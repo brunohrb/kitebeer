@@ -402,7 +402,7 @@
         </header>
 
         <div class="search-container">
-            <input type="text" class="search-input" id="cityInput" placeholder="Buscar cidade (ex: Pecém, Fortaleza)">
+            <input type="text" class="search-input" id="cityInput" placeholder="Buscar praia ou cidade (ex: Taíba, Cumbuco, Jeri, Paracuru)">
             <button class="search-btn" onclick="searchLocation()">Buscar</button>
         </div>
 
@@ -511,6 +511,68 @@
         let currentCity = 'Fortaleza';
         let currentCountry = 'Brasil';
         let currentAdmin1 = 'Ceará';
+
+        // Database of famous kitesurf spots in Brazil
+        const kiteSpotsDatabase = {
+            // Ceará
+            'taiba': { lat: -3.5694, lon: -38.9067, name: 'Taíba', admin1: 'Ceará', country: 'Brasil' },
+            'taíba': { lat: -3.5694, lon: -38.9067, name: 'Taíba', admin1: 'Ceará', country: 'Brasil' },
+            'paracuru': { lat: -3.4103, lon: -39.0303, name: 'Paracuru', admin1: 'Ceará', country: 'Brasil' },
+            'cumbuco': { lat: -3.6282, lon: -38.7758, name: 'Cumbuco', admin1: 'Ceará', country: 'Brasil' },
+            'pecem': { lat: -3.5417, lon: -38.8211, name: 'Pecém', admin1: 'Ceará', country: 'Brasil' },
+            'pecém': { lat: -3.5417, lon: -38.8211, name: 'Pecém', admin1: 'Ceará', country: 'Brasil' },
+            'icarai': { lat: -4.7669, lon: -37.8519, name: 'Icaraí de Amontada', admin1: 'Ceará', country: 'Brasil' },
+            'icaraí': { lat: -4.7669, lon: -37.8519, name: 'Icaraí de Amontada', admin1: 'Ceará', country: 'Brasil' },
+            'jericoacoara': { lat: -2.7928, lon: -40.5142, name: 'Jericoacoara', admin1: 'Ceará', country: 'Brasil' },
+            'jeri': { lat: -2.7928, lon: -40.5142, name: 'Jericoacoara', admin1: 'Ceará', country: 'Brasil' },
+            'preá': { lat: -2.8133, lon: -40.5833, name: 'Preá', admin1: 'Ceará', country: 'Brasil' },
+            'prea': { lat: -2.8133, lon: -40.5833, name: 'Preá', admin1: 'Ceará', country: 'Brasil' },
+            'canoa quebrada': { lat: -4.0072, lon: -37.7656, name: 'Canoa Quebrada', admin1: 'Ceará', country: 'Brasil' },
+            'flecheiras': { lat: -3.2769, lon: -39.2683, name: 'Flecheiras', admin1: 'Ceará', country: 'Brasil' },
+            'lagoinha': { lat: -3.1564, lon: -39.4419, name: 'Lagoinha', admin1: 'Ceará', country: 'Brasil' },
+            'mundau': { lat: -3.0564, lon: -39.5119, name: 'Mundaú', admin1: 'Ceará', country: 'Brasil' },
+            'mundaú': { lat: -3.0564, lon: -39.5119, name: 'Mundaú', admin1: 'Ceará', country: 'Brasil' },
+            
+            // Rio Grande do Norte
+            'ponta do mel': { lat: -4.9389, lon: -36.9842, name: 'Ponta do Mel', admin1: 'Rio Grande do Norte', country: 'Brasil' },
+            'galinhos': { lat: -5.0911, lon: -36.2744, name: 'Galinhos', admin1: 'Rio Grande do Norte', country: 'Brasil' },
+            'sao miguel do gostoso': { lat: -5.1197, lon: -35.6394, name: 'São Miguel do Gostoso', admin1: 'Rio Grande do Norte', country: 'Brasil' },
+            'gostoso': { lat: -5.1197, lon: -35.6394, name: 'São Miguel do Gostoso', admin1: 'Rio Grande do Norte', country: 'Brasil' },
+            'pipa': { lat: -6.2267, lon: -35.0564, name: 'Praia da Pipa', admin1: 'Rio Grande do Norte', country: 'Brasil' },
+            'barra do cunhau': { lat: -6.2761, lon: -35.0069, name: 'Barra do Cunhaú', admin1: 'Rio Grande do Norte', country: 'Brasil' },
+            'touros': { lat: -5.1989, lon: -35.4603, name: 'Touros', admin1: 'Rio Grande do Norte', country: 'Brasil' },
+            
+            // Bahia
+            'barra grande': { lat: -13.9792, lon: -39.0069, name: 'Barra Grande', admin1: 'Bahia', country: 'Brasil' },
+            'morro de sao paulo': { lat: -13.3833, lon: -38.9133, name: 'Morro de São Paulo', admin1: 'Bahia', country: 'Brasil' },
+            'morro': { lat: -13.3833, lon: -38.9133, name: 'Morro de São Paulo', admin1: 'Bahia', country: 'Brasil' },
+            
+            // Maranhão
+            'atins': { lat: -2.5833, lon: -42.8167, name: 'Atins', admin1: 'Maranhão', country: 'Brasil' },
+            'caburé': { lat: -2.6167, lon: -42.8000, name: 'Caburé', admin1: 'Maranhão', country: 'Brasil' },
+            'cabure': { lat: -2.6167, lon: -42.8000, name: 'Caburé', admin1: 'Maranhão', country: 'Brasil' },
+            
+            // Santa Catarina
+            'laguna': { lat: -28.4800, lon: -48.7794, name: 'Laguna', admin1: 'Santa Catarina', country: 'Brasil' },
+            'garopaba': { lat: -28.0256, lon: -48.6156, name: 'Garopaba', admin1: 'Santa Catarina', country: 'Brasil' },
+            'florianopolis': { lat: -27.5935, lon: -48.5582, name: 'Florianópolis', admin1: 'Santa Catarina', country: 'Brasil' },
+            'floripa': { lat: -27.5935, lon: -48.5582, name: 'Florianópolis', admin1: 'Santa Catarina', country: 'Brasil' },
+            
+            // Rio de Janeiro
+            'búzios': { lat: -22.7469, lon: -41.8819, name: 'Búzios', admin1: 'Rio de Janeiro', country: 'Brasil' },
+            'buzios': { lat: -22.7469, lon: -41.8819, name: 'Búzios', admin1: 'Rio de Janeiro', country: 'Brasil' },
+            'cabo frio': { lat: -22.8794, lon: -42.0186, name: 'Cabo Frio', admin1: 'Rio de Janeiro', country: 'Brasil' },
+            
+            // Piauí
+            'barra grande pi': { lat: -2.9011, lon: -41.3797, name: 'Barra Grande', admin1: 'Piauí', country: 'Brasil' },
+            'luis correia': { lat: -2.8808, lon: -41.6658, name: 'Luís Correia', admin1: 'Piauí', country: 'Brasil' }
+        };
+
+        // Check if search term matches a known kite spot
+        function findKiteSpot(searchTerm) {
+            const normalized = searchTerm.toLowerCase().trim();
+            return kiteSpotsDatabase[normalized] || null;
+        }
 
         // Convert wind speed from km/h to knots (API returns km/h by default)
         function kmhToKnots(kmh) {
@@ -658,10 +720,25 @@
             const input = document.getElementById('cityInput').value.trim();
             
             if (input === '') {
-                alert('Por favor, digite uma cidade');
+                alert('Por favor, digite uma cidade ou praia');
                 return;
             }
 
+            // First, check if it's a known kite spot
+            const kiteSpot = findKiteSpot(input);
+            
+            if (kiteSpot) {
+                // Found in our kite spots database!
+                currentLat = kiteSpot.lat;
+                currentLon = kiteSpot.lon;
+                currentCity = kiteSpot.name;
+                currentCountry = kiteSpot.country;
+                currentAdmin1 = kiteSpot.admin1;
+                await loadWeatherData(kiteSpot.lat, kiteSpot.lon, kiteSpot.name, kiteSpot.country, kiteSpot.admin1);
+                return;
+            }
+
+            // If not found in database, try geocoding API
             const coords = await getCoordinates(input);
             
             if (coords) {
@@ -672,7 +749,7 @@
                 currentAdmin1 = coords.admin1;
                 await loadWeatherData(coords.lat, coords.lon, coords.name, coords.country, coords.admin1);
             } else {
-                alert('Cidade não encontrada. Tente novamente com outro nome.');
+                alert('Localização não encontrada. Tente: Taíba, Cumbuco, Jeri, Paracuru, etc.');
             }
         }
 
