@@ -328,7 +328,6 @@
     <div class="card">
         <h2>📜 Histórico</h2>
         <div id="expensesList"></div>
-        <button class="secondary" id="btnLimparDespesas">Limpar Todas as Despesas</button>
     </div>
 </div>
 
@@ -497,10 +496,16 @@
             }
 
             console.log('✅ Grupo criado com sucesso!', data);
+people = [];
+expenses = [];
+
             grupoAtual = data;
             localStorage.setItem('grupoAtual', JSON.stringify(data));
 
             alert(`🎉 Grupo criado!\n\n📌 Código: ${codigo}\n🔒 Senha: ${senha}\n\nCompartilhe!`);
+document.getElementById('criarNome').value = '';
+document.getElementById('criarSenha').value = '';
+document.getElementById('criarCriador').value = '';
             
             mostrarApp();
             carregarDados();
@@ -543,10 +548,14 @@
             }
 
             console.log('✅ Entrou no grupo:', data);
+people = [];
+expenses = [];
             grupoAtual = data;
             localStorage.setItem('grupoAtual', JSON.stringify(data));
 
             alert(`✅ Bem-vindo ao grupo: ${data.nome}!`);
+document.getElementById('loginCodigo').value = '';
+document.getElementById('loginSenha').value = '';
             
             mostrarApp();
             carregarDados();
