@@ -471,6 +471,18 @@
             opacity: 0.8;
         }
 
+        .hour-gust {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #fff;
+            margin-top: 5px;
+        }
+
+        .hour-gust-unit {
+            font-size: 0.55em;
+            opacity: 0.8;
+        }
+
         .hour-details {
             margin-top: 8px;
             font-size: 0.75em;
@@ -694,7 +706,7 @@
                 <!-- Tide Card -->
                 <div class="data-card cyan">
                     <div class="card-header">
-                        <span class="card-icon">🌙</span>
+                        <span class="card-icon">🌊</span>
                         <span class="card-label">MARÉ</span>
                     </div>
                     <div class="card-value" id="tideHeight">1.48<span class="card-unit">m</span></div>
@@ -974,6 +986,14 @@
                 const isNow = i === 0 || (time - now) < 3600000;
                 const dayDisplay = isNow ? 'AGORA' : day;
                 
+                // Calculate dynamic tide (simple simulation based on time)
+                const hourOfDay = time.getHours();
+                const dayOfMonth = time.getDate();
+                // Tide varies between 0.5m and 2.5m approximately
+                const tideBase = 1.5;
+                const tideVariation = Math.sin((hourOfDay / 6) * Math.PI) * 0.8 + Math.sin((dayOfMonth / 15) * Math.PI) * 0.5;
+                const tideHeight = (tideBase + tideVariation).toFixed(1);
+                
                 card.innerHTML = `
                     <div class="hour-day">${timeIcon} ${dayDisplay}</div>
                     <div class="hour-time">${hourStr}</div>
@@ -981,18 +1001,17 @@
                     <div class="hour-wind">
                         <span class="${windColorClass}">${windSpeed}</span><span class="hour-wind-unit">nós</span>
                     </div>
+                    <div class="hour-gust">
+                        <span class="${gustColorClass}">${gust}</span><span class="hour-gust-unit">nós rajada</span>
+                    </div>
                     <div class="hour-details">
                         <div class="hour-detail-item">
-                            <span>💨</span>
-                            <span class="${gustColorClass}">${gust}nós</span>
-                        </div>
-                        <div class="hour-detail-item">
-                            <span>🌊</span>
+                            <span>Onda</span>
                             <span>${waveHeight}${waveHeight !== '--' ? 'm' : ''}</span>
                         </div>
                         <div class="hour-detail-item">
-                            <span>🌙</span>
-                            <span>1.5m</span>
+                            <span>Maré</span>
+                            <span>${tideHeight}m</span>
                         </div>
                     </div>
                     ${!hasWaveData ? '<div class="no-waves-badge">Só vento</div>' : ''}
