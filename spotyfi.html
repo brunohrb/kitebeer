@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotyfi do Carnaval - Acerto de Contas</title>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
         /* --- TEMA "SPOTYFI" --- */
         :root {
@@ -56,10 +60,70 @@
             background-color: var(--primary); color: #000;
             font-weight: bold; font-size: 1.1rem; cursor: pointer;
             transition: 0.2s;
+            position: relative;
         }
         button:hover { transform: scale(1.02); filter: brightness(1.1); }
+        button:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
         button.secondary { background: transparent; border: 1px solid #555; color: #fff; margin-top: 10px; }
         button.small-btn { width: auto; padding: 14px 20px; border-radius: 6px; }
+        button.danger { background-color: var(--danger); }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            border-top: 2px solid #000;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .spinner.white {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #fff;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Overlay de Loading Global */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-overlay .spinner-big {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(29, 185, 84, 0.3);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-overlay p {
+            margin-top: 20px;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
 
         /* Checkboxes e Tags */
         .participants-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
@@ -71,9 +135,33 @@
         .participant-option input:checked + label {
             background-color: var(--primary); color: #000; border-color: var(--primary); font-weight: bold;
         }
-        .person-tag { background: #333; padding: 5px 12px; border-radius: 50px; font-size: 0.85rem; }
+        
+        /* Tags de Pessoas com Botão de Excluir */
+        .person-tag { 
+            background: #333; 
+            padding: 5px 12px; 
+            border-radius: 50px; 
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .person-tag .delete-person-btn {
+            background: none;
+            border: none;
+            color: #ff4444;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1rem;
+            width: auto;
+            line-height: 1;
+        }
+        .person-tag .delete-person-btn:hover {
+            color: #ff6666;
+            transform: none;
+        }
 
-        /* Estilo do Plano de Pagamento (NOVO) */
+        /* Estilo do Plano de Pagamento */
         .payment-plan-item {
             background: #2a2a2a;
             padding: 15px;
@@ -93,18 +181,112 @@
             background: var(--bg-input); margin-bottom: 10px; border-radius: 8px;
         }
         .delete-btn { width: 30px; height: 30px; padding: 0; background: transparent; color: #666; font-size: 1.2rem;}
+
+        /* Tela de Login/Criar Grupo */
+        #authScreen { display: block; }
+        #appScreen { display: none; }
+        
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            background: var(--bg-input);
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        .auth-tab.active {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .grupo-info {
+            background: var(--bg-input);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
+<!-- Loading Overlay Global -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner-big"></div>
+    <p id="loadingText">Carregando...</p>
+</div>
+
 <header>
-    <h1>$ Spotyfi do Carnaval</h1>
+    <h1>🎭 Spotyfi do Carnaval</h1>
 </header>
 
-<div class="container">
+<!-- TELA DE AUTENTICAÇÃO -->
+<div id="authScreen" class="container">
+    <div class="card">
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="tabBtnEntrar">ENTRAR</button>
+            <button class="auth-tab" id="tabBtnCriar">CRIAR GRUPO</button>
+        </div>
+
+        <!-- ABA ENTRAR -->
+        <div id="tabEntrar">
+            <h2>🔑 Entrar no Grupo</h2>
+            <div class="form-group">
+                <label>Código do Grupo</label>
+                <input type="text" id="loginCodigo" placeholder="Ex: CARNA26" style="text-transform: uppercase;">
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="loginSenha" placeholder="Digite a senha">
+            </div>
+            <button id="btnEntrar">ENTRAR</button>
+        </div>
+
+        <!-- ABA CRIAR -->
+        <div id="tabCriar" class="hidden">
+            <h2>✨ Criar Novo Grupo</h2>
+            <div class="form-group">
+                <label>Nome do Grupo</label>
+                <input type="text" id="criarNome" placeholder="Ex: Carnaval Salvador 2026">
+            </div>
+            <div class="form-group">
+                <label>Senha (mínimo 4 caracteres)</label>
+                <input type="password" id="criarSenha" placeholder="Crie uma senha">
+            </div>
+            <div class="form-group">
+                <label>Seu Nome</label>
+                <input type="text" id="criarCriador" placeholder="Quem está criando?">
+            </div>
+            <button id="btnCriar">CRIAR GRUPO</button>
+        </div>
+    </div>
+</div>
+
+<!-- TELA PRINCIPAL DO APP -->
+<div id="appScreen" class="container">
+    
+    <!-- INFO DO GRUPO -->
+    <div class="grupo-info">
+        <div>
+            <strong id="grupoNome"></strong><br>
+            <small style="color: var(--text-muted);">Código: <span id="grupoCodigo"></span></small>
+        </div>
+        <button class="small-btn danger" id="btnSair">SAIR</button>
+    </div>
 
     <div class="card" style="border: 1px solid var(--primary);">
-        <h2>✅ Como acertas as contas:</h2>
+        <h2>✅ Como acertar as contas:</h2>
         <div id="paymentPlanList">
             <p style="text-align:center; color:var(--text-muted); padding: 10px;">Lance os gastos para gerar o plano.</p>
         </div>
@@ -116,10 +298,10 @@
     </div>
 
     <div class="card">
-        <h2>👥 Novo Folião</h2>
+        <h2>👥 Foliões do Grupo</h2>
         <div style="display: flex; gap: 10px;">
-            <input type="text" id="newPersonName" placeholder="Nome">
-            <button onclick="addPerson()" class="small-btn">+</button>
+            <input type="text" id="newPersonName" placeholder="Nome do participante">
+            <button id="btnAddPerson" class="small-btn">+</button>
         </div>
         <div id="peopleTags" style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
     </div>
@@ -140,21 +322,69 @@
             <label style="color: var(--primary);">Para quem foi? (Marque os envolvidos)</label>
             <div id="participantsContainer" class="participants-grid"></div>
         </div>
-        <button onclick="addExpense()">SALVAR</button>
+        <button id="btnAddExpense">SALVAR</button>
     </div>
 
     <div class="card">
         <h2>📜 Histórico</h2>
-        <ul id="expensesList"></ul>
-        <button class="secondary" onclick="resetApp()">Reiniciar Tudo</button>
+        <div id="expensesList"></div>
+        <button class="secondary" id="btnLimparDespesas">Limpar Todas as Despesas</button>
     </div>
 </div>
 
 <script>
+(function() {
+    'use strict';
+    
+    // ========================================
+    // ⚠️ CREDENCIAIS DO SUPABASE ⚠️
+    // ========================================
+    const SUPABASE_URL = 'https://fwhsjzkmnfxnlrvspkyr.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3aHNqemttbmZ4bmxydnNwa3lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0Nzg3MzUsImV4cCI6MjA4MzA1NDczNX0.lT_tHpkxiOQl2HdsFc5VQr_xfkEvoGi101MaITnSLkc';
+    // ========================================
+
+    console.log('🚀 Iniciando aplicação...');
+
+    // Criar cliente Supabase
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log('✅ Cliente Supabase criado');
+
+    // ========================================
+    // FUNÇÕES DE LOADING
+    // ========================================
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+
+    function showLoading(message = 'Carregando...') {
+        loadingText.textContent = message;
+        loadingOverlay.classList.add('active');
+    }
+
+    function hideLoading() {
+        loadingOverlay.classList.remove('active');
+    }
+
+    function setButtonLoading(button, loading, originalText) {
+        if (loading) {
+            button.disabled = true;
+            button.dataset.originalText = button.innerHTML;
+            button.innerHTML = '<span class="spinner"></span>' + originalText;
+        } else {
+            button.disabled = false;
+            button.innerHTML = button.dataset.originalText || originalText;
+        }
+    }
+
+    // ========================================
+    // VARIÁVEIS GLOBAIS
+    // ========================================
+    let grupoAtual = null;
     let people = [];
     let expenses = [];
 
-    // --- Elementos ---
+    // Elementos DOM
+    const authScreen = document.getElementById('authScreen');
+    const appScreen = document.getElementById('appScreen');
     const payerSelect = document.getElementById('payerSelect');
     const participantsContainer = document.getElementById('participantsContainer');
     const expensesList = document.getElementById('expensesList');
@@ -162,17 +392,363 @@
     const paymentPlanList = document.getElementById('paymentPlanList');
     const peopleTags = document.getElementById('peopleTags');
 
-    // --- Funções Básicas ---
-    function addPerson() {
+    // ========================================
+    // INICIALIZAÇÃO
+    // ========================================
+    window.addEventListener('load', function() {
+        console.log('📄 Página carregada');
+        
+        const grupoSalvo = localStorage.getItem('grupoAtual');
+        if (grupoSalvo) {
+            grupoAtual = JSON.parse(grupoSalvo);
+            console.log('📂 Grupo recuperado:', grupoAtual);
+            mostrarApp();
+            carregarDados();
+        }
+
+        // Event Listeners
+        document.getElementById('tabBtnEntrar').addEventListener('click', () => switchTab('entrar'));
+        document.getElementById('tabBtnCriar').addEventListener('click', () => switchTab('criar'));
+        document.getElementById('btnEntrar').addEventListener('click', entrarNoGrupo);
+        document.getElementById('btnCriar').addEventListener('click', criarGrupo);
+        document.getElementById('btnSair').addEventListener('click', sairDoGrupo);
+        document.getElementById('btnAddPerson').addEventListener('click', addPerson);
+        document.getElementById('btnAddExpense').addEventListener('click', addExpense);
+        document.getElementById('btnLimparDespesas').addEventListener('click', limparDespesas);
+    });
+
+    // ========================================
+    // AUTENTICAÇÃO
+    // ========================================
+
+    function switchTab(tab) {
+        console.log('Mudando para aba:', tab);
+        const tabEntrar = document.getElementById('tabEntrar');
+        const tabCriar = document.getElementById('tabCriar');
+        const btnEntrar = document.getElementById('tabBtnEntrar');
+        const btnCriar = document.getElementById('tabBtnCriar');
+        
+        btnEntrar.classList.remove('active');
+        btnCriar.classList.remove('active');
+        
+        if (tab === 'entrar') {
+            tabEntrar.classList.remove('hidden');
+            tabCriar.classList.add('hidden');
+            btnEntrar.classList.add('active');
+        } else {
+            tabEntrar.classList.add('hidden');
+            tabCriar.classList.remove('hidden');
+            btnCriar.classList.add('active');
+        }
+    }
+
+    async function criarGrupo() {
+        console.log('📝 Iniciando criação de grupo...');
+        
+        const nome = document.getElementById('criarNome').value.trim();
+        const senha = document.getElementById('criarSenha').value;
+        const criador = document.getElementById('criarCriador').value.trim();
+
+        console.log('Dados:', { nome, senha: senha ? '***' : '', criador });
+
+        if (!nome || !senha || !criador) {
+            alert('Preencha todos os campos!');
+            return;
+        }
+
+        if (senha.length < 4) {
+            alert('A senha deve ter no mínimo 4 caracteres!');
+            return;
+        }
+
+        const codigo = Math.random().toString(36).substring(2, 8).toUpperCase();
+        console.log('Código gerado:', codigo);
+
+        const btn = document.getElementById('btnCriar');
+        setButtonLoading(btn, true, 'Criando...');
+
+        try {
+            console.log('📤 Enviando para Supabase...');
+            
+            const { data, error } = await supabase
+                .from('grupos')
+                .insert([{ 
+                    nome: nome,
+                    senha: senha,
+                    codigo_acesso: codigo,
+                    criado_por: criador
+                }])
+                .select()
+                .single();
+
+            console.log('📥 Resposta:', { data, error });
+
+            if (error) {
+                console.error('❌ Erro:', error);
+                
+                if (error.code === '42P01') {
+                    alert('❌ Tabela não existe!\n\nExecute o SQL no Supabase.');
+                } else if (error.code === '42501') {
+                    alert('❌ Sem permissão!\n\nExecute:\nALTER TABLE grupos DISABLE ROW LEVEL SECURITY;');
+                } else {
+                    alert('Erro: ' + error.message);
+                }
+                return;
+            }
+
+            console.log('✅ Grupo criado com sucesso!', data);
+            grupoAtual = data;
+            localStorage.setItem('grupoAtual', JSON.stringify(data));
+
+            alert(`🎉 Grupo criado!\n\n📌 Código: ${codigo}\n🔒 Senha: ${senha}\n\nCompartilhe!`);
+            
+            mostrarApp();
+            carregarDados();
+
+        } catch (error) {
+            console.error('❌ Erro crítico:', error);
+            alert('Erro: ' + error.message);
+        } finally {
+            setButtonLoading(btn, false, 'CRIAR GRUPO');
+        }
+    }
+
+    async function entrarNoGrupo() {
+        console.log('🔑 Tentando entrar no grupo...');
+        
+        const codigo = document.getElementById('loginCodigo').value.trim().toUpperCase();
+        const senha = document.getElementById('loginSenha').value;
+
+        if (!codigo || !senha) {
+            alert('Preencha o código e a senha!');
+            return;
+        }
+
+        const btn = document.getElementById('btnEntrar');
+        setButtonLoading(btn, true, 'Entrando...');
+
+        try {
+            const { data, error } = await supabase
+                .from('grupos')
+                .select('*')
+                .eq('codigo_acesso', codigo)
+                .eq('senha', senha)
+                .eq('ativo', true)
+                .single();
+
+            if (error || !data) {
+                console.error('Erro:', error);
+                alert('❌ Código ou senha incorretos!');
+                return;
+            }
+
+            console.log('✅ Entrou no grupo:', data);
+            grupoAtual = data;
+            localStorage.setItem('grupoAtual', JSON.stringify(data));
+
+            alert(`✅ Bem-vindo ao grupo: ${data.nome}!`);
+            
+            mostrarApp();
+            carregarDados();
+
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro ao entrar.');
+        } finally {
+            setButtonLoading(btn, false, 'ENTRAR');
+        }
+    }
+
+    function sairDoGrupo() {
+        if (confirm('Deseja sair do grupo?')) {
+            grupoAtual = null;
+            people = [];
+            expenses = [];
+            localStorage.removeItem('grupoAtual');
+            
+            authScreen.style.display = 'block';
+            appScreen.style.display = 'none';
+            
+            document.getElementById('loginCodigo').value = '';
+            document.getElementById('loginSenha').value = '';
+            
+            console.log('👋 Saiu do grupo');
+        }
+    }
+
+    function mostrarApp() {
+        authScreen.style.display = 'none';
+        appScreen.style.display = 'block';
+        
+        document.getElementById('grupoNome').textContent = grupoAtual.nome;
+        document.getElementById('grupoCodigo').textContent = grupoAtual.codigo_acesso;
+    }
+
+    // ========================================
+    // CARREGAR DADOS
+    // ========================================
+
+    async function carregarDados() {
+        if (!grupoAtual) return;
+        showLoading('Carregando dados do grupo...');
+        try {
+            await carregarParticipantes();
+            await carregarDespesas();
+        } finally {
+            hideLoading();
+        }
+    }
+
+    async function carregarParticipantes() {
+        if (!grupoAtual) return;
+
+        try {
+            const { data, error } = await supabase
+                .from('participantes')
+                .select('nome')
+                .eq('grupo_id', grupoAtual.id)
+                .order('nome');
+
+            if (error) throw error;
+
+            people = data ? data.map(p => p.nome) : [];
+            updateUI();
+
+        } catch (error) {
+            console.error('Erro ao carregar participantes:', error);
+        }
+    }
+
+    async function carregarDespesas() {
+        if (!grupoAtual) return;
+
+        try {
+            const { data, error } = await supabase
+                .from('despesas')
+                .select(`
+                    id,
+                    descricao,
+                    valor,
+                    pagador,
+                    criado_em,
+                    despesas_envolvidos (
+                        participante_nome
+                    )
+                `)
+                .eq('grupo_id', grupoAtual.id)
+                .order('criado_em', { ascending: false });
+
+            if (error) throw error;
+
+            expenses = data ? data.map(d => ({
+                id: d.id,
+                desc: d.descricao,
+                amount: parseFloat(d.valor),
+                payer: d.pagador,
+                involved: d.despesas_envolvidos.map(e => e.participante_nome)
+            })) : [];
+
+            updateUI();
+
+        } catch (error) {
+            console.error('Erro ao carregar despesas:', error);
+        }
+    }
+
+    // ========================================
+    // ADICIONAR PARTICIPANTE
+    // ========================================
+
+    async function addPerson() {
         const name = document.getElementById('newPersonName').value.trim();
-        if (name && !people.includes(name)) {
+        
+        if (!name) {
+            alert('Digite um nome!');
+            return;
+        }
+
+        if (!grupoAtual) {
+            alert('Erro: grupo não identificado!');
+            return;
+        }
+
+        if (people.includes(name)) {
+            alert('Este nome já existe!');
+            return;
+        }
+
+        const btn = document.getElementById('btnAddPerson');
+        setButtonLoading(btn, true, 'Adicionando...');
+
+        try {
+            const { data, error } = await supabase
+                .from('participantes')
+                .insert([{ grupo_id: grupoAtual.id, nome: name }])
+                .select();
+
+            if (error) {
+                if (error.code === '23505') alert('Nome já existe!');
+                throw error;
+            }
+
             people.push(name);
             document.getElementById('newPersonName').value = '';
             updateUI();
-        } else if (people.includes(name)) alert('Já existe!');
+
+        } catch (error) {
+            console.error('Erro:', error);
+        } finally {
+            setButtonLoading(btn, false, '+');
+        }
     }
 
-    function addExpense() {
+    // ========================================
+    // EXCLUIR PARTICIPANTE
+    // ========================================
+
+    async function deletePerson(nome) {
+        // Verificar se tem despesas
+        const temDespesas = expenses.some(exp => 
+            exp.payer === nome || exp.involved.includes(nome)
+        );
+
+        if (temDespesas) {
+            alert(`❌ Não é possível excluir ${nome}!\n\nEsta pessoa tem despesas lançadas.\nRemova as despesas primeiro.`);
+            return;
+        }
+
+        if (!confirm(`Excluir ${nome} do grupo?`)) return;
+
+        showLoading('Removendo folião...');
+
+        try {
+            const { error } = await supabase
+                .from('participantes')
+                .delete()
+                .eq('grupo_id', grupoAtual.id)
+                .eq('nome', nome);
+
+            if (error) throw error;
+
+            people = people.filter(p => p !== nome);
+            updateUI();
+
+        } catch (error) {
+            console.error('Erro ao excluir participante:', error);
+            alert('Erro ao excluir participante.');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // Tornar global para onclick
+    window.deletePerson = deletePerson;
+
+    // ========================================
+    // ADICIONAR DESPESA (OTIMIZADO!)
+    // ========================================
+
+    async function addExpense() {
         const desc = document.getElementById('descInput').value.trim();
         const amount = parseFloat(document.getElementById('amountInput').value);
         const payer = payerSelect.value;
@@ -180,25 +756,149 @@
         const involved = Array.from(checkboxes).map(cb => cb.value);
 
         if (!desc || isNaN(amount) || amount <= 0 || !payer || involved.length === 0) {
-            alert('Preencha todos os dados corretamente.');
+            alert('Preencha todos os dados!');
             return;
         }
 
-        expenses.push({ id: Date.now(), desc, amount, payer, involved });
-        
-        document.getElementById('descInput').value = '';
-        document.getElementById('amountInput').value = '';
-        updateUI();
-    }
+        if (!grupoAtual) {
+            alert('Erro: grupo não identificado!');
+            return;
+        }
 
-    function removeExpense(id) {
-        if(confirm('Apagar despesa?')) {
-            expenses = expenses.filter(e => e.id !== id);
-            updateUI();
+        const btn = document.getElementById('btnAddExpense');
+        setButtonLoading(btn, true, 'Salvando...');
+
+        try {
+            // TENTAR usar a função otimizada primeiro
+            const { data: funcData, error: funcError } = await supabase
+                .rpc('adicionar_despesa_completa', {
+                    p_grupo_id: grupoAtual.id,
+                    p_descricao: desc,
+                    p_valor: amount,
+                    p_pagador: payer,
+                    p_envolvidos: involved
+                });
+
+            // Se a função não existe, usar método tradicional
+            if (funcError && funcError.code === '42883') {
+                console.log('⚠️ Função otimizada não encontrada. Usando método tradicional...');
+                await addExpenseTradicional(desc, amount, payer, involved);
+            } else if (funcError) {
+                throw funcError;
+            } else {
+                console.log('✅ Despesa adicionada com função otimizada!');
+            }
+
+            document.getElementById('descInput').value = '';
+            document.getElementById('amountInput').value = '';
+            
+            await carregarDespesas();
+
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro ao salvar despesa.');
+        } finally {
+            setButtonLoading(btn, false, 'SALVAR');
         }
     }
 
-    // --- Atualização Visual ---
+    // Método tradicional (fallback caso a função SQL não exista)
+    async function addExpenseTradicional(desc, amount, payer, involved) {
+        const { data: despesaData, error: despesaError } = await supabase
+            .from('despesas')
+            .insert([{
+                grupo_id: grupoAtual.id,
+                descricao: desc,
+                valor: amount,
+                pagador: payer
+            }])
+            .select()
+            .single();
+
+        if (despesaError) throw despesaError;
+
+        const { data: participantesData, error: participantesError } = await supabase
+            .from('participantes')
+            .select('id, nome')
+            .eq('grupo_id', grupoAtual.id)
+            .in('nome', involved);
+
+        if (participantesError) throw participantesError;
+
+        const envolvidos = participantesData.map(p => ({
+            despesa_id: despesaData.id,
+            participante_nome: p.nome,
+            participante_id: p.id
+        }));
+
+        const { error: envolvidosError } = await supabase
+            .from('despesas_envolvidos')
+            .insert(envolvidos);
+
+        if (envolvidosError) throw envolvidosError;
+    }
+
+    // ========================================
+    // REMOVER DESPESA
+    // ========================================
+
+    window.removeExpense = async function(id) {
+        if (!confirm('Apagar esta despesa?')) return;
+
+        showLoading('Removendo despesa...');
+
+        try {
+            const { error } = await supabase
+                .from('despesas')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+
+            await carregarDespesas();
+
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro ao remover despesa.');
+        } finally {
+            hideLoading();
+        }
+    };
+
+    // ========================================
+    // LIMPAR DESPESAS
+    // ========================================
+
+    async function limparDespesas() {
+        if (!confirm('Limpar TODAS as despesas?')) return;
+
+        const btn = document.getElementById('btnLimparDespesas');
+        setButtonLoading(btn, true, 'Limpando...');
+
+        try {
+            const { error } = await supabase
+                .from('despesas')
+                .delete()
+                .eq('grupo_id', grupoAtual.id);
+
+            if (error) throw error;
+
+            expenses = [];
+            updateUI();
+            alert('Despesas removidas!');
+
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro ao limpar despesas.');
+        } finally {
+            setButtonLoading(btn, false, 'Limpar Todas as Despesas');
+        }
+    }
+
+    // ========================================
+    // INTERFACE
+    // ========================================
+
     function updateUI() {
         renderPeopleRelated();
         renderExpenses();
@@ -206,20 +906,24 @@
     }
 
     function renderPeopleRelated() {
-        // Tags
-        peopleTags.innerHTML = people.map(p => `<span class="person-tag">${p}</span>`).join('');
+        // Renderizar tags com botão de excluir
+        peopleTags.innerHTML = people.map(p => `
+            <span class="person-tag">
+                ${p}
+                <button class="delete-person-btn" onclick="deletePerson('${p}')" title="Excluir">×</button>
+            </span>
+        `).join('');
         
-        // Select
         const currentPayer = payerSelect.value;
         payerSelect.innerHTML = '<option value="" disabled selected>Selecione...</option>';
         people.forEach(p => {
             const opt = document.createElement('option');
-            opt.value = p; opt.textContent = p;
+            opt.value = p; 
+            opt.textContent = p;
             payerSelect.appendChild(opt);
         });
         if(people.includes(currentPayer)) payerSelect.value = currentPayer;
 
-        // Checkboxes (só recria se mudou numero de pessoas para não perder seleção atual durante uso)
         if(participantsContainer.children.length !== people.length && people.length > 0) {
             participantsContainer.innerHTML = '';
             people.forEach(p => {
@@ -232,41 +936,50 @@
     }
 
     function renderExpenses() {
+        if (expenses.length === 0) {
+            expensesList.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:20px;">Nenhuma despesa ainda.</p>';
+            return;
+        }
+
         expensesList.innerHTML = '';
-        expenses.slice().reverse().forEach(exp => {
-            const li = document.createElement('li');
-            li.className = 'expense-item';
-            li.innerHTML = `
+        expenses.forEach(exp => {
+            const div = document.createElement('div');
+            div.className = 'expense-item';
+            div.innerHTML = `
                 <div>
-                    <strong>${exp.desc}</strong>
+                    <strong>${exp.desc}</strong><br>
                     <small style="color:#888">${exp.payer} pagou R$ ${exp.amount.toFixed(2)}</small>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px">
                     <span style="color:var(--primary)">R$ ${exp.amount.toFixed(2)}</span>
-                    <button class="delete-btn" onclick="removeExpense(${exp.id})">✕</button>
+                    <button class="delete-btn" onclick="removeExpense('${exp.id}')">✕</button>
                 </div>`;
-            expensesList.appendChild(li);
+            expensesList.appendChild(div);
         });
     }
 
-    // --- O CORAÇÃO DO CÁLCULO (QUEM PAGA QUEM) ---
     function calculateAndRenderBalances() {
-        if (people.length === 0) return;
+        if (people.length === 0) {
+            balanceList.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Adicione participantes.</p>';
+            return;
+        }
 
-        // 1. Calcular Saldo Líquido
         let balances = {};
         people.forEach(p => balances[p] = 0);
 
         expenses.forEach(exp => {
             const share = exp.amount / exp.involved.length;
             if (people.includes(exp.payer)) balances[exp.payer] += exp.amount;
-            exp.involved.forEach(p => { if (balances.hasOwnProperty(p)) balances[p] -= share; });
+            exp.involved.forEach(p => { 
+                if (balances.hasOwnProperty(p)) balances[p] -= share; 
+            });
         });
 
-        // 2. Renderizar Resumo (Saldo Líquido)
         balanceList.innerHTML = '';
+        let hasSaldo = false;
         Object.keys(balances).forEach(p => {
             if(Math.abs(balances[p]) < 0.01) return;
+            hasSaldo = true;
             const color = balances[p] > 0 ? 'var(--primary)' : 'var(--danger)';
             const text = balances[p] > 0 ? 'recebe' : 'deve';
             balanceList.innerHTML += `<div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid #333;">
@@ -274,8 +987,10 @@
             </div>`;
         });
 
-        // 3. ALGORITMO DE OTIMIZAÇÃO DE PAGAMENTOS
-        // Separa quem deve (devedores) de quem tem a receber (credores)
+        if (!hasSaldo) {
+            balanceList.innerHTML = '<p style="text-align:center; color:var(--primary);">Ninguém deve nada!</p>';
+        }
+
         let debtors = [];
         let creditors = [];
 
@@ -284,26 +999,22 @@
             if (amount > 0.01) creditors.push({ name: person, amount: amount });
         }
 
-        // Ordena para facilitar (opcional, mas ajuda na visualização)
         debtors.sort((a, b) => b.amount - a.amount);
         creditors.sort((a, b) => b.amount - a.amount);
 
         paymentPlanList.innerHTML = '';
         let hasPayments = false;
 
-        // Cruzamento de dados
-        let i = 0; // Índice devedores
-        let j = 0; // Índice credores
+        let i = 0;
+        let j = 0;
 
         while (i < debtors.length && j < creditors.length) {
             hasPayments = true;
             let debtor = debtors[i];
             let creditor = creditors[j];
 
-            // O valor a ser pago é o mínimo entre o que um deve e o outro tem a receber
             let amountToPay = Math.min(debtor.amount, creditor.amount);
 
-            // Gera o HTML da instrução
             const div = document.createElement('div');
             div.className = 'payment-plan-item';
             div.innerHTML = `
@@ -316,13 +1027,10 @@
             `;
             paymentPlanList.appendChild(div);
 
-            // Atualiza os valores restantes
             debtor.amount -= amountToPay;
             creditor.amount -= amountToPay;
 
-            // Se zerou a dívida, passa para o próximo devedor
             if (debtor.amount < 0.01) i++;
-            // Se zerou o crédito, passa para o próximo credor
             if (creditor.amount < 0.01) j++;
         }
 
@@ -331,11 +1039,7 @@
         }
     }
 
-    function resetApp() {
-        if(confirm("Reiniciar tudo?")) {
-            people = []; expenses = []; updateUI();
-        }
-    }
+})();
 </script>
 
 </body>
