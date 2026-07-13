@@ -518,7 +518,7 @@ let pendingPhotoSlot = null;
 
 function loadData() {
   try {
-    const saved = localStorage.getItem('velejin2016_data');
+    const saved = localStorage.getItem('velejin2026_data');
     return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_DATA));
   } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_DATA)); }
 }
@@ -526,7 +526,7 @@ function loadData() {
 function saveAll() {
   // collect all contenteditable values back into data
   collectEdits();
-  localStorage.setItem('velejin2016_data', JSON.stringify(data));
+  localStorage.setItem('velejin2026_data', JSON.stringify(data));
   const badge = document.getElementById('editBadge');
   badge.textContent = '✅ Salvo!';
   setTimeout(() => { badge.innerHTML = '💾 Salvar'; }, 1500);
@@ -608,7 +608,7 @@ function buildDayHTML(day, di) {
   <div class="day-head">
     <div class="day-number">Dia ${day.num} de ${data.days.length}</div>
     <div class="day-weekday">${day.weekday}-feira</div>
-    <div class="day-full-date">${day.date} de 2016</div>
+    <div class="day-full-date">${day.date} de 2026</div>
   </div>
 
   <div class="day-body">
