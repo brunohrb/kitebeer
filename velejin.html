@@ -1,964 +1,845 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Kite Trip Velejin 2016</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a1a2e">
+<link rel="manifest" href="manifest-velejin.json">
+<title>Kite Trip Velejin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --green:#00ff96;--cyan:#00e5ff;--dark:#0a1a2e;--card:#ffffff0d;--border:#ffffff1a;
+  --text:rgba(255,255,255,0.88);--muted:rgba(255,255,255,0.45);
+}
+html,body{height:100%;overflow:hidden;background:var(--dark);}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(160deg, #0a1a2e 0%, #0d2137 40%, #0f3d2e 100%);
-            min-height: 100vh;
-            color: white;
-        }
+/* ─── SPLASH ─── */
+#splash{
+  position:fixed;inset:0;background:linear-gradient(160deg,#0a1a2e 0%,#0d2637 50%,#0f3d2e 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:999;transition:opacity .5s;
+}
+#splash.hide{opacity:0;pointer-events:none;}
 
-        /* ─── HEADER / LOGO ─── */
-        .header {
-            position: relative;
-            text-align: center;
-            padding: 40px 20px 30px;
-            overflow: hidden;
-        }
+/* ─── LOGO SVG (kitesurfer) ─── */
+.logo-svg{filter:drop-shadow(0 0 24px rgba(0,255,150,.5));animation:logopulse 3s ease-in-out infinite;}
+@keyframes logopulse{0%,100%{filter:drop-shadow(0 0 16px rgba(0,255,150,.35))}50%{filter:drop-shadow(0 0 36px rgba(0,255,150,.7))}}
 
-        .header::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 50% 0%, rgba(0,255,150,0.12) 0%, transparent 70%);
-        }
+.splash-title{
+  font-size:2.2em;font-weight:900;margin-top:16px;
+  background:linear-gradient(135deg,var(--green),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.splash-sub{font-size:.85em;color:var(--muted);margin-top:6px;letter-spacing:2px;text-transform:uppercase;}
+.splash-date{
+  margin-top:16px;padding:8px 20px;border-radius:50px;
+  background:rgba(0,255,150,.1);border:1px solid rgba(0,255,150,.3);
+  font-size:.9em;color:var(--green);font-weight:600;
+}
+.splash-start{
+  margin-top:32px;padding:14px 40px;border-radius:50px;cursor:pointer;
+  background:linear-gradient(135deg,var(--green),#00c896);color:#0a1a2e;
+  font-size:1em;font-weight:800;border:none;
+  box-shadow:0 8px 24px rgba(0,255,150,.35);
+  transition:transform .2s,box-shadow .2s;
+}
+.splash-start:active{transform:scale(.96);}
 
-        /* SVG Logo */
-        .logo-svg-wrap {
-            display: inline-block;
-            margin-bottom: 18px;
-            filter: drop-shadow(0 0 20px rgba(0,255,150,0.4));
-            animation: pulse 3s ease-in-out infinite;
-        }
+/* ─── APP SHELL ─── */
+#app{
+  position:fixed;inset:0;display:flex;flex-direction:column;
+  background:linear-gradient(160deg,#0a1a2e 0%,#0d2637 50%,#0f3d2e 100%);
+}
 
-        @keyframes pulse {
-            0%,100% { filter: drop-shadow(0 0 16px rgba(0,255,150,0.35)); }
-            50%      { filter: drop-shadow(0 0 30px rgba(0,255,150,0.65)); }
-        }
+/* ─── TOP BAR ─── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:env(safe-area-inset-top,12px) 16px 10px;
+  padding-top:max(env(safe-area-inset-top),12px);
+  background:rgba(10,26,46,.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);flex-shrink:0;position:relative;z-index:10;
+}
+.topbar-logo{display:flex;align-items:center;gap:8px;}
+.topbar-logo svg{flex-shrink:0;}
+.topbar-name{font-size:.95em;font-weight:800;background:linear-gradient(135deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.topbar-name small{display:block;font-size:.65em;font-weight:500;color:var(--muted);-webkit-text-fill-color:var(--muted);}
 
-        .event-title {
-            font-size: 2.6em;
-            font-weight: 900;
-            background: linear-gradient(135deg, #00ff96, #00e5ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -1px;
-        }
+.edit-toggle{
+  padding:7px 14px;border-radius:50px;border:1px solid var(--border);
+  background:var(--card);color:var(--muted);font-size:.8em;font-weight:600;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;
+}
+.edit-toggle.active{background:rgba(0,255,150,.15);border-color:rgba(0,255,150,.4);color:var(--green);}
 
-        .event-subtitle {
-            font-size: 1em;
-            color: rgba(255,255,255,0.6);
-            margin-top: 6px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+/* ─── DAY PILLS ─── */
+.day-pills{
+  display:flex;gap:8px;padding:10px 16px;overflow-x:auto;scrollbar-width:none;flex-shrink:0;
+}
+.day-pills::-webkit-scrollbar{display:none;}
+.day-pill{
+  flex-shrink:0;padding:6px 14px;border-radius:50px;border:1px solid var(--border);
+  background:var(--card);color:var(--muted);font-size:.78em;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.day-pill.active{background:rgba(0,255,150,.15);border-color:rgba(0,255,150,.45);color:var(--green);}
 
-        .event-dates {
-            display: inline-block;
-            margin-top: 14px;
-            padding: 8px 22px;
-            background: rgba(0,255,150,0.12);
-            border: 1px solid rgba(0,255,150,0.35);
-            border-radius: 50px;
-            font-size: 0.95em;
-            color: #00ff96;
-            font-weight: 600;
-        }
+/* ─── DAYS VIEWPORT ─── */
+.days-track-wrap{flex:1;overflow:hidden;position:relative;}
+.days-track{
+  display:flex;height:100%;
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+  will-change:transform;
+}
+.day-screen{
+  flex-shrink:0;width:100%;height:100%;overflow-y:auto;
+  padding:0 0 env(safe-area-inset-bottom,20px);
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.day-screen::-webkit-scrollbar{display:none;}
 
-        /* Back button */
-        .back-btn {
-            position: absolute;
-            top: 20px;
-            left: 16px;
-            text-decoration: none;
-            color: rgba(255,255,255,0.6);
-            font-size: 0.9em;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: color 0.2s;
-            z-index: 10;
-        }
-        .back-btn:hover { color: #00ff96; }
+/* ─── DAY HEADER ─── */
+.day-head{
+  padding:20px 16px 14px;
+  background:linear-gradient(180deg,rgba(0,255,150,.08) 0%,transparent 100%);
+  border-bottom:1px solid var(--border);
+}
+.day-number{font-size:.72em;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:2px;}
+.day-weekday{font-size:2em;font-weight:900;color:white;line-height:1.1;}
+.day-full-date{font-size:.85em;color:var(--muted);margin-top:2px;}
 
-        /* ─── TABS ─── */
-        .tabs {
-            display: flex;
-            gap: 8px;
-            padding: 0 16px 0;
-            overflow-x: auto;
-            scrollbar-width: none;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .tabs::-webkit-scrollbar { display: none; }
+/* ─── SECTIONS INSIDE DAY ─── */
+.day-body{padding:12px 16px 20px;display:flex;flex-direction:column;gap:14px;}
 
-        .tab-btn {
-            padding: 10px 18px;
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 50px;
-            background: rgba(255,255,255,0.05);
-            color: rgba(255,255,255,0.6);
-            font-size: 0.88em;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.25s;
-        }
-        .tab-btn.active {
-            background: rgba(0,255,150,0.15);
-            border-color: rgba(0,255,150,0.5);
-            color: #00ff96;
-        }
-        .tab-btn:hover:not(.active) {
-            background: rgba(255,255,255,0.1);
-            color: white;
-        }
+.section-card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;
+}
+.section-head{
+  display:flex;align-items:center;gap:8px;padding:13px 14px 10px;
+  border-bottom:1px solid var(--border);
+}
+.section-icon{font-size:1.1em;}
+.section-title{font-size:.85em;font-weight:700;color:var(--green);}
+.section-body{padding:12px 14px;}
 
-        /* ─── CONTENT SECTIONS ─── */
-        .section { display: none; padding: 20px 16px 40px; max-width: 700px; margin: 0 auto; }
-        .section.active { display: block; }
+/* ─── KITE SPOT ─── */
+.spot-name{font-size:1.1em;font-weight:800;color:white;margin-bottom:4px;}
+.spot-desc{font-size:.82em;color:var(--muted);margin-bottom:12px;line-height:1.5;}
 
-        /* ─── CARDS ─── */
-        .card {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
+.photo-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+.photo-row::-webkit-scrollbar{display:none;}
+.photo-slot{
+  flex-shrink:0;width:120px;height:80px;border-radius:10px;
+  background:rgba(255,255,255,.06);border:1px dashed rgba(255,255,255,.15);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:.65em;color:var(--muted);text-align:center;cursor:pointer;gap:4px;
+  overflow:hidden;position:relative;
+}
+.photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:10px;}
+.photo-slot .photo-label{position:relative;z-index:1;background:rgba(0,0,0,.5);padding:2px 6px;border-radius:4px;display:none;}
+.photo-slot img ~ .photo-label{display:block;}
+.photo-add-icon{font-size:1.5em;opacity:.5;}
 
-        .card-title {
-            font-size: 1em;
-            font-weight: 700;
-            color: #00ff96;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+/* ─── SCHEDULE TIMELINE ─── */
+.timeline{list-style:none;padding-left:18px;position:relative;}
+.timeline::before{content:'';position:absolute;left:4px;top:10px;bottom:10px;width:2px;background:linear-gradient(to bottom,var(--green),rgba(0,255,150,.1));border-radius:2px;}
+.timeline li{position:relative;padding:5px 0 5px 14px;font-size:.86em;color:var(--text);line-height:1.5;}
+.timeline li::before{content:'';position:absolute;left:-14px;top:11px;width:8px;height:8px;background:var(--green);border-radius:50%;border:2px solid var(--dark);}
+.timeline li .t{font-weight:700;color:var(--green);font-size:.82em;margin-right:6px;}
 
-        /* ─── SCHEDULE ─── */
-        .day-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
+/* ─── MEALS ─── */
+.meal-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.meal-row:last-child{border-bottom:none;}
+.meal-time-col{flex-shrink:0;width:44px;font-size:.75em;color:var(--muted);font-weight:600;padding-top:2px;}
+.meal-col{flex:1;}
+.meal-name-text{font-size:.9em;font-weight:600;color:white;}
+.meal-detail-text{font-size:.76em;color:var(--muted);margin-top:1px;}
 
-        .day-badge {
-            background: linear-gradient(135deg, #00ff96, #00c896);
-            color: #0a1a2e;
-            font-weight: 800;
-            font-size: 0.8em;
-            padding: 4px 12px;
-            border-radius: 50px;
-            white-space: nowrap;
-        }
+/* ─── ACCOMMODATION ─── */
+.apto-row{display:flex;align-items:center;gap:12px;}
+.apto-icon{width:44px;height:44px;border-radius:12px;background:rgba(0,229,255,.1);display:flex;align-items:center;justify-content:center;font-size:1.3em;flex-shrink:0;}
+.apto-info{flex:1;}
+.apto-name{font-size:.95em;font-weight:700;color:white;}
+.apto-who{font-size:.78em;color:var(--muted);margin-top:2px;}
+.apto-link{
+  display:inline-flex;align-items:center;gap:5px;margin-top:8px;
+  padding:6px 14px;border-radius:50px;background:rgba(0,229,255,.1);
+  border:1px solid rgba(0,229,255,.25);color:var(--cyan);font-size:.78em;font-weight:600;
+  text-decoration:none;transition:all .2s;
+}
+.apto-link:hover{background:rgba(0,229,255,.2);}
+.apto-link-placeholder{color:var(--muted);border-style:dashed;}
 
-        .day-date {
-            color: rgba(255,255,255,0.5);
-            font-size: 0.85em;
-        }
+/* ─── NIGHT EVENT ─── */
+.night-row{display:flex;gap:12px;align-items:flex-start;}
+.night-emoji{font-size:1.8em;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);border-radius:12px;flex-shrink:0;}
+.night-info{flex:1;}
+.night-name{font-size:.95em;font-weight:700;color:white;}
+.night-desc{font-size:.8em;color:var(--muted);margin-top:3px;line-height:1.5;}
 
-        .timeline {
-            list-style: none;
-            position: relative;
-            padding-left: 20px;
-        }
+/* ─── NAV ARROWS ─── */
+.day-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px;margin-top:4px;
+}
+.nav-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:10px 18px;border-radius:50px;border:1px solid var(--border);
+  background:var(--card);color:var(--muted);font-size:.82em;font-weight:600;
+  cursor:pointer;transition:all .2s;
+}
+.nav-btn:not(.disabled):hover{border-color:var(--green);color:var(--green);}
+.nav-btn:not(.disabled):active{transform:scale(.95);}
+.nav-btn.disabled{opacity:.2;pointer-events:none;}
+.nav-btn.next{background:rgba(0,255,150,.1);border-color:rgba(0,255,150,.3);color:var(--green);}
 
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 6px;
-            top: 8px;
-            bottom: 8px;
-            width: 2px;
-            background: linear-gradient(to bottom, #00ff96, rgba(0,255,150,0.1));
-            border-radius: 2px;
-        }
+/* ─── EDITABLE STATE ─── */
+body.edit-mode [contenteditable]{
+  outline:none;
+  border-bottom:1px dashed rgba(0,255,150,.4);
+  padding-bottom:1px;
+  min-width:20px;
+  display:inline-block;
+}
+body.edit-mode [contenteditable]:focus{
+  background:rgba(0,255,150,.07);border-radius:6px;
+  border-bottom:1px solid var(--green);
+  padding:2px 4px;margin:-2px -4px;
+}
+.edit-badge{
+  display:none;position:fixed;bottom:24px;right:16px;
+  background:var(--green);color:#0a1a2e;padding:10px 18px;border-radius:50px;
+  font-size:.82em;font-weight:800;z-index:20;
+  box-shadow:0 4px 16px rgba(0,255,150,.4);
+  cursor:pointer;
+}
+body.edit-mode .edit-badge{display:flex;align-items:center;gap:6px;}
 
-        .timeline li {
-            position: relative;
-            padding: 6px 0 6px 16px;
-            font-size: 0.9em;
-            color: rgba(255,255,255,0.8);
-            line-height: 1.5;
-        }
+/* ─── PHOTO URL MODAL ─── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;
+  display:none;align-items:flex-end;justify-content:center;
+}
+.modal-overlay.show{display:flex;}
+.modal-box{
+  width:100%;max-width:520px;background:#14293f;border-radius:24px 24px 0 0;
+  padding:24px 20px;padding-bottom:max(24px,env(safe-area-inset-bottom));
+}
+.modal-title{font-size:.95em;font-weight:700;margin-bottom:12px;}
+.modal-input{
+  width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.07);
+  border:1px solid var(--border);color:white;font-size:.9em;font-family:inherit;
+  outline:none;
+}
+.modal-input:focus{border-color:var(--green);}
+.modal-actions{display:flex;gap:10px;margin-top:12px;}
+.modal-btn{flex:1;padding:12px;border-radius:10px;font-size:.9em;font-weight:700;cursor:pointer;border:none;}
+.modal-btn.cancel{background:rgba(255,255,255,.08);color:var(--muted);}
+.modal-btn.confirm{background:var(--green);color:#0a1a2e;}
 
-        .timeline li::before {
-            content: '';
-            position: absolute;
-            left: -14px;
-            top: 12px;
-            width: 8px;
-            height: 8px;
-            background: #00ff96;
-            border-radius: 50%;
-            border: 2px solid #0a1a2e;
-        }
-
-        .timeline li .time {
-            font-weight: 700;
-            color: #00ff96;
-            margin-right: 8px;
-            font-size: 0.85em;
-        }
-
-        /* ─── MENU / CARDÁPIO ─── */
-        .menu-day-label {
-            font-size: 0.78em;
-            font-weight: 700;
-            color: #00e5ff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .menu-meal {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            gap: 10px;
-        }
-        .menu-meal:last-child { border-bottom: none; }
-
-        .meal-info { flex: 1; }
-        .meal-time { font-size: 0.78em; color: rgba(255,255,255,0.4); }
-        .meal-name {
-            font-size: 0.95em;
-            color: white;
-            font-weight: 600;
-            outline: none;
-            background: transparent;
-            border: none;
-            width: 100%;
-            resize: none;
-            font-family: inherit;
-        }
-        .meal-name:focus {
-            background: rgba(0,255,150,0.07);
-            border-radius: 6px;
-            padding: 2px 6px;
-            margin: -2px -6px;
-        }
-        .meal-detail {
-            font-size: 0.82em;
-            color: rgba(255,255,255,0.5);
-            outline: none;
-            background: transparent;
-            border: none;
-            width: 100%;
-            font-family: inherit;
-        }
-        .meal-detail:focus {
-            background: rgba(0,255,150,0.07);
-            border-radius: 6px;
-            padding: 2px 6px;
-            margin: -2px -6px;
-        }
-
-        .edit-hint {
-            text-align: center;
-            font-size: 0.78em;
-            color: rgba(255,255,255,0.3);
-            margin-bottom: 12px;
-        }
-
-        /* ─── HOSPEDAGEM ─── */
-        .room-card {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-            padding: 14px 16px;
-            margin-bottom: 10px;
-        }
-
-        .room-name {
-            font-size: 0.9em;
-            font-weight: 700;
-            color: #00e5ff;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .room-icon {
-            font-size: 1.1em;
-        }
-
-        .person-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .person-tag {
-            background: rgba(0,229,255,0.12);
-            border: 1px solid rgba(0,229,255,0.25);
-            border-radius: 50px;
-            padding: 4px 14px;
-            font-size: 0.82em;
-            color: rgba(255,255,255,0.85);
-            cursor: text;
-            outline: none;
-        }
-        .person-tag:focus {
-            border-color: #00ff96;
-            color: white;
-        }
-
-        .add-person-btn {
-            background: rgba(0,255,150,0.08);
-            border: 1px dashed rgba(0,255,150,0.3);
-            border-radius: 50px;
-            padding: 4px 14px;
-            font-size: 0.82em;
-            color: rgba(0,255,150,0.6);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .add-person-btn:hover {
-            background: rgba(0,255,150,0.15);
-            color: #00ff96;
-        }
-
-        /* ─── EVENTOS ─── */
-        .event-item {
-            display: flex;
-            gap: 14px;
-            padding: 14px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            align-items: flex-start;
-        }
-        .event-item:last-child { border-bottom: none; }
-
-        .event-emoji {
-            font-size: 1.8em;
-            flex-shrink: 0;
-            width: 44px;
-            height: 44px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .event-info { flex: 1; }
-
-        .event-name {
-            font-weight: 700;
-            font-size: 0.95em;
-            color: white;
-            outline: none;
-            background: transparent;
-            border: none;
-            width: 100%;
-            font-family: inherit;
-        }
-        .event-name:focus {
-            background: rgba(0,255,150,0.07);
-            border-radius: 6px;
-            padding: 2px 6px;
-            margin: -2px -6px;
-        }
-
-        .event-when {
-            font-size: 0.8em;
-            color: #00ff96;
-            margin-top: 2px;
-        }
-
-        .event-desc {
-            font-size: 0.82em;
-            color: rgba(255,255,255,0.5);
-            margin-top: 3px;
-            outline: none;
-            background: transparent;
-            border: none;
-            width: 100%;
-            font-family: inherit;
-        }
-        .event-desc:focus {
-            background: rgba(0,255,150,0.07);
-            border-radius: 6px;
-            padding: 2px 6px;
-            margin: -2px -6px;
-        }
-
-        /* ─── STATS ROW ─── */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .stat-box {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 14px 10px;
-            text-align: center;
-        }
-
-        .stat-num {
-            font-size: 1.8em;
-            font-weight: 800;
-            background: linear-gradient(135deg, #00ff96, #00e5ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stat-label {
-            font-size: 0.72em;
-            color: rgba(255,255,255,0.5);
-            margin-top: 2px;
-        }
-
-        /* Decorative waves */
-        .wave-deco {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 200%;
-            height: 120px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,60 C150,90 350,0 600,60 C850,120 1050,30 1200,60 L1200,120 L0,120 Z' fill='%2300ff96' fill-opacity='0.04'/%3E%3C/svg%3E");
-            background-size: 50% 100%;
-            animation: wave 18s linear infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        @keyframes wave {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        /* ─── RESPONSIVE ─── */
-        @media (max-width: 480px) {
-            .event-title { font-size: 2em; }
-            .stats-row { grid-template-columns: repeat(3, 1fr); }
-        }
-    </style>
+/* ─── WAVE DECO ─── */
+.wave-bg{
+  position:fixed;bottom:0;left:0;width:200%;height:90px;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,60 C150,90 350,0 600,60 C850,120 1050,30 1200,60 L1200,120 L0,120 Z' fill='%2300ff96' fill-opacity='0.04'/%3E%3C/svg%3E");
+  background-size:50% 100%;animation:wavemove 20s linear infinite;z-index:0;
+}
+@keyframes wavemove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+</style>
 </head>
 <body>
 
-<div class="wave-deco"></div>
+<!-- ══════════ SPLASH ══════════ -->
+<div id="splash">
+  <!-- Kitesurfer logo SVG -->
+  <svg class="logo-svg" width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Ocean -->
+    <rect width="140" height="140" rx="28" fill="url(#splashBg)"/>
+    <!-- Sun -->
+    <circle cx="110" cy="32" r="14" fill="rgba(255,200,50,.25)" stroke="rgba(255,200,50,.5)" stroke-width="1.5"/>
+    <circle cx="110" cy="32" r="9" fill="rgba(255,210,60,.7)"/>
+    <!-- Kite (diamond shape, top-right) -->
+    <path d="M95 12 L108 30 L95 46 L82 30 Z" fill="url(#kiteGrad)" stroke="rgba(0,255,150,.9)" stroke-width="1.5"/>
+    <line x1="95" y1="12" x2="95" y2="46" stroke="rgba(0,255,150,.4)" stroke-width="1"/>
+    <line x1="82" y1="30" x2="108" y2="30" stroke="rgba(0,255,150,.4)" stroke-width="1"/>
+    <!-- Bridle lines from kite to surfer hand -->
+    <path d="M95 46 Q80 68 66 72" stroke="rgba(0,255,150,.5)" stroke-width="1.2" fill="none" stroke-dasharray="3 2"/>
+    <path d="M82 30 Q70 60 66 72" stroke="rgba(0,255,150,.3)" stroke-width="1" fill="none" stroke-dasharray="3 2"/>
+    <!-- Board (angled, on water) -->
+    <rect x="18" y="100" width="50" height="7" rx="3.5" fill="rgba(0,229,255,.7)" transform="rotate(-12 18 100)"/>
+    <!-- Surfer body -->
+    <!-- Legs bent (crouching on board) -->
+    <line x1="46" y1="95" x2="38" y2="104" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    <line x1="52" y1="95" x2="46" y2="104" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    <!-- Torso -->
+    <line x1="49" y1="95" x2="54" y2="80" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    <!-- Head -->
+    <circle cx="55" cy="75" r="6" fill="white"/>
+    <!-- Helmet glint -->
+    <circle cx="57" cy="73" r="1.5" fill="rgba(0,255,150,.8)"/>
+    <!-- Arms reaching up toward bar -->
+    <line x1="54" y1="80" x2="64" y2="70" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="54" y1="80" x2="68" y2="74" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Control bar -->
+    <rect x="60" y="68" width="14" height="3" rx="1.5" fill="rgba(0,255,150,.9)"/>
+    <!-- Spray / wake -->
+    <path d="M22 106 Q28 102 34 106 Q40 110 46 106" stroke="rgba(0,229,255,.5)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M14 112 Q26 107 38 112" stroke="rgba(0,229,255,.3)" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <!-- Water line -->
+    <path d="M8 118 Q35 110 70 118 Q105 126 132 118" stroke="rgba(0,229,255,.4)" stroke-width="1.5" fill="none"/>
+    <!-- Label -->
+    <rect x="28" y="123" width="84" height="13" rx="6.5" fill="rgba(0,255,150,.18)" stroke="rgba(0,255,150,.45)" stroke-width="1"/>
+    <text x="70" y="133" text-anchor="middle" fill="#00ff96" font-size="7.5" font-weight="800" font-family="-apple-system,sans-serif">KITE TRIP VELEJIN</text>
+    <defs>
+      <radialGradient id="splashBg" cx="50%" cy="20%" r="80%">
+        <stop offset="0%" stop-color="#0d3d2a"/>
+        <stop offset="100%" stop-color="#0a1a2e"/>
+      </radialGradient>
+      <linearGradient id="kiteGrad" x1="82" y1="12" x2="108" y2="46" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#00ff96" stop-opacity=".95"/>
+        <stop offset="100%" stop-color="#00c896" stop-opacity=".55"/>
+      </linearGradient>
+    </defs>
+  </svg>
 
-<!-- HEADER -->
-<div class="header">
-    <a href="index.html" class="back-btn">← Início</a>
-
-    <!-- SVG Logo -->
-    <div class="logo-svg-wrap">
-        <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Background circle -->
-            <circle cx="60" cy="60" r="58" fill="url(#bgGrad)" stroke="url(#strokeGrad)" stroke-width="2"/>
-            <!-- Ocean waves -->
-            <path d="M10 80 Q30 70 50 80 Q70 90 90 80 Q110 70 115 80" stroke="rgba(0,229,255,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
-            <path d="M5 90 Q30 78 55 90 Q80 102 110 90" stroke="rgba(0,229,255,0.3)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-            <!-- Kite shape -->
-            <path d="M60 18 L80 52 L60 72 L40 52 Z" fill="url(#kiteGrad)" stroke="rgba(0,255,150,0.8)" stroke-width="1.5"/>
-            <line x1="60" y1="18" x2="60" y2="72" stroke="rgba(0,255,150,0.4)" stroke-width="1"/>
-            <line x1="40" y1="52" x2="80" y2="52" stroke="rgba(0,255,150,0.4)" stroke-width="1"/>
-            <!-- String -->
-            <path d="M60 72 Q55 85 58 96" stroke="rgba(0,255,150,0.6)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-            <!-- Year badge -->
-            <rect x="35" y="95" width="50" height="18" rx="9" fill="rgba(0,255,150,0.2)" stroke="rgba(0,255,150,0.5)" stroke-width="1"/>
-            <text x="60" y="108" text-anchor="middle" fill="#00ff96" font-size="9" font-weight="800" font-family="-apple-system, sans-serif">2º ANO • 2016</text>
-            <defs>
-                <radialGradient id="bgGrad" cx="50%" cy="30%" r="70%">
-                    <stop offset="0%" stop-color="#0d3d2a"/>
-                    <stop offset="100%" stop-color="#0a1a2e"/>
-                </radialGradient>
-                <linearGradient id="strokeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#00ff96"/>
-                    <stop offset="100%" stop-color="#00e5ff"/>
-                </linearGradient>
-                <linearGradient id="kiteGrad" x1="40" y1="18" x2="80" y2="72" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stop-color="#00ff96" stop-opacity="0.9"/>
-                    <stop offset="100%" stop-color="#00c896" stop-opacity="0.5"/>
-                </linearGradient>
-            </defs>
-        </svg>
-    </div>
-
-    <div class="event-title">Kite Trip Velejin</div>
-    <div class="event-subtitle">2° Edição — Kite Beer</div>
-    <div class="event-dates">📅 6 a 9 de Agosto de 2016</div>
+  <div class="splash-title">Kite Trip Velejin</div>
+  <div class="splash-sub">2ª Edição · Kite Beer</div>
+  <div class="splash-date">📅 6 a 9 de Agosto — Qui a Dom</div>
+  <button class="splash-start" onclick="startApp()">Ver Roteiro →</button>
 </div>
 
-<!-- TABS -->
-<div class="tabs">
-    <button class="tab-btn active" onclick="showTab('programacao')">📋 Programação</button>
-    <button class="tab-btn" onclick="showTab('cardapio')">🍽️ Cardápio</button>
-    <button class="tab-btn" onclick="showTab('hospedagem')">🛏️ Hospedagem</button>
-    <button class="tab-btn" onclick="showTab('eventos')">🎉 Eventos</button>
+<!-- ══════════ APP ══════════ -->
+<div id="app" style="display:none;">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <!-- Mini kitesurfer logo -->
+      <svg width="32" height="32" viewBox="0 0 140 140" fill="none">
+        <rect width="140" height="140" rx="28" fill="url(#miniSplashBg)"/>
+        <path d="M95 12 L108 30 L95 46 L82 30 Z" fill="#00ff96" opacity=".9"/>
+        <path d="M95 46 Q80 68 66 72" stroke="#00ff96" stroke-width="1.5" fill="none"/>
+        <rect x="18" y="100" width="50" height="7" rx="3.5" fill="rgba(0,229,255,.7)" transform="rotate(-12 18 100)"/>
+        <line x1="46" y1="95" x2="38" y2="104" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        <line x1="52" y1="95" x2="46" y2="104" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        <line x1="49" y1="95" x2="54" y2="80" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="55" cy="75" r="6" fill="white"/>
+        <line x1="54" y1="80" x2="64" y2="70" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="54" y1="80" x2="68" y2="74" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="60" y="68" width="14" height="3" rx="1.5" fill="#00ff96"/>
+        <defs>
+          <radialGradient id="miniSplashBg" cx="50%" cy="20%" r="80%">
+            <stop offset="0%" stop-color="#0d3d2a"/>
+            <stop offset="100%" stop-color="#0a1a2e"/>
+          </radialGradient>
+        </defs>
+      </svg>
+      <div class="topbar-name">Velejin<small>Kite Beer · 2ª edição</small></div>
+    </div>
+    <a href="index.html" style="color:var(--muted);font-size:.8em;text-decoration:none;margin-right:10px;">← Início</a>
+    <button class="edit-toggle" id="editToggle" onclick="toggleEdit()">✏️ Editar</button>
+  </div>
+
+  <!-- DAY PILLS -->
+  <div class="day-pills" id="dayPills"></div>
+
+  <!-- DAYS TRACK -->
+  <div class="days-track-wrap">
+    <div class="days-track" id="daysTrack"></div>
+  </div>
+
+  <!-- SAVE BADGE -->
+  <div class="edit-badge" id="editBadge" onclick="saveAll()">💾 Salvar</div>
 </div>
 
-<!-- ════════════════════════════════════════
-     PROGRAMAÇÃO
-════════════════════════════════════════ -->
-<div class="section active" id="programacao">
-
-    <div class="stats-row">
-        <div class="stat-box">
-            <div class="stat-num">4</div>
-            <div class="stat-label">Dias</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-num">🌊</div>
-            <div class="stat-label">Kite</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-num">2ª</div>
-            <div class="stat-label">Edição</div>
-        </div>
+<!-- PHOTO URL MODAL -->
+<div class="modal-overlay" id="photoModal" onclick="closePhotoModal(event)">
+  <div class="modal-box">
+    <div class="modal-title">📸 Link da foto</div>
+    <input class="modal-input" id="photoUrlInput" type="url" placeholder="https://... (link do Google Fotos, etc.)">
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closePhotoModal()">Cancelar</button>
+      <button class="modal-btn confirm" onclick="confirmPhoto()">Confirmar</button>
     </div>
-
-    <!-- Dia 1 -->
-    <div class="card">
-        <div class="day-header">
-            <span class="day-badge">DIA 1</span>
-            <span class="day-date">Sábado, 6 de Agosto</span>
-        </div>
-        <ul class="timeline">
-            <li><span class="time">07:00</span> Concentração e saída de Fortaleza</li>
-            <li><span class="time">10:00</span> Chegada, check-in e organização do espaço</li>
-            <li><span class="time">11:00</span> Primeira sessão de kite — vento matinal</li>
-            <li><span class="time">13:00</span> Almoço em grupo</li>
-            <li><span class="time">15:00</span> Sessão da tarde — kite e longboard</li>
-            <li><span class="time">18:00</span> Pôr do sol na praia + cervejinha 🍺</li>
-            <li><span class="time">20:00</span> Jantar de boas-vindas + animação</li>
-        </ul>
-    </div>
-
-    <!-- Dia 2 -->
-    <div class="card">
-        <div class="day-header">
-            <span class="day-badge">DIA 2</span>
-            <span class="day-date">Domingo, 7 de Agosto</span>
-        </div>
-        <ul class="timeline">
-            <li><span class="time">08:00</span> Café da manhã reforçado</li>
-            <li><span class="time">09:30</span> Sessão longa de kite — manhã toda</li>
-            <li><span class="time">12:30</span> Almoço + descanso</li>
-            <li><span class="time">15:00</span> Campeonato interno — tricks e velocidade</li>
-            <li><span class="time">18:30</span> Premiação do campeonato 🏆</li>
-            <li><span class="time">19:30</span> Churrasco da galera 🔥</li>
-            <li><span class="time">22:00</span> Noitada — jogos e música</li>
-        </ul>
-    </div>
-
-    <!-- Dia 3 -->
-    <div class="card">
-        <div class="day-header">
-            <span class="day-badge">DIA 3</span>
-            <span class="day-date">Segunda-feira, 8 de Agosto</span>
-        </div>
-        <ul class="timeline">
-            <li><span class="time">08:30</span> Café da manhã</li>
-            <li><span class="time">10:00</span> Downwinder — excursão de kite pela costa</li>
-            <li><span class="time">13:00</span> Almoço no ponto de chegada</li>
-            <li><span class="time">15:30</span> Tarde livre — kite, stand-up paddle ou descanso</li>
-            <li><span class="time">17:30</span> Fotos e vídeos do grupo na praia</li>
-            <li><span class="time">19:00</span> Jantar + roda de causos 😂</li>
-        </ul>
-    </div>
-
-    <!-- Dia 4 -->
-    <div class="card">
-        <div class="day-header">
-            <span class="day-badge">DIA 4</span>
-            <span class="day-date">Terça-feira, 9 de Agosto</span>
-        </div>
-        <ul class="timeline">
-            <li><span class="time">08:00</span> Última sessão de kite — manhã final</li>
-            <li><span class="time">10:30</span> Check-out e organização das malas</li>
-            <li><span class="time">11:30</span> Almoço de despedida</li>
-            <li><span class="time">13:30</span> Saída de volta para Fortaleza</li>
-            <li><span class="time">16:30</span> Chegada em Fortaleza — até a próxima! 🤙</li>
-        </ul>
-    </div>
+  </div>
 </div>
 
-<!-- ════════════════════════════════════════
-     CARDÁPIO
-════════════════════════════════════════ -->
-<div class="section" id="cardapio">
-    <p class="edit-hint">✏️ Toque nos itens para editar</p>
-
-    <!-- Dia 1 -->
-    <div class="card">
-        <div class="card-title">🗓️ Sábado — 6/08</div>
-
-        <div class="menu-day-label">🌅 Almoço</div>
-        <div class="menu-meal">
-            <div class="meal-info">
-                <div class="meal-time">13:00</div>
-                <div contenteditable="true" class="meal-name">Arroz, feijão, frango grelhado e salada</div>
-                <div contenteditable="true" class="meal-detail">Responsável: a definir</div>
-            </div>
-        </div>
-
-        <div class="menu-day-label" style="margin-top:12px">🌙 Jantar</div>
-        <div class="menu-meal">
-            <div class="meal-info">
-                <div class="meal-time">20:00</div>
-                <div contenteditable="true" class="meal-name">Macarrão com molho bolonhesa e salada</div>
-                <div contenteditable="true" class="meal-detail">Responsável: a definir</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Dia 2 -->
-    <div class="card">
-        <div class="card-title">🗓️ Domingo — 7/08</div>
-
-        <div class="menu-day-label">☀️ Café da manhã</div>
-        <div class="menu-meal">
-            <div class="meal-info">
-                <div class="meal-time">08:00</div>
-                <div contenteditable="true" class="meal-name">Tapioca, queijo coalho, frutas e café</div>
-                <div contenteditable="true" class="meal-detail">Responsável: a definir</div>
-            </div>
-        </div>
-
-        <div class="menu-day-label" style="margin-top:12px">🌅 Almoço</div>
-        <div class="menu-meal">
-            <div class="meal-info">
-                <div class="meal-time">12:30</div>
-                <div contenteditable="true" class="meal-name">Peixe na brasa, arroz, pirão e legumes</div>
-                <div contenteditable="true" class="meal-detail">Responsável: a definir</div>
-            </div>
-        </div>
-
-        <div class="menu-day-label" style="margin-top:12px">🔥 Churrasco</div>
-        <div class="menu-meal">
-            <div class="meal-info">
-                <div class="meal-time">19:30</div>
-                <div contenteditable="true" class="meal-name">Picanha, costela, linguiça, carne de sol, queijo coalho</div>
-                <div contenteditable="true" class="meal-detail">Acompanhamentos: farofa, vinagrete, pão de alho · Responsável: a definir</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Dia 3 -->
-    <div class="card">
-        <div class="card-title">🗓️ Segunda — 8/08</div>
-
-        <div class="menu-day-label">☀️ Café da manhã</div>
-        <div class="menu-meal">
-            <div class="meal-info">
-                <div class="meal-time">08:30</div>
-                <div contenteditable="true" class="meal-name">Pão, manteiga, ovos mexidos, suco de caju</div>
-                <div contenteditable="true" class="meal-detail">Responsável: a definir</div>
-            </div>
-        </div>
-
-        <div class="menu-day-label" style="margin-top:12px">🌅 Almoço</div>
-        <div class="menu-meal">
-            <div class="meal-info">
-                <div class="meal-time">13:00</div>
-                <div contenteditable="true" class="meal-name">Moqueca de camarão com arroz e pirão</div>
-                <div contenteditable="true" class="meal-detail">Responsável: a definir</div>
-            </div>
-        </div>
-
-        <div class="menu-day-label" style="margin-top:12px">🌙 Jantar</div>
-        <div class="menu-meal">
-            <div class="meal-info">
-                <div class="meal-time">19:00</div>
-                <div contenteditable="true" class="meal-name">Hambúrguer artesanal + batata frita</div>
-                <div contenteditable="true" class="meal-detail">Responsável: a definir</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Dia 4 -->
-    <div class="card">
-        <div class="card-title">🗓️ Terça — 9/08</div>
-
-        <div class="menu-day-label">☀️ Café da manhã</div>
-        <div class="menu-meal">
-            <div class="meal-info">
-                <div class="meal-time">08:00</div>
-                <div contenteditable="true" class="meal-name">Café da manhã completo — tudo que sobrou 😄</div>
-                <div contenteditable="true" class="meal-detail">Responsável: todo mundo</div>
-            </div>
-        </div>
-
-        <div class="menu-day-label" style="margin-top:12px">🌅 Almoço de despedida</div>
-        <div class="menu-meal">
-            <div class="meal-info">
-                <div class="meal-time">11:30</div>
-                <div contenteditable="true" class="meal-name">Arroz de pato, feijão verde e salada especial</div>
-                <div contenteditable="true" class="meal-detail">Responsável: a definir</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bebidas -->
-    <div class="card">
-        <div class="card-title">🍺 Bebidas (trip toda)</div>
-        <div class="menu-meal">
-            <div class="meal-info">
-                <div contenteditable="true" class="meal-name">Cerveja gelada — trazer do Fortaleza</div>
-                <div contenteditable="true" class="meal-detail">Quantidade: a definir por pessoa</div>
-            </div>
-        </div>
-        <div class="menu-meal">
-            <div class="meal-info">
-                <div contenteditable="true" class="meal-name">Água, refrigerante, energético</div>
-                <div contenteditable="true" class="meal-detail">Comprar no local</div>
-            </div>
-        </div>
-        <div class="menu-meal">
-            <div class="meal-info">
-                <div contenteditable="true" class="meal-name">Caipirinhas e drinks da noite</div>
-                <div contenteditable="true" class="meal-detail">Responsável: a definir</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ════════════════════════════════════════
-     HOSPEDAGEM
-════════════════════════════════════════ -->
-<div class="section" id="hospedagem">
-
-    <div class="card" style="border-color:rgba(0,255,150,0.2); margin-bottom:20px;">
-        <div class="card-title">📍 Local</div>
-        <div contenteditable="true" style="font-size:0.95em; color:rgba(255,255,255,0.8); outline:none; line-height:1.6;">
-            Casa de praia — Velejin, Ceará<br>
-            <span style="color:rgba(255,255,255,0.4); font-size:0.85em;">Toque para editar o endereço completo</span>
-        </div>
-    </div>
-
-    <div class="room-card">
-        <div class="room-name"><span class="room-icon">🛏️</span> Quarto 1 — Casal</div>
-        <div class="person-list" id="room1">
-            <span class="person-tag" contenteditable="true">Bruno</span>
-            <span class="person-tag" contenteditable="true">Parceira</span>
-            <button class="add-person-btn" onclick="addPerson('room1')">+ add</button>
-        </div>
-    </div>
-
-    <div class="room-card">
-        <div class="room-name"><span class="room-icon">🛏️</span> Quarto 2</div>
-        <div class="person-list" id="room2">
-            <span class="person-tag" contenteditable="true">Pessoa 1</span>
-            <span class="person-tag" contenteditable="true">Pessoa 2</span>
-            <button class="add-person-btn" onclick="addPerson('room2')">+ add</button>
-        </div>
-    </div>
-
-    <div class="room-card">
-        <div class="room-name"><span class="room-icon">🛏️</span> Quarto 3</div>
-        <div class="person-list" id="room3">
-            <span class="person-tag" contenteditable="true">Pessoa 3</span>
-            <span class="person-tag" contenteditable="true">Pessoa 4</span>
-            <button class="add-person-btn" onclick="addPerson('room3')">+ add</button>
-        </div>
-    </div>
-
-    <div class="room-card">
-        <div class="room-name"><span class="room-icon">🏕️</span> Rede / Varanda</div>
-        <div class="person-list" id="room4">
-            <span class="person-tag" contenteditable="true">Aventureiro 1</span>
-            <button class="add-person-btn" onclick="addPerson('room4')">+ add</button>
-        </div>
-    </div>
-
-    <div class="room-card">
-        <div class="room-name"><span class="room-icon">🛋️</span> Sala — Colchonetes</div>
-        <div class="person-list" id="room5">
-            <button class="add-person-btn" onclick="addPerson('room5')">+ add</button>
-        </div>
-    </div>
-
-    <p style="text-align:center; font-size:0.78em; color:rgba(255,255,255,0.3); margin-top:16px;">
-        ✏️ Toque nos nomes para editar · "+ add" para adicionar
-    </p>
-</div>
-
-<!-- ════════════════════════════════════════
-     EVENTOS
-════════════════════════════════════════ -->
-<div class="section" id="eventos">
-
-    <div class="card">
-        <div class="card-title">🎯 Eventos da Trip</div>
-
-        <div class="event-item">
-            <div class="event-emoji">🏆</div>
-            <div class="event-info">
-                <div contenteditable="true" class="event-name">Campeonato de Kite Interno</div>
-                <div class="event-when">Domingo, 7/08 · 15:00</div>
-                <div contenteditable="true" class="event-desc">Competição amistosa de tricks e velocidade entre a galera. Troféu artesanal para o campeão.</div>
-            </div>
-        </div>
-
-        <div class="event-item">
-            <div class="event-emoji">🌊</div>
-            <div class="event-info">
-                <div contenteditable="true" class="event-name">Downwinder Costeiro</div>
-                <div class="event-when">Segunda, 8/08 · 10:00</div>
-                <div contenteditable="true" class="event-desc">Descida pela costa no kite. Rota a definir conforme o vento do dia.</div>
-            </div>
-        </div>
-
-        <div class="event-item">
-            <div class="event-emoji">🔥</div>
-            <div class="event-info">
-                <div contenteditable="true" class="event-name">Churrasco do Campeão</div>
-                <div class="event-when">Domingo, 7/08 · 19:30</div>
-                <div contenteditable="true" class="event-desc">Churrasco especial pós-campeonato. Picanha, costela e muito cauzo.</div>
-            </div>
-        </div>
-
-        <div class="event-item">
-            <div class="event-emoji">📸</div>
-            <div class="event-info">
-                <div contenteditable="true" class="event-name">Sessão de Fotos e Vídeos</div>
-                <div class="event-when">Segunda, 8/08 · 17:30</div>
-                <div contenteditable="true" class="event-desc">Foto oficial da galera na praia. Drone e câmeras bem vindos!</div>
-            </div>
-        </div>
-
-        <div class="event-item">
-            <div class="event-emoji">🍺</div>
-            <div class="event-info">
-                <div contenteditable="true" class="event-name">Happy Hour do Pôr do Sol</div>
-                <div class="event-when">Diário · 18:00</div>
-                <div contenteditable="true" class="event-desc">Ritual sagrado: cerveja gelada, pôr do sol na praia e aquela conversa boa.</div>
-            </div>
-        </div>
-
-        <div class="event-item">
-            <div class="event-emoji">🎶</div>
-            <div class="event-info">
-                <div contenteditable="true" class="event-name">Noite de Jogos e Música</div>
-                <div class="event-when">Domingo, 7/08 · 22:00</div>
-                <div contenteditable="true" class="event-desc">Truco, dominó, violão e muita risada. Playlist do Kite Beer no ar.</div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="card">
-        <div class="card-title">✅ Lista de Itens para Levar</div>
-        <div id="checklist" style="display:flex; flex-direction:column; gap:8px;">
-            <!-- itens injetados pelo JS -->
-        </div>
-        <button onclick="addCheckItem()" style="margin-top:12px; width:100%; padding:10px; background:rgba(0,255,150,0.08); border:1px dashed rgba(0,255,150,0.3); border-radius:10px; color:rgba(0,255,150,0.7); cursor:pointer; font-size:0.88em;">
-            + Adicionar item
-        </button>
-    </div>
-</div>
+<div class="wave-bg"></div>
 
 <script>
-    // ─── TABS ───
-    function showTab(id) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        event.target.classList.add('active');
+// ═══════════════════════════════════════════════
+// DATA — edite aqui os dados padrão ou use o modo edição no app
+// ═══════════════════════════════════════════════
+const DEFAULT_DATA = {
+  days: [
+    {
+      num: 1,
+      weekday: "Quinta",
+      date: "6 de Agosto",
+      kite: {
+        spot: "Pecém — Barraca Ventaya",
+        desc: "Vento alísio vindo do nordeste. Ideal para freestyle e iniciantes. Barraca estruturada com sombra, comida e aluguel de equipamento.",
+        photos: ["","",""]
+      },
+      schedule: [
+        {time:"07:00", text:"Concentração e saída de Fortaleza"},
+        {time:"10:00", text:"Chegada, check-in e organização"},
+        {time:"11:00", text:"Primeira sessão de kite na Ventaya"},
+        {time:"13:00", text:"Almoço na barraca"},
+        {time:"15:00", text:"Sessão da tarde — kite e longboard"},
+        {time:"18:00", text:"Pôr do sol na praia 🌅"}
+      ],
+      meals: [
+        {time:"08:00", name:"Café da manhã no caminho", detail:"Tapioca, queijo, café"},
+        {time:"13:00", name:"Almoço — Barraca Ventaya", detail:"Peixe frito, arroz, feijão"},
+        {time:"20:00", name:"Jantar de boas-vindas", detail:"A definir — responsável: galera"}
+      ],
+      night: {
+        emoji:"🍺",
+        name:"Abertura oficial da Kite Trip",
+        desc:"Cerveja gelada, aquela roda de conversa, música e combinações para os próximos dias."
+      },
+      apto: {
+        name:"Casa/Apto da galera",
+        who:"Todos",
+        link:""
+      }
+    },
+    {
+      num: 2,
+      weekday: "Sexta",
+      date: "7 de Agosto",
+      kite: {
+        spot: "Pecém — Barraca Ventaya",
+        desc: "Dia completo de kite. Tarde boa de vento, sessão longa com a galera toda no mar.",
+        photos: ["","",""]
+      },
+      schedule: [
+        {time:"08:00", text:"Café da manhã em casa"},
+        {time:"09:30", text:"Sessão de kite — manhã completa"},
+        {time:"12:30", text:"Almoço + descanso"},
+        {time:"15:00", text:"Campeonato interno de tricks 🏆"},
+        {time:"18:30", text:"Premiação + foto da galera"}
+      ],
+      meals: [
+        {time:"08:00", name:"Café da manhã", detail:"Tapioca, ovos, frutas, suco de caju"},
+        {time:"12:30", name:"Almoço", detail:"Moqueca de camarão com arroz e pirão"},
+        {time:"19:30", name:"Churrasco 🔥", detail:"Picanha, costela, linguiça, queijo coalho, farofa"}
+      ],
+      night: {
+        emoji:"🏆",
+        name:"Churrasco do Campeão + Noite de Jogos",
+        desc:"Premiação do campeonato, churrasco completo, truco, dominó e muita risada."
+      },
+      apto: {
+        name:"Casa/Apto da galera",
+        who:"Todos",
+        link:""
+      }
+    },
+    {
+      num: 3,
+      weekday: "Sábado",
+      date: "8 de Agosto",
+      kite: {
+        spot: "Downwinder — Pecém a Taíba",
+        desc: "Descida pela costa no kite. Rota conforme o vento. Logística com carro de apoio.",
+        photos: ["","",""]
+      },
+      schedule: [
+        {time:"08:30", text:"Café da manhã"},
+        {time:"10:00", text:"Downwinder — saída do Pecém"},
+        {time:"13:00", text:"Chegada em Taíba, almoço no local"},
+        {time:"15:30", text:"Tarde livre — kite, SUP ou descanso"},
+        {time:"17:30", text:"Sessão de fotos e vídeos 📸"}
+      ],
+      meals: [
+        {time:"08:30", name:"Café da manhã", detail:"Pão, manteiga, queijo, café"},
+        {time:"13:00", name:"Almoço em Taíba", detail:"Peixe na brasa, arroz, pirão"},
+        {time:"19:00", name:"Jantar", detail:"Hambúrguer artesanal + batata frita"}
+      ],
+      night: {
+        emoji:"🎶",
+        name:"Roda de causos + Música",
+        desc:"Violão, playlist do Kite Beer, causos do mar e aquele saudosismo em tempo real."
+      },
+      apto: {
+        name:"Casa/Apto da galera",
+        who:"Todos",
+        link:""
+      }
+    },
+    {
+      num: 4,
+      weekday: "Domingo",
+      date: "9 de Agosto",
+      kite: {
+        spot: "Pecém — Barraca Ventaya",
+        desc: "Última sessão da trip. Aproveita que amanhã é segunda e o vento vai embora com a galera.",
+        photos: ["","",""]
+      },
+      schedule: [
+        {time:"08:00", text:"Última sessão de kite — despedida do mar"},
+        {time:"10:30", text:"Check-out e organização das malas"},
+        {time:"11:30", text:"Almoço de despedida"},
+        {time:"13:30", text:"Saída de volta para Fortaleza"},
+        {time:"16:30", text:"Chegada em Fortaleza — até a próxima 🤙"}
+      ],
+      meals: [
+        {time:"08:00", name:"Café da manhã", detail:"Tudo que sobrou — sem desperdício!"},
+        {time:"11:30", name:"Almoço de despedida", detail:"Arroz, feijão verde, carneiro assado"}
+      ],
+      night: {
+        emoji:"🌊",
+        name:"Encerramento da Kite Trip",
+        desc:"Viagem de volta pra Fortaleza. Fotos enviadas no grupo. Já planejando o próximo ano."
+      },
+      apto: {
+        name:"Casa/Apto da galera",
+        who:"Todos",
+        link:""
+      }
     }
+  ]
+};
 
-    // ─── HOSPEDAGEM — adicionar pessoa ───
-    function addPerson(roomId) {
-        const list = document.getElementById(roomId);
-        const btn = list.querySelector('.add-person-btn');
-        const tag = document.createElement('span');
-        tag.className = 'person-tag';
-        tag.contentEditable = 'true';
-        tag.textContent = 'Nova pessoa';
-        list.insertBefore(tag, btn);
-        tag.focus();
-        // select all text
-        const range = document.createRange();
-        range.selectNodeContents(tag);
-        const sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let data = loadData();
+let currentDay = 0;
+let editMode = false;
+let pendingPhotoSlot = null;
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem('velejin2026_data');
+    return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_DATA));
+  } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+}
+
+function saveAll() {
+  // collect all contenteditable values back into data
+  collectEdits();
+  localStorage.setItem('velejin2026_data', JSON.stringify(data));
+  const badge = document.getElementById('editBadge');
+  badge.textContent = '✅ Salvo!';
+  setTimeout(() => { badge.innerHTML = '💾 Salvar'; }, 1500);
+}
+
+function collectEdits() {
+  data.days.forEach((day, di) => {
+    const screen = document.querySelector(`[data-day="${di}"]`);
+    if (!screen) return;
+
+    const q = (sel) => screen.querySelector(sel);
+    const qa = (sel) => [...screen.querySelectorAll(sel)];
+
+    const spotName = q('[data-field="spotName"]');
+    if (spotName) day.kite.spot = spotName.textContent;
+    const spotDesc = q('[data-field="spotDesc"]');
+    if (spotDesc) day.kite.desc = spotDesc.textContent;
+
+    qa('[data-sched-time]').forEach((el, i) => {
+      if (day.schedule[i]) day.schedule[i].time = el.textContent;
+    });
+    qa('[data-sched-text]').forEach((el, i) => {
+      if (day.schedule[i]) day.schedule[i].text = el.textContent;
+    });
+
+    qa('[data-meal-name]').forEach((el, i) => {
+      if (day.meals[i]) day.meals[i].name = el.textContent;
+    });
+    qa('[data-meal-detail]').forEach((el, i) => {
+      if (day.meals[i]) day.meals[i].detail = el.textContent;
+    });
+    qa('[data-meal-time]').forEach((el, i) => {
+      if (day.meals[i]) day.meals[i].time = el.textContent;
+    });
+
+    const nightName = q('[data-field="nightName"]');
+    if (nightName) day.night.name = nightName.textContent;
+    const nightDesc = q('[data-field="nightDesc"]');
+    if (nightDesc) day.night.desc = nightDesc.textContent;
+
+    const aptoName = q('[data-field="aptoName"]');
+    if (aptoName) day.apto.name = aptoName.textContent;
+    const aptoWho = q('[data-field="aptoWho"]');
+    if (aptoWho) day.apto.who = aptoWho.textContent;
+  });
+}
+
+// ═══════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════
+function render() {
+  const pills = document.getElementById('dayPills');
+  const track = document.getElementById('daysTrack');
+  pills.innerHTML = '';
+  track.innerHTML = '';
+
+  data.days.forEach((day, di) => {
+    // pill
+    const pill = document.createElement('button');
+    pill.className = 'day-pill' + (di === currentDay ? ' active' : '');
+    pill.textContent = `Dia ${day.num} · ${day.weekday}`;
+    pill.onclick = () => goToDay(di);
+    pills.appendChild(pill);
+
+    // screen
+    const screen = document.createElement('div');
+    screen.className = 'day-screen';
+    screen.setAttribute('data-day', di);
+    screen.innerHTML = buildDayHTML(day, di);
+    track.appendChild(screen);
+  });
+
+  updateTrack();
+  attachPhotoHandlers();
+}
+
+function buildDayHTML(day, di) {
+  return `
+  <div class="day-head">
+    <div class="day-number">Dia ${day.num} de ${data.days.length}</div>
+    <div class="day-weekday">${day.weekday}-feira</div>
+    <div class="day-full-date">${day.date} de 2026</div>
+  </div>
+
+  <div class="day-body">
+
+    <!-- KITE SPOT -->
+    <div class="section-card">
+      <div class="section-head"><span class="section-icon">🪂</span><span class="section-title">Velejo do Dia</span></div>
+      <div class="section-body">
+        <div class="spot-name" contenteditable="false" data-field="spotName">${day.kite.spot}</div>
+        <div class="spot-desc" contenteditable="false" data-field="spotDesc">${day.kite.desc}</div>
+        <div class="photo-row" id="photos-${di}">
+          ${day.kite.photos.map((url, pi) => `
+            <div class="photo-slot" data-day="${di}" data-photo="${pi}" onclick="openPhotoModal(${di},${pi})">
+              ${url ? `<img src="${url}" alt="foto ${pi+1}">` : ''}
+              <span class="photo-add-icon">${url ? '' : '📸'}</span>
+              <span class="photo-label">${url ? 'Trocar' : ''}</span>
+              ${!url ? `<span style="font-size:.65em;color:var(--muted)">Adicionar foto</span>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- PROGRAMAÇÃO -->
+    <div class="section-card">
+      <div class="section-head"><span class="section-icon">📋</span><span class="section-title">Programação</span></div>
+      <div class="section-body">
+        <ul class="timeline">
+          ${day.schedule.map((s, si) => `
+            <li>
+              <span class="t" contenteditable="false" data-sched-time>${s.time}</span>
+              <span contenteditable="false" data-sched-text>${s.text}</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    </div>
+
+    <!-- CARDÁPIO -->
+    <div class="section-card">
+      <div class="section-head"><span class="section-icon">🍽️</span><span class="section-title">Cardápio do Dia</span></div>
+      <div class="section-body">
+        ${day.meals.map((m, mi) => `
+          <div class="meal-row">
+            <div class="meal-time-col" contenteditable="false" data-meal-time>${m.time}</div>
+            <div class="meal-col">
+              <div class="meal-name-text" contenteditable="false" data-meal-name>${m.name}</div>
+              <div class="meal-detail-text" contenteditable="false" data-meal-detail>${m.detail}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- EVENTO DA NOITE -->
+    <div class="section-card">
+      <div class="section-head"><span class="section-icon">🌙</span><span class="section-title">Evento da Noite</span></div>
+      <div class="section-body">
+        <div class="night-row">
+          <div class="night-emoji">${day.night.emoji}</div>
+          <div class="night-info">
+            <div class="night-name" contenteditable="false" data-field="nightName">${day.night.name}</div>
+            <div class="night-desc" contenteditable="false" data-field="nightDesc">${day.night.desc}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOSPEDAGEM -->
+    <div class="section-card">
+      <div class="section-head"><span class="section-icon">🛏️</span><span class="section-title">Hospedagem</span></div>
+      <div class="section-body">
+        <div class="apto-row">
+          <div class="apto-icon">🏠</div>
+          <div class="apto-info">
+            <div class="apto-name" contenteditable="false" data-field="aptoName">${day.apto.name}</div>
+            <div class="apto-who" contenteditable="false" data-field="aptoWho">${day.apto.who}</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          ${day.apto.link
+            ? `<a class="apto-link" href="${day.apto.link}" target="_blank">🔗 Ver apto / local</a>`
+            : `<span class="apto-link apto-link-placeholder" onclick="editAptoLink(${di})" style="cursor:pointer;">🔗 Adicionar link do apto</span>`
+          }
+          ${day.apto.link ? `<span style="margin-left:8px;font-size:.75em;color:var(--muted);cursor:pointer;" onclick="editAptoLink(${di})">✏️ trocar link</span>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <!-- NAV -->
+    <div class="day-nav">
+      <button class="nav-btn ${di === 0 ? 'disabled' : ''}" onclick="goToDay(${di-1})">← Dia ${di} · ${di > 0 ? data.days[di-1].weekday : ''}</button>
+      <button class="nav-btn next ${di === data.days.length-1 ? 'disabled' : ''}" onclick="goToDay(${di+1})">Dia ${di+2} · ${di < data.days.length-1 ? data.days[di+1].weekday : ''} →</button>
+    </div>
+
+  </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+function goToDay(di) {
+  if (di < 0 || di >= data.days.length) return;
+  currentDay = di;
+  updateTrack();
+  updatePills();
+  // scroll to top of the target day
+  const screen = document.querySelector(`[data-day="${di}"]`);
+  if (screen) screen.scrollTop = 0;
+}
+
+function updateTrack() {
+  const track = document.getElementById('daysTrack');
+  track.style.transform = `translateX(-${currentDay * 100}%)`;
+}
+
+function updatePills() {
+  document.querySelectorAll('.day-pill').forEach((p, i) => {
+    p.classList.toggle('active', i === currentDay);
+  });
+  // scroll pill into view
+  const activePill = document.querySelectorAll('.day-pill')[currentDay];
+  if (activePill) activePill.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+}
+
+// Touch/swipe support
+let touchStartX = 0;
+let touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+    if (dx < 0) goToDay(currentDay + 1);
+    else goToDay(currentDay - 1);
+  }
+}, {passive:true});
+
+// ═══════════════════════════════════════════════
+// EDIT MODE
+// ═══════════════════════════════════════════════
+function toggleEdit() {
+  editMode = !editMode;
+  document.body.classList.toggle('edit-mode', editMode);
+  const toggle = document.getElementById('editToggle');
+  toggle.classList.toggle('active', editMode);
+  toggle.textContent = editMode ? '✅ Editando' : '✏️ Editar';
+
+  // enable/disable contenteditable on all fields
+  document.querySelectorAll('[contenteditable]').forEach(el => {
+    el.contentEditable = editMode ? 'true' : 'false';
+  });
+}
+
+// ═══════════════════════════════════════════════
+// PHOTO MODAL
+// ═══════════════════════════════════════════════
+function attachPhotoHandlers() {
+  // already handled by onclick in HTML
+}
+
+function openPhotoModal(di, pi) {
+  pendingPhotoSlot = {di, pi};
+  document.getElementById('photoUrlInput').value = data.days[di].kite.photos[pi] || '';
+  document.getElementById('photoModal').classList.add('show');
+  setTimeout(() => document.getElementById('photoUrlInput').focus(), 100);
+}
+
+function closePhotoModal(e) {
+  if (e && e.target !== document.getElementById('photoModal')) return;
+  document.getElementById('photoModal').classList.remove('show');
+  pendingPhotoSlot = null;
+}
+
+function confirmPhoto() {
+  if (!pendingPhotoSlot) return;
+  const url = document.getElementById('photoUrlInput').value.trim();
+  const {di, pi} = pendingPhotoSlot;
+  data.days[di].kite.photos[pi] = url;
+  saveAll();
+  document.getElementById('photoModal').classList.remove('show');
+  // re-render just this photo slot
+  const slot = document.querySelector(`#photos-${di} .photo-slot:nth-child(${pi+1})`);
+  if (slot) {
+    slot.innerHTML = url
+      ? `<img src="${url}" alt="foto ${pi+1}"><span class="photo-label">Trocar</span>`
+      : `<span class="photo-add-icon">📸</span><span style="font-size:.65em;color:var(--muted)">Adicionar foto</span>`;
+  }
+  pendingPhotoSlot = null;
+}
+
+// ═══════════════════════════════════════════════
+// APTO LINK
+// ═══════════════════════════════════════════════
+function editAptoLink(di) {
+  const current = data.days[di].apto.link || '';
+  const url = prompt('Link do apto/local (Airbnb, Google Maps, etc.):', current);
+  if (url === null) return;
+  data.days[di].apto.link = url.trim();
+  saveAll();
+  // re-render the screen
+  const screen = document.querySelector(`[data-day="${di}"]`);
+  if (screen) {
+    screen.innerHTML = buildDayHTML(data.days[di], di);
+    if (editMode) {
+      screen.querySelectorAll('[contenteditable]').forEach(el => el.contentEditable = 'true');
     }
+  }
+}
 
-    // ─── CHECKLIST ───
-    const defaultItems = [
-        'Equipamento de kite completo',
-        'Prancha e barra',
-        'Colete e capacete',
-        'Protetor solar FPS 50+',
-        'Roupas para 4 dias',
-        'Chinelo e sandália',
-        'Câmera à prova d\'água',
-        'Caixa de som bluetooth',
-        'Remédios pessoais',
-        'Dinheiro em espécie',
-        'Documento de identidade',
-        'Saco de dormir / lençol',
-    ];
+// ═══════════════════════════════════════════════
+// SPLASH → APP
+// ═══════════════════════════════════════════════
+function startApp() {
+  const splash = document.getElementById('splash');
+  splash.classList.add('hide');
+  setTimeout(() => { splash.style.display = 'none'; }, 500);
+  document.getElementById('app').style.display = 'flex';
+  render();
+}
 
-    function renderChecklist() {
-        const saved = localStorage.getItem('velejin_checklist');
-        const items = saved ? JSON.parse(saved) : defaultItems.map(t => ({ text: t, done: false }));
-        const container = document.getElementById('checklist');
-        container.innerHTML = '';
-        items.forEach((item, i) => {
-            const row = document.createElement('label');
-            row.style.cssText = 'display:flex;align-items:center;gap:10px;cursor:pointer;';
-
-            const cb = document.createElement('input');
-            cb.type = 'checkbox';
-            cb.checked = item.done;
-            cb.style.cssText = 'width:16px;height:16px;accent-color:#00ff96;flex-shrink:0;cursor:pointer;';
-            cb.addEventListener('change', () => { items[i].done = cb.checked; saveChecklist(items); span.style.textDecoration = cb.checked ? 'line-through' : ''; span.style.color = cb.checked ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.8)'; });
-
-            const span = document.createElement('span');
-            span.contentEditable = 'true';
-            span.textContent = item.text;
-            span.style.cssText = `font-size:0.88em;outline:none;flex:1;color:${item.done ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.8)'};text-decoration:${item.done ? 'line-through' : ''};`;
-            span.addEventListener('input', () => { items[i].text = span.textContent; saveChecklist(items); });
-
-            row.appendChild(cb);
-            row.appendChild(span);
-            container.appendChild(row);
-        });
-        container._items = items;
-    }
-
-    function saveChecklist(items) {
-        localStorage.setItem('velejin_checklist', JSON.stringify(items));
-    }
-
-    function addCheckItem() {
-        const saved = localStorage.getItem('velejin_checklist');
-        const items = saved ? JSON.parse(saved) : defaultItems.map(t => ({ text: t, done: false }));
-        items.push({ text: 'Novo item', done: false });
-        saveChecklist(items);
-        renderChecklist();
-        // focus last
-        const spans = document.getElementById('checklist').querySelectorAll('span[contenteditable]');
-        const last = spans[spans.length - 1];
-        if (last) { last.focus(); const r = document.createRange(); r.selectNodeContents(last); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); }
-    }
-
-    renderChecklist();
+// ═══════════════════════════════════════════════
+// PWA SERVICE WORKER
+// ═══════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw-velejin.js').catch(() => {});
+}
 </script>
 </body>
 </html>
