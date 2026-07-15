@@ -6,840 +6,893 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0a1a2e">
+<meta name="theme-color" content="#04111f">
 <link rel="manifest" href="manifest-velejin.json">
-<title>Kite Trip Velejin</title>
+<title>Kite Trip Velejin 2026</title>
 <style>
+/* ── RESET & BASE ── */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --green:#00ff96;--cyan:#00e5ff;--dark:#0a1a2e;--card:#ffffff0d;--border:#ffffff1a;
-  --text:rgba(255,255,255,0.88);--muted:rgba(255,255,255,0.45);
+  --sky:#04111f;
+  --ocean:#062236;
+  --teal:#00c9b1;
+  --cyan:#38d9f5;
+  --sun:#f7c948;
+  --sunset:#f4845f;
+  --white:rgba(255,255,255,0.92);
+  --dim:rgba(255,255,255,0.45);
+  --faint:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.11);
+  --r16:16px;--r12:12px;--r8:8px;
 }
-html,body{height:100%;overflow:hidden;background:var(--dark);}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);}
-
-/* ─── SPLASH ─── */
-#splash{
-  position:fixed;inset:0;background:linear-gradient(160deg,#0a1a2e 0%,#0d2637 50%,#0f3d2e 100%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:999;transition:opacity .5s;
-}
-#splash.hide{opacity:0;pointer-events:none;}
-
-/* ─── LOGO SVG (kitesurfer) ─── */
-.logo-svg{filter:drop-shadow(0 0 24px rgba(0,255,150,.5));animation:logopulse 3s ease-in-out infinite;}
-@keyframes logopulse{0%,100%{filter:drop-shadow(0 0 16px rgba(0,255,150,.35))}50%{filter:drop-shadow(0 0 36px rgba(0,255,150,.7))}}
-
-.splash-title{
-  font-size:2.2em;font-weight:900;margin-top:16px;
-  background:linear-gradient(135deg,var(--green),var(--cyan));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.splash-sub{font-size:.85em;color:var(--muted);margin-top:6px;letter-spacing:2px;text-transform:uppercase;}
-.splash-date{
-  margin-top:16px;padding:8px 20px;border-radius:50px;
-  background:rgba(0,255,150,.1);border:1px solid rgba(0,255,150,.3);
-  font-size:.9em;color:var(--green);font-weight:600;
-}
-.splash-start{
-  margin-top:32px;padding:14px 40px;border-radius:50px;cursor:pointer;
-  background:linear-gradient(135deg,var(--green),#00c896);color:#0a1a2e;
-  font-size:1em;font-weight:800;border:none;
-  box-shadow:0 8px 24px rgba(0,255,150,.35);
-  transition:transform .2s,box-shadow .2s;
-}
-.splash-start:active{transform:scale(.96);}
-
-/* ─── APP SHELL ─── */
-#app{
-  position:fixed;inset:0;display:flex;flex-direction:column;
-  background:linear-gradient(160deg,#0a1a2e 0%,#0d2637 50%,#0f3d2e 100%);
+html{scroll-behavior:smooth;background:var(--sky);}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  color:var(--white);min-height:100vh;
+  background:var(--sky);overflow-x:hidden;
 }
 
-/* ─── TOP BAR ─── */
-.topbar{
+/* ── FIXED HEADER ── */
+.site-header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:max(env(safe-area-inset-top),10px) 18px 10px;
+  background:rgba(4,17,31,0.88);backdrop-filter:blur(16px) saturate(180%);
+  border-bottom:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;
-  padding:env(safe-area-inset-top,12px) 16px 10px;
-  padding-top:max(env(safe-area-inset-top),12px);
-  background:rgba(10,26,46,.85);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);flex-shrink:0;position:relative;z-index:10;
 }
-.topbar-logo{display:flex;align-items:center;gap:8px;}
-.topbar-logo svg{flex-shrink:0;}
-.topbar-name{font-size:.95em;font-weight:800;background:linear-gradient(135deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.topbar-name small{display:block;font-size:.65em;font-weight:500;color:var(--muted);-webkit-text-fill-color:var(--muted);}
+.header-brand{display:flex;align-items:center;gap:10px;}
+.brand-text{line-height:1.2;}
+.brand-name{font-size:.95em;font-weight:800;letter-spacing:-.3px;
+  background:linear-gradient(90deg,var(--teal),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.brand-sub{font-size:.68em;color:var(--dim);font-weight:500;}
+.header-back{
+  font-size:.78em;color:var(--dim);text-decoration:none;
+  padding:6px 12px;border:1px solid var(--border);border-radius:20px;
+  transition:color .2s,border-color .2s;
+}
+.header-back:hover{color:var(--teal);border-color:var(--teal);}
 
-.edit-toggle{
-  padding:7px 14px;border-radius:50px;border:1px solid var(--border);
-  background:var(--card);color:var(--muted);font-size:.8em;font-weight:600;
-  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;
-}
-.edit-toggle.active{background:rgba(0,255,150,.15);border-color:rgba(0,255,150,.4);color:var(--green);}
-
-/* ─── DAY PILLS ─── */
-.day-pills{
-  display:flex;gap:8px;padding:10px 16px;overflow-x:auto;scrollbar-width:none;flex-shrink:0;
-}
-.day-pills::-webkit-scrollbar{display:none;}
-.day-pill{
-  flex-shrink:0;padding:6px 14px;border-radius:50px;border:1px solid var(--border);
-  background:var(--card);color:var(--muted);font-size:.78em;font-weight:700;
-  cursor:pointer;transition:all .2s;
-}
-.day-pill.active{background:rgba(0,255,150,.15);border-color:rgba(0,255,150,.45);color:var(--green);}
-
-/* ─── DAYS VIEWPORT ─── */
-.days-track-wrap{flex:1;overflow:hidden;position:relative;}
-.days-track{
-  display:flex;height:100%;
-  transition:transform .35s cubic-bezier(.4,0,.2,1);
-  will-change:transform;
-}
-.day-screen{
-  flex-shrink:0;width:100%;height:100%;overflow-y:auto;
-  padding:0 0 env(safe-area-inset-bottom,20px);
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
-}
-.day-screen::-webkit-scrollbar{display:none;}
-
-/* ─── DAY HEADER ─── */
-.day-head{
-  padding:20px 16px 14px;
-  background:linear-gradient(180deg,rgba(0,255,150,.08) 0%,transparent 100%);
+/* ── STICKY DAY NAV ── */
+.day-nav-bar{
+  position:sticky;top:56px;z-index:90;
+  display:flex;gap:8px;padding:10px 18px;
+  overflow-x:auto;scrollbar-width:none;
+  background:rgba(4,17,31,0.75);backdrop-filter:blur(12px);
   border-bottom:1px solid var(--border);
 }
-.day-number{font-size:.72em;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:2px;}
-.day-weekday{font-size:2em;font-weight:900;color:white;line-height:1.1;}
-.day-full-date{font-size:.85em;color:var(--muted);margin-top:2px;}
+.day-nav-bar::-webkit-scrollbar{display:none;}
+.dnav{
+  flex-shrink:0;padding:7px 16px;border-radius:50px;
+  border:1px solid var(--border);background:var(--faint);
+  color:var(--dim);font-size:.78em;font-weight:700;
+  cursor:pointer;transition:all .22s;white-space:nowrap;
+}
+.dnav.active,.dnav:hover{
+  background:rgba(0,201,177,.15);border-color:rgba(0,201,177,.5);color:var(--teal);
+}
 
-/* ─── SECTIONS INSIDE DAY ─── */
-.day-body{padding:12px 16px 20px;display:flex;flex-direction:column;gap:14px;}
-
-.section-card{
-  background:var(--card);border:1px solid var(--border);border-radius:16px;
+/* ── HERO ── */
+.hero{
+  padding-top:110px;
+  text-align:center;
+  padding-bottom:50px;
+  position:relative;
   overflow:hidden;
 }
-.section-head{
-  display:flex;align-items:center;gap:8px;padding:13px 14px 10px;
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 20%, rgba(0,201,177,.12) 0%, transparent 70%);
+  pointer-events:none;
+}
+.hero-logo{margin-bottom:20px;display:inline-block;}
+.hero-title{
+  font-size:2.6em;font-weight:900;letter-spacing:-1.5px;line-height:1;
+  background:linear-gradient(135deg,#fff 0%,var(--cyan) 60%,var(--teal) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-edition{
+  display:inline-block;margin-top:10px;
+  font-size:.75em;letter-spacing:3px;text-transform:uppercase;color:var(--dim);font-weight:600;
+}
+.hero-dates{
+  display:inline-flex;align-items:center;gap:8px;
+  margin-top:16px;padding:10px 22px;border-radius:50px;
+  background:rgba(0,201,177,.1);border:1px solid rgba(0,201,177,.3);
+  font-size:.9em;color:var(--teal);font-weight:700;
+}
+.hero-waves{
+  position:absolute;bottom:0;left:0;width:200%;height:60px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60'%3E%3Cpath d='M0,30 C240,55 480,5 720,30 C960,55 1200,5 1440,30 L1440,60 L0,60Z' fill='%23062236'/%3E%3C/svg%3E");
+  background-size:50% 100%;animation:waveScroll 16s linear infinite;
+}
+@keyframes waveScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── PAGE BODY ── */
+.page-body{background:var(--ocean);padding-bottom:60px;}
+
+/* ── DAY SECTION ── */
+.day-section{padding:0 0 32px;}
+.day-banner{
+  padding:28px 18px 22px;
+  background:linear-gradient(180deg,rgba(0,201,177,.07) 0%,transparent 100%);
   border-bottom:1px solid var(--border);
+  position:relative;overflow:hidden;
 }
-.section-icon{font-size:1.1em;}
-.section-title{font-size:.85em;font-weight:700;color:var(--green);}
-.section-body{padding:12px 14px;}
-
-/* ─── KITE SPOT ─── */
-.spot-name{font-size:1.1em;font-weight:800;color:white;margin-bottom:4px;}
-.spot-desc{font-size:.82em;color:var(--muted);margin-bottom:12px;line-height:1.5;}
-
-.photo-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
-.photo-row::-webkit-scrollbar{display:none;}
-.photo-slot{
-  flex-shrink:0;width:120px;height:80px;border-radius:10px;
-  background:rgba(255,255,255,.06);border:1px dashed rgba(255,255,255,.15);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-size:.65em;color:var(--muted);text-align:center;cursor:pointer;gap:4px;
-  overflow:hidden;position:relative;
+.day-banner::after{
+  content:'';position:absolute;right:-20px;top:50%;transform:translateY(-50%);
+  width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,201,177,.12) 0%,transparent 70%);
+  pointer-events:none;
 }
-.photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:10px;}
-.photo-slot .photo-label{position:relative;z-index:1;background:rgba(0,0,0,.5);padding:2px 6px;border-radius:4px;display:none;}
-.photo-slot img ~ .photo-label{display:block;}
-.photo-add-icon{font-size:1.5em;opacity:.5;}
-
-/* ─── SCHEDULE TIMELINE ─── */
-.timeline{list-style:none;padding-left:18px;position:relative;}
-.timeline::before{content:'';position:absolute;left:4px;top:10px;bottom:10px;width:2px;background:linear-gradient(to bottom,var(--green),rgba(0,255,150,.1));border-radius:2px;}
-.timeline li{position:relative;padding:5px 0 5px 14px;font-size:.86em;color:var(--text);line-height:1.5;}
-.timeline li::before{content:'';position:absolute;left:-14px;top:11px;width:8px;height:8px;background:var(--green);border-radius:50%;border:2px solid var(--dark);}
-.timeline li .t{font-weight:700;color:var(--green);font-size:.82em;margin-right:6px;}
-
-/* ─── MEALS ─── */
-.meal-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
-.meal-row:last-child{border-bottom:none;}
-.meal-time-col{flex-shrink:0;width:44px;font-size:.75em;color:var(--muted);font-weight:600;padding-top:2px;}
-.meal-col{flex:1;}
-.meal-name-text{font-size:.9em;font-weight:600;color:white;}
-.meal-detail-text{font-size:.76em;color:var(--muted);margin-top:1px;}
-
-/* ─── ACCOMMODATION ─── */
-.apto-row{display:flex;align-items:center;gap:12px;}
-.apto-icon{width:44px;height:44px;border-radius:12px;background:rgba(0,229,255,.1);display:flex;align-items:center;justify-content:center;font-size:1.3em;flex-shrink:0;}
-.apto-info{flex:1;}
-.apto-name{font-size:.95em;font-weight:700;color:white;}
-.apto-who{font-size:.78em;color:var(--muted);margin-top:2px;}
-.apto-link{
-  display:inline-flex;align-items:center;gap:5px;margin-top:8px;
-  padding:6px 14px;border-radius:50px;background:rgba(0,229,255,.1);
-  border:1px solid rgba(0,229,255,.25);color:var(--cyan);font-size:.78em;font-weight:600;
-  text-decoration:none;transition:all .2s;
-}
-.apto-link:hover{background:rgba(0,229,255,.2);}
-.apto-link-placeholder{color:var(--muted);border-style:dashed;}
-
-/* ─── NIGHT EVENT ─── */
-.night-row{display:flex;gap:12px;align-items:flex-start;}
-.night-emoji{font-size:1.8em;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);border-radius:12px;flex-shrink:0;}
-.night-info{flex:1;}
-.night-name{font-size:.95em;font-weight:700;color:white;}
-.night-desc{font-size:.8em;color:var(--muted);margin-top:3px;line-height:1.5;}
-
-/* ─── NAV ARROWS ─── */
-.day-nav{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:16px;margin-top:4px;
-}
-.nav-btn{
-  display:flex;align-items:center;gap:6px;
-  padding:10px 18px;border-radius:50px;border:1px solid var(--border);
-  background:var(--card);color:var(--muted);font-size:.82em;font-weight:600;
-  cursor:pointer;transition:all .2s;
-}
-.nav-btn:not(.disabled):hover{border-color:var(--green);color:var(--green);}
-.nav-btn:not(.disabled):active{transform:scale(.95);}
-.nav-btn.disabled{opacity:.2;pointer-events:none;}
-.nav-btn.next{background:rgba(0,255,150,.1);border-color:rgba(0,255,150,.3);color:var(--green);}
-
-/* ─── EDITABLE STATE ─── */
-body.edit-mode [contenteditable]{
-  outline:none;
-  border-bottom:1px dashed rgba(0,255,150,.4);
-  padding-bottom:1px;
-  min-width:20px;
+.day-tag{
   display:inline-block;
+  font-size:.68em;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--teal);margin-bottom:6px;
 }
-body.edit-mode [contenteditable]:focus{
-  background:rgba(0,255,150,.07);border-radius:6px;
-  border-bottom:1px solid var(--green);
-  padding:2px 4px;margin:-2px -4px;
-}
-.edit-badge{
-  display:none;position:fixed;bottom:24px;right:16px;
-  background:var(--green);color:#0a1a2e;padding:10px 18px;border-radius:50px;
-  font-size:.82em;font-weight:800;z-index:20;
-  box-shadow:0 4px 16px rgba(0,255,150,.4);
-  cursor:pointer;
-}
-body.edit-mode .edit-badge{display:flex;align-items:center;gap:6px;}
+.day-weekday{font-size:2.2em;font-weight:900;line-height:1;color:#fff;letter-spacing:-1px;}
+.day-date{font-size:.88em;color:var(--dim);margin-top:4px;font-weight:500;}
 
-/* ─── PHOTO URL MODAL ─── */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;
+/* ── DAY EVENTS (timeline) ── */
+.events-wrap{padding:16px 18px 0;}
+.event-item{
+  display:flex;gap:14px;padding:0 0 20px;position:relative;
+}
+.event-item::before{
+  content:'';position:absolute;left:19px;top:36px;bottom:0;
+  width:1px;background:linear-gradient(to bottom,var(--border),transparent);
+}
+.event-item:last-child::before{display:none;}
+.event-dot{
+  flex-shrink:0;width:40px;height:40px;border-radius:50%;
+  background:rgba(0,201,177,.12);border:1.5px solid rgba(0,201,177,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1em;position:relative;z-index:1;
+}
+.event-dot.beer{background:rgba(247,201,72,.1);border-color:rgba(247,201,72,.3);}
+.event-dot.kite{background:rgba(56,217,245,.1);border-color:rgba(56,217,245,.3);}
+.event-dot.night{background:rgba(244,132,95,.1);border-color:rgba(244,132,95,.3);}
+.event-dot.food{background:rgba(100,220,130,.1);border-color:rgba(100,220,130,.3);}
+.event-dot.pray{background:rgba(200,200,255,.1);border-color:rgba(200,200,255,.3);}
+.event-body{flex:1;padding-top:8px;}
+.event-time{font-size:.72em;font-weight:700;color:var(--teal);letter-spacing:.5px;margin-bottom:3px;}
+.event-title{font-size:.97em;font-weight:700;color:#fff;line-height:1.3;}
+.event-desc{font-size:.8em;color:var(--dim);margin-top:3px;line-height:1.5;}
+
+/* ── LINK CHIP ── */
+.chip{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:8px;padding:6px 14px;border-radius:50px;
+  font-size:.76em;font-weight:600;text-decoration:none;
+  transition:all .2s;cursor:pointer;
+}
+.chip-teal{background:rgba(0,201,177,.12);border:1px solid rgba(0,201,177,.3);color:var(--teal);}
+.chip-teal:hover{background:rgba(0,201,177,.22);border-color:var(--teal);}
+.chip-sun{background:rgba(247,201,72,.1);border:1px solid rgba(247,201,72,.3);color:var(--sun);}
+.chip-sun:hover{background:rgba(247,201,72,.2);}
+.chip-cyan{background:rgba(56,217,245,.1);border:1px solid rgba(56,217,245,.3);color:var(--cyan);}
+.chip-cyan:hover{background:rgba(56,217,245,.2);}
+.chip-dim{background:var(--faint);border:1px dashed var(--border);color:var(--dim);}
+.chips-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+
+/* ── ACCOMMODATION GRID ── */
+.acomod-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;
+}
+.acomod-card{
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  border-radius:var(--r12);padding:12px;text-decoration:none;
+  transition:all .22s;display:block;
+}
+.acomod-card:hover{background:rgba(0,201,177,.08);border-color:rgba(0,201,177,.3);}
+.acomod-icon{font-size:1.4em;margin-bottom:6px;}
+.acomod-name{font-size:.82em;font-weight:700;color:#fff;}
+.acomod-detail{font-size:.72em;color:var(--dim);margin-top:2px;}
+.acomod-link-tag{
+  display:inline-flex;align-items:center;gap:3px;
+  margin-top:6px;font-size:.68em;color:var(--teal);font-weight:600;
+}
+
+/* ── PHOTO SLOT ── */
+.photo-slot{
+  position:relative;border-radius:var(--r12);overflow:hidden;
+  background:rgba(255,255,255,.05);border:1px dashed var(--border);
+  aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:6px;cursor:pointer;transition:border-color .2s;
+  margin-top:10px;
+}
+.photo-slot:hover{border-color:var(--teal);}
+.photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.photo-slot-label{font-size:.72em;color:var(--dim);position:relative;z-index:1;}
+.photo-slot-icon{font-size:1.6em;opacity:.5;position:relative;z-index:1;}
+.photo-overlay{
+  position:absolute;inset:0;z-index:2;background:rgba(0,0,0,.45);
+  display:none;align-items:center;justify-content:center;
+  font-size:.72em;color:#fff;font-weight:600;gap:4px;
+}
+.photo-slot:hover .photo-overlay{display:flex;}
+
+/* ── DIVIDER ── */
+.day-divider{
+  height:4px;margin:0;
+  background:linear-gradient(90deg,var(--teal),var(--cyan),transparent);
+  opacity:.25;
+}
+
+/* ── MODAL ── */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;
   display:none;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(4px);
 }
-.modal-overlay.show{display:flex;}
+.modal-bg.open{display:flex;}
 .modal-box{
-  width:100%;max-width:520px;background:#14293f;border-radius:24px 24px 0 0;
-  padding:24px 20px;padding-bottom:max(24px,env(safe-area-inset-bottom));
+  width:100%;max-width:520px;
+  background:#0d2236;border-radius:22px 22px 0 0;
+  padding:22px 18px max(22px,env(safe-area-inset-bottom));
+  border-top:1px solid var(--border);
 }
-.modal-title{font-size:.95em;font-weight:700;margin-bottom:12px;}
+.modal-title{font-size:.92em;font-weight:700;margin-bottom:12px;color:#fff;}
 .modal-input{
-  width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.07);
-  border:1px solid var(--border);color:white;font-size:.9em;font-family:inherit;
-  outline:none;
+  width:100%;padding:12px 14px;border-radius:var(--r12);
+  background:rgba(255,255,255,.07);border:1px solid var(--border);
+  color:#fff;font-size:.9em;font-family:inherit;outline:none;
 }
-.modal-input:focus{border-color:var(--green);}
-.modal-actions{display:flex;gap:10px;margin-top:12px;}
-.modal-btn{flex:1;padding:12px;border-radius:10px;font-size:.9em;font-weight:700;cursor:pointer;border:none;}
-.modal-btn.cancel{background:rgba(255,255,255,.08);color:var(--muted);}
-.modal-btn.confirm{background:var(--green);color:#0a1a2e;}
+.modal-input:focus{border-color:var(--teal);}
+.modal-row{display:flex;gap:10px;margin-top:10px;}
+.mbtn{flex:1;padding:12px;border-radius:var(--r12);font-size:.88em;font-weight:700;border:none;cursor:pointer;}
+.mbtn-cancel{background:rgba(255,255,255,.08);color:var(--dim);}
+.mbtn-ok{background:linear-gradient(135deg,var(--teal),var(--cyan));color:#04111f;}
 
-/* ─── WAVE DECO ─── */
-.wave-bg{
-  position:fixed;bottom:0;left:0;width:200%;height:90px;pointer-events:none;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,60 C150,90 350,0 600,60 C850,120 1050,30 1200,60 L1200,120 L0,120 Z' fill='%2300ff96' fill-opacity='0.04'/%3E%3C/svg%3E");
-  background-size:50% 100%;animation:wavemove 20s linear infinite;z-index:0;
+/* ── INSTALL BANNER ── */
+.install-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:150;
+  padding:12px 18px max(12px,env(safe-area-inset-bottom));
+  background:rgba(4,17,31,.95);border-top:1px solid var(--border);
+  display:none;align-items:center;justify-content:space-between;gap:12px;
+  backdrop-filter:blur(16px);
 }
-@keyframes wavemove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.install-bar.show{display:flex;}
+.install-text{font-size:.8em;color:var(--dim);}
+.install-text strong{color:#fff;display:block;font-size:.95em;}
+.install-btn{
+  flex-shrink:0;padding:9px 18px;border-radius:50px;border:none;
+  background:linear-gradient(135deg,var(--teal),var(--cyan));
+  color:#04111f;font-weight:800;font-size:.82em;cursor:pointer;
+}
+.install-close{color:var(--dim);background:none;border:none;font-size:1.2em;cursor:pointer;flex-shrink:0;}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.day-section{animation:fadeUp .4s ease both;}
+.day-section:nth-child(2){animation-delay:.05s}
+.day-section:nth-child(3){animation-delay:.1s}
+.day-section:nth-child(4){animation-delay:.15s}
 </style>
 </head>
 <body>
 
-<!-- ══════════ SPLASH ══════════ -->
-<div id="splash">
-  <!-- Kitesurfer logo SVG -->
-  <svg class="logo-svg" width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Ocean -->
-    <rect width="140" height="140" rx="28" fill="url(#splashBg)"/>
-    <!-- Sun -->
-    <circle cx="110" cy="32" r="14" fill="rgba(255,200,50,.25)" stroke="rgba(255,200,50,.5)" stroke-width="1.5"/>
-    <circle cx="110" cy="32" r="9" fill="rgba(255,210,60,.7)"/>
-    <!-- Kite (diamond shape, top-right) -->
-    <path d="M95 12 L108 30 L95 46 L82 30 Z" fill="url(#kiteGrad)" stroke="rgba(0,255,150,.9)" stroke-width="1.5"/>
-    <line x1="95" y1="12" x2="95" y2="46" stroke="rgba(0,255,150,.4)" stroke-width="1"/>
-    <line x1="82" y1="30" x2="108" y2="30" stroke="rgba(0,255,150,.4)" stroke-width="1"/>
-    <!-- Bridle lines from kite to surfer hand -->
-    <path d="M95 46 Q80 68 66 72" stroke="rgba(0,255,150,.5)" stroke-width="1.2" fill="none" stroke-dasharray="3 2"/>
-    <path d="M82 30 Q70 60 66 72" stroke="rgba(0,255,150,.3)" stroke-width="1" fill="none" stroke-dasharray="3 2"/>
-    <!-- Board (angled, on water) -->
-    <rect x="18" y="100" width="50" height="7" rx="3.5" fill="rgba(0,229,255,.7)" transform="rotate(-12 18 100)"/>
-    <!-- Surfer body -->
-    <!-- Legs bent (crouching on board) -->
-    <line x1="46" y1="95" x2="38" y2="104" stroke="white" stroke-width="3" stroke-linecap="round"/>
-    <line x1="52" y1="95" x2="46" y2="104" stroke="white" stroke-width="3" stroke-linecap="round"/>
-    <!-- Torso -->
-    <line x1="49" y1="95" x2="54" y2="80" stroke="white" stroke-width="3" stroke-linecap="round"/>
-    <!-- Head -->
-    <circle cx="55" cy="75" r="6" fill="white"/>
-    <!-- Helmet glint -->
-    <circle cx="57" cy="73" r="1.5" fill="rgba(0,255,150,.8)"/>
-    <!-- Arms reaching up toward bar -->
-    <line x1="54" y1="80" x2="64" y2="70" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="54" y1="80" x2="68" y2="74" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- Control bar -->
-    <rect x="60" y="68" width="14" height="3" rx="1.5" fill="rgba(0,255,150,.9)"/>
-    <!-- Spray / wake -->
-    <path d="M22 106 Q28 102 34 106 Q40 110 46 106" stroke="rgba(0,229,255,.5)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <path d="M14 112 Q26 107 38 112" stroke="rgba(0,229,255,.3)" stroke-width="1" fill="none" stroke-linecap="round"/>
-    <!-- Water line -->
-    <path d="M8 118 Q35 110 70 118 Q105 126 132 118" stroke="rgba(0,229,255,.4)" stroke-width="1.5" fill="none"/>
-    <!-- Label -->
-    <rect x="28" y="123" width="84" height="13" rx="6.5" fill="rgba(0,255,150,.18)" stroke="rgba(0,255,150,.45)" stroke-width="1"/>
-    <text x="70" y="133" text-anchor="middle" fill="#00ff96" font-size="7.5" font-weight="800" font-family="-apple-system,sans-serif">KITE TRIP VELEJIN</text>
-    <defs>
-      <radialGradient id="splashBg" cx="50%" cy="20%" r="80%">
-        <stop offset="0%" stop-color="#0d3d2a"/>
-        <stop offset="100%" stop-color="#0a1a2e"/>
-      </radialGradient>
-      <linearGradient id="kiteGrad" x1="82" y1="12" x2="108" y2="46" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#00ff96" stop-opacity=".95"/>
-        <stop offset="100%" stop-color="#00c896" stop-opacity=".55"/>
-      </linearGradient>
-    </defs>
-  </svg>
-
-  <div class="splash-title">Kite Trip Velejin</div>
-  <div class="splash-sub">2ª Edição · Kite Beer</div>
-  <div class="splash-date">📅 6 a 9 de Agosto — Qui a Dom</div>
-  <button class="splash-start" onclick="startApp()">Ver Roteiro →</button>
-</div>
-
-<!-- ══════════ APP ══════════ -->
-<div id="app" style="display:none;">
-
-  <!-- TOP BAR -->
-  <div class="topbar">
-    <div class="topbar-logo">
-      <!-- Mini kitesurfer logo -->
-      <svg width="32" height="32" viewBox="0 0 140 140" fill="none">
-        <rect width="140" height="140" rx="28" fill="url(#miniSplashBg)"/>
-        <path d="M95 12 L108 30 L95 46 L82 30 Z" fill="#00ff96" opacity=".9"/>
-        <path d="M95 46 Q80 68 66 72" stroke="#00ff96" stroke-width="1.5" fill="none"/>
-        <rect x="18" y="100" width="50" height="7" rx="3.5" fill="rgba(0,229,255,.7)" transform="rotate(-12 18 100)"/>
-        <line x1="46" y1="95" x2="38" y2="104" stroke="white" stroke-width="3" stroke-linecap="round"/>
-        <line x1="52" y1="95" x2="46" y2="104" stroke="white" stroke-width="3" stroke-linecap="round"/>
-        <line x1="49" y1="95" x2="54" y2="80" stroke="white" stroke-width="3" stroke-linecap="round"/>
-        <circle cx="55" cy="75" r="6" fill="white"/>
-        <line x1="54" y1="80" x2="64" y2="70" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="54" y1="80" x2="68" y2="74" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-        <rect x="60" y="68" width="14" height="3" rx="1.5" fill="#00ff96"/>
-        <defs>
-          <radialGradient id="miniSplashBg" cx="50%" cy="20%" r="80%">
-            <stop offset="0%" stop-color="#0d3d2a"/>
-            <stop offset="100%" stop-color="#0a1a2e"/>
-          </radialGradient>
-        </defs>
-      </svg>
-      <div class="topbar-name">Velejin<small>Kite Beer · 2ª edição</small></div>
+<!-- ══════════ FIXED HEADER ══════════ -->
+<header class="site-header">
+  <div class="header-brand">
+    <!-- LOGO: kite surfer profissional -->
+    <svg width="38" height="38" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="80" height="80" rx="16" fill="#062236"/>
+      <!-- Sky gradient -->
+      <defs>
+        <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#083050"/>
+          <stop offset="65%" stop-color="#062236"/>
+          <stop offset="100%" stop-color="#041820"/>
+        </linearGradient>
+        <linearGradient id="kiteG" x1="15" y1="8" x2="65" y2="26" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00c9b1"/>
+          <stop offset="100%" stop-color="#38d9f5"/>
+        </linearGradient>
+        <linearGradient id="waterG" x1="0" y1="56" x2="0" y2="80" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#083d5e"/>
+          <stop offset="100%" stop-color="#041820"/>
+        </linearGradient>
+      </defs>
+      <rect width="80" height="80" rx="16" fill="url(#skyG)"/>
+      <!-- Water -->
+      <path d="M0 58 Q20 52 40 58 Q60 64 80 58 L80 80 L0 80Z" fill="url(#waterG)"/>
+      <!-- Water shimmer -->
+      <path d="M5 62 Q15 59 25 62" stroke="rgba(56,217,245,.35)" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <path d="M40 65 Q52 62 62 65" stroke="rgba(56,217,245,.25)" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <!-- KITE: large arc / bow kite (forma real do kite) -->
+      <!-- Leading edge arc -->
+      <path d="M15 28 Q40 6 65 28" stroke="url(#kiteG)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <!-- Kite body fill (canopy) -->
+      <path d="M15 28 Q40 6 65 28 Q50 36 40 34 Q30 36 15 28Z" fill="rgba(0,201,177,.18)" stroke="none"/>
+      <!-- Kite cells (vertical lines) -->
+      <line x1="28" y1="18" x2="26" y2="32" stroke="rgba(0,201,177,.35)" stroke-width="1"/>
+      <line x1="40" y1="13" x2="40" y2="34" stroke="rgba(0,201,177,.35)" stroke-width="1"/>
+      <line x1="52" y1="18" x2="54" y2="32" stroke="rgba(0,201,177,.35)" stroke-width="1"/>
+      <!-- Trailing edge (bottom of kite) -->
+      <path d="M15 28 Q30 36 40 34 Q50 36 65 28" stroke="rgba(0,201,177,.4)" stroke-width="1" fill="none"/>
+      <!-- BRIDLE LINES: from kite center-bottom to bar -->
+      <line x1="32" y1="33" x2="38" y2="50" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>
+      <line x1="48" y1="33" x2="42" y2="50" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>
+      <!-- Control bar -->
+      <rect x="33" y="49" width="14" height="2.5" rx="1.25" fill="rgba(0,201,177,.8)"/>
+      <!-- RIDER: body (crouching position) -->
+      <!-- Head -->
+      <circle cx="40" cy="54.5" r="3" fill="white"/>
+      <!-- Helmet stripe -->
+      <path d="M37.2 53 Q40 51.5 42.8 53" stroke="rgba(0,201,177,.8)" stroke-width="1.2" fill="none"/>
+      <!-- Torso -->
+      <line x1="40" y1="57" x2="40" y2="63" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+      <!-- Arms up to bar -->
+      <line x1="40" y1="59" x2="35" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="40" y1="59" x2="45" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+      <!-- Front leg bent forward -->
+      <line x1="40" y1="63" x2="35" y2="68" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <!-- Back leg -->
+      <line x1="40" y1="63" x2="44" y2="67" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <!-- BOARD: twin-tip, angled -->
+      <rect x="26" y="66" width="28" height="4" rx="2" fill="rgba(56,217,245,.75)" transform="rotate(-5 26 66)"/>
+      <!-- Board fins suggestion -->
+      <line x1="28" y1="69" x2="26" y2="72" stroke="rgba(56,217,245,.5)" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="52" y1="68" x2="54" y2="71" stroke="rgba(56,217,245,.5)" stroke-width="1.2" stroke-linecap="round"/>
+      <!-- Wake/spray -->
+      <path d="M22 71 Q28 68 34 71" stroke="rgba(255,255,255,.3)" stroke-width="1" fill="none" stroke-linecap="round"/>
+    </svg>
+    <div class="brand-text">
+      <div class="brand-name">Kite Trip Velejin</div>
+      <div class="brand-sub">6 – 9 Ago 2026 · Pecém</div>
     </div>
-    <a href="index.html" style="color:var(--muted);font-size:.8em;text-decoration:none;margin-right:10px;">← Início</a>
-    <button class="edit-toggle" id="editToggle" onclick="toggleEdit()">✏️ Editar</button>
+  </div>
+  <a href="index.html" class="header-back">← Início</a>
+</header>
+
+<!-- ══════════ DAY NAV BAR ══════════ -->
+<nav class="day-nav-bar" id="dayNav">
+  <button class="dnav active" onclick="scrollToDay(0,this)">Dia 1 · Qui</button>
+  <button class="dnav" onclick="scrollToDay(1,this)">Dia 2 · Sex</button>
+  <button class="dnav" onclick="scrollToDay(2,this)">Dia 3 · Sáb</button>
+  <button class="dnav" onclick="scrollToDay(3,this)">Dia 4 · Dom</button>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero">
+  <!-- Full logo no hero -->
+  <div class="hero-logo">
+    <svg width="110" height="110" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="80" height="80" rx="20" fill="#062236"/>
+      <defs>
+        <linearGradient id="skyG2" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#083050"/><stop offset="65%" stop-color="#062236"/><stop offset="100%" stop-color="#041820"/>
+        </linearGradient>
+        <linearGradient id="kiteG2" x1="15" y1="8" x2="65" y2="26" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00c9b1"/><stop offset="100%" stop-color="#38d9f5"/>
+        </linearGradient>
+        <linearGradient id="waterG2" x1="0" y1="56" x2="0" y2="80" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#083d5e"/><stop offset="100%" stop-color="#041820"/>
+        </linearGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="80" height="80" rx="20" fill="url(#skyG2)"/>
+      <path d="M0 58 Q20 52 40 58 Q60 64 80 58 L80 80 L0 80Z" fill="url(#waterG2)"/>
+      <path d="M5 62 Q15 59 25 62" stroke="rgba(56,217,245,.35)" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <path d="M40 65 Q52 62 62 65" stroke="rgba(56,217,245,.25)" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <path d="M15 28 Q40 6 65 28" stroke="url(#kiteG2)" stroke-width="3.5" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+      <path d="M15 28 Q40 6 65 28 Q50 36 40 34 Q30 36 15 28Z" fill="rgba(0,201,177,.18)"/>
+      <line x1="28" y1="18" x2="26" y2="32" stroke="rgba(0,201,177,.35)" stroke-width="1"/>
+      <line x1="40" y1="13" x2="40" y2="34" stroke="rgba(0,201,177,.35)" stroke-width="1"/>
+      <line x1="52" y1="18" x2="54" y2="32" stroke="rgba(0,201,177,.35)" stroke-width="1"/>
+      <path d="M15 28 Q30 36 40 34 Q50 36 65 28" stroke="rgba(0,201,177,.4)" stroke-width="1" fill="none"/>
+      <line x1="32" y1="33" x2="38" y2="50" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>
+      <line x1="48" y1="33" x2="42" y2="50" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>
+      <rect x="33" y="49" width="14" height="2.5" rx="1.25" fill="rgba(0,201,177,.8)"/>
+      <circle cx="40" cy="54.5" r="3" fill="white"/>
+      <path d="M37.2 53 Q40 51.5 42.8 53" stroke="rgba(0,201,177,.8)" stroke-width="1.2" fill="none"/>
+      <line x1="40" y1="57" x2="40" y2="63" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="40" y1="59" x2="35" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="40" y1="59" x2="45" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="40" y1="63" x2="35" y2="68" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="40" y1="63" x2="44" y2="67" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <rect x="26" y="66" width="28" height="4" rx="2" fill="rgba(56,217,245,.75)" transform="rotate(-5 26 66)"/>
+      <line x1="28" y1="69" x2="26" y2="72" stroke="rgba(56,217,245,.5)" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="52" y1="68" x2="54" y2="71" stroke="rgba(56,217,245,.5)" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M22 71 Q28 68 34 71" stroke="rgba(255,255,255,.3)" stroke-width="1" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <h1 class="hero-title">Kite Trip Velejin</h1>
+  <div class="hero-edition">Pecém · Ceará · Brasil</div>
+  <div class="hero-dates">📅 6 a 9 de Agosto de 2026</div>
+  <div class="hero-waves"></div>
+</section>
+
+<!-- ══════════ PAGE BODY ══════════ -->
+<main class="page-body">
+
+<!-- ─────────────────────────────────────
+     DIA 1 · QUINTA · 6 AGOSTO
+───────────────────────────────────── -->
+<section class="day-section" id="day-0">
+  <div class="day-banner">
+    <div class="day-tag">Dia 1 de 4</div>
+    <div class="day-weekday">Quinta-feira</div>
+    <div class="day-date">6 de Agosto de 2026</div>
   </div>
 
-  <!-- DAY PILLS -->
-  <div class="day-pills" id="dayPills"></div>
+  <div class="events-wrap">
 
-  <!-- DAYS TRACK -->
-  <div class="days-track-wrap">
-    <div class="days-track" id="daysTrack"></div>
+    <!-- 12:00 Chegada -->
+    <div class="event-item">
+      <div class="event-dot">🏠</div>
+      <div class="event-body">
+        <div class="event-time">12:00</div>
+        <div class="event-title">Chegada & Acomodações</div>
+        <div class="event-desc">Check-in nos espaços. Veja abaixo onde cada um fica:</div>
+        <div class="acomod-grid">
+          <a class="acomod-card" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">
+            <div class="acomod-icon">🏡</div>
+            <div class="acomod-name">Cs. 2.7</div>
+            <div class="acomod-detail">5 quartos</div>
+            <div class="acomod-link-tag">📸 Ver no Instagram →</div>
+          </a>
+          <a class="acomod-card" href="https://www.instagram.com/stories/highlights/18062237377636213/" target="_blank">
+            <div class="acomod-icon">🛏️</div>
+            <div class="acomod-name">Apto 102C</div>
+            <div class="acomod-detail">2 quartos + sala</div>
+            <div class="acomod-link-tag">📸 Ver no Instagram →</div>
+          </a>
+          <a class="acomod-card" href="https://www.instagram.com/stories/highlights/17987787710507233/" target="_blank">
+            <div class="acomod-icon">🛏️</div>
+            <div class="acomod-name">Apto 103F</div>
+            <div class="acomod-detail">1 quarto + sala</div>
+            <div class="acomod-link-tag">📸 Ver no Instagram →</div>
+          </a>
+          <a class="acomod-card" href="https://www.instagram.com/stories/highlights/18026240075521145/" target="_blank">
+            <div class="acomod-icon">🛏️</div>
+            <div class="acomod-name">Apto 201H</div>
+            <div class="acomod-detail">1 quarto + sala</div>
+            <div class="acomod-link-tag">📸 Ver no Instagram →</div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12:30 Almoço -->
+    <div class="event-item">
+      <div class="event-dot food">🍽️</div>
+      <div class="event-body">
+        <div class="event-time">12:30</div>
+        <div class="event-title">Almoço</div>
+        <div class="chips-row">
+          <span class="chip chip-dim" onclick="openCardapioModal()">🍴 Ver Cardápio</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 15:00 DW -->
+    <div class="event-item">
+      <div class="event-dot kite">🪁</div>
+      <div class="event-body">
+        <div class="event-time">15:00</div>
+        <div class="event-title">DW Pecém → Ventaya</div>
+        <div class="event-desc">Downwinder de largada. Vento alísio nordeste, condiçoes perfeitas.</div>
+        <div class="chips-row">
+          <a class="chip chip-cyan" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTE5NDU1MjQwODcyNDkx?story_media_id=3938348567068268435&igsh=b2NxaG80bmk5eHNy" target="_blank">📸 Barraca Ventaya</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 17:30 Pôr do sol -->
+    <div class="event-item">
+      <div class="event-dot beer">🌅</div>
+      <div class="event-body">
+        <div class="event-time">17:30</div>
+        <div class="event-title">Pôr do sol no Ventaya + 🍺</div>
+        <div class="event-desc">Quem tiver nas áreas, queda obrigatória de kite às 17h30 pra não perder o sol.</div>
+      </div>
+    </div>
+
+    <!-- 19:00 Janta -->
+    <div class="event-item">
+      <div class="event-dot food">🍽️</div>
+      <div class="event-body">
+        <div class="event-time">19:00</div>
+        <div class="event-title">Jantar</div>
+        <div class="chips-row">
+          <span class="chip chip-dim" onclick="openCardapioModal()">🍴 Ver Cardápio</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 19:01 Beer -->
+    <div class="event-item">
+      <div class="event-dot beer">🍺</div>
+      <div class="event-body">
+        <div class="event-time">19:01</div>
+        <div class="event-title">Beer 🍺</div>
+        <div class="event-desc">Essa é a parte mais fácil do roteiro.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+<div class="day-divider"></div>
+
+<!-- ─────────────────────────────────────
+     DIA 2 · SEXTA · 7 AGOSTO
+───────────────────────────────────── -->
+<section class="day-section" id="day-1">
+  <div class="day-banner">
+    <div class="day-tag">Dia 2 de 4</div>
+    <div class="day-weekday">Sexta-feira</div>
+    <div class="day-date">7 de Agosto de 2026</div>
   </div>
 
-  <!-- SAVE BADGE -->
-  <div class="edit-badge" id="editBadge" onclick="saveAll()">💾 Salvar</div>
-</div>
+  <div class="events-wrap">
 
-<!-- PHOTO URL MODAL -->
-<div class="modal-overlay" id="photoModal" onclick="closePhotoModal(event)">
+    <!-- 08:00 Café da manhã -->
+    <div class="event-item">
+      <div class="event-dot food">☕</div>
+      <div class="event-body">
+        <div class="event-time">08:00</div>
+        <div class="event-title">Café da manhã na Cs. 2.7</div>
+        <div class="chips-row">
+          <a class="chip chip-teal" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Ver Cs. 2.7</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12:00 Almoço -->
+    <div class="event-item">
+      <div class="event-dot food">🍽️</div>
+      <div class="event-body">
+        <div class="event-time">12:00</div>
+        <div class="event-title">Almoço</div>
+        <div class="chips-row">
+          <span class="chip chip-dim" onclick="openCardapioModal()">🍴 Ver Cardápio</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 14:00 DW Pecém - Paracuru -->
+    <div class="event-item">
+      <div class="event-dot kite">🪁</div>
+      <div class="event-body">
+        <div class="event-time">14:00</div>
+        <div class="event-title">DW Pecém → Paracuru</div>
+        <div class="event-desc">Downwinder longo, rumo a Paracuru. Vento firme à tarde.</div>
+      </div>
+    </div>
+
+    <!-- 19:00 Assado de Peixe -->
+    <div class="event-item">
+      <div class="event-dot night">🐟</div>
+      <div class="event-body">
+        <div class="event-time">19:00</div>
+        <div class="event-title">Assado de Peixe</div>
+        <div class="event-desc">O clássico da trip. Peixe fresquinho direto do mar.</div>
+        <div class="photo-slot" onclick="openPhotoModal('peixe')" id="slot-peixe">
+          <div class="photo-overlay">✏️ Trocar foto</div>
+          <span class="photo-slot-icon">📸</span>
+          <span class="photo-slot-label">Adicionar foto do assado</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 19:01 Beer -->
+    <div class="event-item">
+      <div class="event-dot beer">🍺</div>
+      <div class="event-body">
+        <div class="event-time">19:01</div>
+        <div class="event-title">Beer 🍺</div>
+        <div class="event-desc">Novamente pontual.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+<div class="day-divider"></div>
+
+<!-- ─────────────────────────────────────
+     DIA 3 · SÁBADO · 8 AGOSTO
+───────────────────────────────────── -->
+<section class="day-section" id="day-2">
+  <div class="day-banner">
+    <div class="day-tag">Dia 3 de 4</div>
+    <div class="day-weekday">Sábado</div>
+    <div class="day-date">8 de Agosto de 2026</div>
+  </div>
+
+  <div class="events-wrap">
+
+    <!-- 09:00 Café -->
+    <div class="event-item">
+      <div class="event-dot food">☕</div>
+      <div class="event-body">
+        <div class="event-time">09:00</div>
+        <div class="event-title">Café da manhã na Cs. 2.7</div>
+        <div class="chips-row">
+          <a class="chip chip-teal" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Ver Cs. 2.7</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12:00 Churrasco -->
+    <div class="event-item">
+      <div class="event-dot night">🔥</div>
+      <div class="event-body">
+        <div class="event-time">12:00</div>
+        <div class="event-title">Churrasco 🔥</div>
+        <div class="event-desc">Picanha, costela, linguiça e tudo que a galera trouxer.</div>
+      </div>
+    </div>
+
+    <!-- 15:00 Pecém - Ventaya -->
+    <div class="event-item">
+      <div class="event-dot kite">🪁</div>
+      <div class="event-body">
+        <div class="event-time">15:00</div>
+        <div class="event-title">Pecém → Ventaya</div>
+        <div class="event-desc">Sessão da tarde no Ventaya. Vento de tarde, melhor hora.</div>
+        <div class="chips-row">
+          <a class="chip chip-cyan" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTE5NDU1MjQwODcyNDkx?story_media_id=3938348567068268435&igsh=b2NxaG80bmk5eHNy" target="_blank">📸 Barraca Ventaya</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 17:00 Karolzinha -->
+    <div class="event-item">
+      <div class="event-dot night">🎸</div>
+      <div class="event-body">
+        <div class="event-time">17:00</div>
+        <div class="event-title">Festa — Karolzinha Sonfoneira no Ventaya</div>
+        <div class="event-desc">Ao vivo no Ventaya. Não pode faltar!</div>
+        <div class="photo-slot" onclick="openPhotoModal('banda')" id="slot-banda">
+          <div class="photo-overlay">✏️ Trocar foto</div>
+          <span class="photo-slot-icon">🎸</span>
+          <span class="photo-slot-label">Adicionar foto da Banda</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 19:00 DJ -->
+    <div class="event-item">
+      <div class="event-dot night">🎧</div>
+      <div class="event-body">
+        <div class="event-time">19:00</div>
+        <div class="event-title">DJ 🎧</div>
+        <div class="event-desc">A noite continua.</div>
+        <div class="photo-slot" onclick="openPhotoModal('dj')" id="slot-dj">
+          <div class="photo-overlay">✏️ Trocar foto</div>
+          <span class="photo-slot-icon">🎧</span>
+          <span class="photo-slot-label">Adicionar foto do DJ</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+<div class="day-divider"></div>
+
+<!-- ─────────────────────────────────────
+     DIA 4 · DOMINGO · 9 AGOSTO
+───────────────────────────────────── -->
+<section class="day-section" id="day-3">
+  <div class="day-banner" style="background:linear-gradient(180deg,rgba(244,132,95,.07) 0%,transparent 100%);">
+    <div class="day-tag" style="color:var(--sunset);">Dia 4 de 4 · Último dia</div>
+    <div class="day-weekday">Domingo</div>
+    <div class="day-date">9 de Agosto de 2026</div>
+  </div>
+
+  <div class="events-wrap">
+
+    <!-- 08:00 Rezar -->
+    <div class="event-item">
+      <div class="event-dot pray">🙏</div>
+      <div class="event-body">
+        <div class="event-time">08:00</div>
+        <div class="event-title">Rezar para acordar bem</div>
+      </div>
+    </div>
+
+    <!-- 08:20 Rezar de novo -->
+    <div class="event-item">
+      <div class="event-dot pray">🙏</div>
+      <div class="event-body">
+        <div class="event-time">08:20</div>
+        <div class="event-title">Rezar pra ter coragem</div>
+        <div class="event-desc">Depois de ontem... vai precisar.</div>
+      </div>
+    </div>
+
+    <!-- 09:00 Café -->
+    <div class="event-item">
+      <div class="event-dot food">☕</div>
+      <div class="event-body">
+        <div class="event-time">09:00</div>
+        <div class="event-title">Café da manhã na Cs. 2.7</div>
+        <div class="chips-row">
+          <a class="chip chip-teal" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Ver Cs. 2.7</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11:00 Velejar -->
+    <div class="event-item">
+      <div class="event-dot kite">🪁</div>
+      <div class="event-body">
+        <div class="event-time">11:00</div>
+        <div class="event-title">Coragem de velejar? Vamos. 🤙</div>
+        <div class="event-desc">Última sessão da trip. Despedida do mar.</div>
+      </div>
+    </div>
+
+    <!-- 14:00 Almoço -->
+    <div class="event-item">
+      <div class="event-dot food">🍽️</div>
+      <div class="event-body">
+        <div class="event-time">14:00</div>
+        <div class="event-title">Almoço de encerramento</div>
+        <div class="chips-row">
+          <span class="chip chip-dim" onclick="openCardapioModal()">🍴 Ver Cardápio</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Encerramento -->
+  <div style="margin:24px 18px 0;padding:20px;background:rgba(244,132,95,.08);border:1px solid rgba(244,132,95,.2);border-radius:16px;text-align:center;">
+    <div style="font-size:2em;margin-bottom:8px;">🌅</div>
+    <div style="font-weight:800;font-size:1em;color:#fff;">Até a próxima edição!</div>
+    <div style="font-size:.8em;color:var(--dim);margin-top:6px;">Kite Beer · Velejin · Pecém · Ceará</div>
+  </div>
+</section>
+
+</main><!-- end page-body -->
+
+<!-- ══════════ PHOTO MODAL ══════════ -->
+<div class="modal-bg" id="photoModal">
   <div class="modal-box">
-    <div class="modal-title">📸 Link da foto</div>
-    <input class="modal-input" id="photoUrlInput" type="url" placeholder="https://... (link do Google Fotos, etc.)">
-    <div class="modal-actions">
-      <button class="modal-btn cancel" onclick="closePhotoModal()">Cancelar</button>
-      <button class="modal-btn confirm" onclick="confirmPhoto()">Confirmar</button>
+    <div class="modal-title" id="photoModalTitle">📸 Link da foto</div>
+    <input class="modal-input" id="photoUrlInput" type="url" placeholder="https://... (Google Fotos, Instagram, etc.)">
+    <div class="modal-row">
+      <button class="mbtn mbtn-cancel" onclick="closeModal('photoModal')">Cancelar</button>
+      <button class="mbtn mbtn-ok" onclick="confirmPhoto()">Salvar</button>
     </div>
   </div>
 </div>
 
-<div class="wave-bg"></div>
+<!-- ══════════ CARDÁPIO MODAL ══════════ -->
+<div class="modal-bg" id="cardapioModal">
+  <div class="modal-box">
+    <div class="modal-title">🍴 Cardápio — em breve!</div>
+    <p style="font-size:.85em;color:var(--dim);line-height:1.6;">
+      O cardápio ainda está sendo definido.<br>
+      Quando estiver pronto, adicione o link abaixo:
+    </p>
+    <input class="modal-input" id="cardapioUrlInput" type="url" placeholder="https://..." style="margin-top:12px;">
+    <div class="modal-row">
+      <button class="mbtn mbtn-cancel" onclick="closeModal('cardapioModal')">Fechar</button>
+      <button class="mbtn mbtn-ok" onclick="saveCardapio()">Salvar link</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ INSTALL BANNER ══════════ -->
+<div class="install-bar" id="installBar">
+  <div class="install-text">
+    <strong>Instalar no celular</strong>
+    Acesse offline como um app
+  </div>
+  <button class="install-btn" id="installBtn">Instalar</button>
+  <button class="install-close" onclick="document.getElementById('installBar').classList.remove('show')">✕</button>
+</div>
 
 <script>
-// ═══════════════════════════════════════════════
-// DATA — edite aqui os dados padrão ou use o modo edição no app
-// ═══════════════════════════════════════════════
-const DEFAULT_DATA = {
-  days: [
-    {
-      num: 1,
-      weekday: "Quinta",
-      date: "6 de Agosto",
-      kite: {
-        spot: "Pecém — Barraca Ventaya",
-        desc: "Vento alísio vindo do nordeste. Ideal para freestyle e iniciantes. Barraca estruturada com sombra, comida e aluguel de equipamento.",
-        photos: ["","",""]
-      },
-      schedule: [
-        {time:"07:00", text:"Concentração e saída de Fortaleza"},
-        {time:"10:00", text:"Chegada, check-in e organização"},
-        {time:"11:00", text:"Primeira sessão de kite na Ventaya"},
-        {time:"13:00", text:"Almoço na barraca"},
-        {time:"15:00", text:"Sessão da tarde — kite e longboard"},
-        {time:"18:00", text:"Pôr do sol na praia 🌅"}
-      ],
-      meals: [
-        {time:"08:00", name:"Café da manhã no caminho", detail:"Tapioca, queijo, café"},
-        {time:"13:00", name:"Almoço — Barraca Ventaya", detail:"Peixe frito, arroz, feijão"},
-        {time:"20:00", name:"Jantar de boas-vindas", detail:"A definir — responsável: galera"}
-      ],
-      night: {
-        emoji:"🍺",
-        name:"Abertura oficial da Kite Trip",
-        desc:"Cerveja gelada, aquela roda de conversa, música e combinações para os próximos dias."
-      },
-      apto: {
-        name:"Casa/Apto da galera",
-        who:"Todos",
-        link:""
-      }
-    },
-    {
-      num: 2,
-      weekday: "Sexta",
-      date: "7 de Agosto",
-      kite: {
-        spot: "Pecém — Barraca Ventaya",
-        desc: "Dia completo de kite. Tarde boa de vento, sessão longa com a galera toda no mar.",
-        photos: ["","",""]
-      },
-      schedule: [
-        {time:"08:00", text:"Café da manhã em casa"},
-        {time:"09:30", text:"Sessão de kite — manhã completa"},
-        {time:"12:30", text:"Almoço + descanso"},
-        {time:"15:00", text:"Campeonato interno de tricks 🏆"},
-        {time:"18:30", text:"Premiação + foto da galera"}
-      ],
-      meals: [
-        {time:"08:00", name:"Café da manhã", detail:"Tapioca, ovos, frutas, suco de caju"},
-        {time:"12:30", name:"Almoço", detail:"Moqueca de camarão com arroz e pirão"},
-        {time:"19:30", name:"Churrasco 🔥", detail:"Picanha, costela, linguiça, queijo coalho, farofa"}
-      ],
-      night: {
-        emoji:"🏆",
-        name:"Churrasco do Campeão + Noite de Jogos",
-        desc:"Premiação do campeonato, churrasco completo, truco, dominó e muita risada."
-      },
-      apto: {
-        name:"Casa/Apto da galera",
-        who:"Todos",
-        link:""
-      }
-    },
-    {
-      num: 3,
-      weekday: "Sábado",
-      date: "8 de Agosto",
-      kite: {
-        spot: "Downwinder — Pecém a Taíba",
-        desc: "Descida pela costa no kite. Rota conforme o vento. Logística com carro de apoio.",
-        photos: ["","",""]
-      },
-      schedule: [
-        {time:"08:30", text:"Café da manhã"},
-        {time:"10:00", text:"Downwinder — saída do Pecém"},
-        {time:"13:00", text:"Chegada em Taíba, almoço no local"},
-        {time:"15:30", text:"Tarde livre — kite, SUP ou descanso"},
-        {time:"17:30", text:"Sessão de fotos e vídeos 📸"}
-      ],
-      meals: [
-        {time:"08:30", name:"Café da manhã", detail:"Pão, manteiga, queijo, café"},
-        {time:"13:00", name:"Almoço em Taíba", detail:"Peixe na brasa, arroz, pirão"},
-        {time:"19:00", name:"Jantar", detail:"Hambúrguer artesanal + batata frita"}
-      ],
-      night: {
-        emoji:"🎶",
-        name:"Roda de causos + Música",
-        desc:"Violão, playlist do Kite Beer, causos do mar e aquele saudosismo em tempo real."
-      },
-      apto: {
-        name:"Casa/Apto da galera",
-        who:"Todos",
-        link:""
-      }
-    },
-    {
-      num: 4,
-      weekday: "Domingo",
-      date: "9 de Agosto",
-      kite: {
-        spot: "Pecém — Barraca Ventaya",
-        desc: "Última sessão da trip. Aproveita que amanhã é segunda e o vento vai embora com a galera.",
-        photos: ["","",""]
-      },
-      schedule: [
-        {time:"08:00", text:"Última sessão de kite — despedida do mar"},
-        {time:"10:30", text:"Check-out e organização das malas"},
-        {time:"11:30", text:"Almoço de despedida"},
-        {time:"13:30", text:"Saída de volta para Fortaleza"},
-        {time:"16:30", text:"Chegada em Fortaleza — até a próxima 🤙"}
-      ],
-      meals: [
-        {time:"08:00", name:"Café da manhã", detail:"Tudo que sobrou — sem desperdício!"},
-        {time:"11:30", name:"Almoço de despedida", detail:"Arroz, feijão verde, carneiro assado"}
-      ],
-      night: {
-        emoji:"🌊",
-        name:"Encerramento da Kite Trip",
-        desc:"Viagem de volta pra Fortaleza. Fotos enviadas no grupo. Já planejando o próximo ano."
-      },
-      apto: {
-        name:"Casa/Apto da galera",
-        who:"Todos",
-        link:""
-      }
+// ── SCROLL TO DAY ──
+function scrollToDay(idx, btn) {
+  const sec = document.getElementById('day-' + idx);
+  if (!sec) return;
+  const offset = 110; // header + nav height
+  const top = sec.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({top, behavior:'smooth'});
+  document.querySelectorAll('.dnav').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── AUTO ACTIVE NAV ON SCROLL ──
+const dayIds = ['day-0','day-1','day-2','day-3'];
+const navBtns = document.querySelectorAll('.dnav');
+window.addEventListener('scroll', () => {
+  let current = 0;
+  dayIds.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top <= 130) current = i;
+  });
+  navBtns.forEach((b, i) => b.classList.toggle('active', i === current));
+}, {passive: true});
+
+// ── PHOTO SLOTS ──
+let activeSlot = null;
+const photoData = JSON.parse(localStorage.getItem('velejin_photos') || '{}');
+
+function renderPhotos() {
+  ['peixe','banda','dj'].forEach(key => {
+    const slot = document.getElementById('slot-' + key);
+    if (!slot) return;
+    if (photoData[key]) {
+      slot.innerHTML = `<img src="${photoData[key]}" alt="${key}"><div class="photo-overlay">✏️ Trocar foto</div>`;
+      slot.onclick = () => openPhotoModal(key);
     }
-  ]
-};
-
-// ═══════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════
-let data = loadData();
-let currentDay = 0;
-let editMode = false;
-let pendingPhotoSlot = null;
-
-function loadData() {
-  try {
-    const saved = localStorage.getItem('velejin2026_data');
-    return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_DATA));
-  } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_DATA)); }
-}
-
-function saveAll() {
-  // collect all contenteditable values back into data
-  collectEdits();
-  localStorage.setItem('velejin2026_data', JSON.stringify(data));
-  const badge = document.getElementById('editBadge');
-  badge.textContent = '✅ Salvo!';
-  setTimeout(() => { badge.innerHTML = '💾 Salvar'; }, 1500);
-}
-
-function collectEdits() {
-  data.days.forEach((day, di) => {
-    const screen = document.querySelector(`[data-day="${di}"]`);
-    if (!screen) return;
-
-    const q = (sel) => screen.querySelector(sel);
-    const qa = (sel) => [...screen.querySelectorAll(sel)];
-
-    const spotName = q('[data-field="spotName"]');
-    if (spotName) day.kite.spot = spotName.textContent;
-    const spotDesc = q('[data-field="spotDesc"]');
-    if (spotDesc) day.kite.desc = spotDesc.textContent;
-
-    qa('[data-sched-time]').forEach((el, i) => {
-      if (day.schedule[i]) day.schedule[i].time = el.textContent;
-    });
-    qa('[data-sched-text]').forEach((el, i) => {
-      if (day.schedule[i]) day.schedule[i].text = el.textContent;
-    });
-
-    qa('[data-meal-name]').forEach((el, i) => {
-      if (day.meals[i]) day.meals[i].name = el.textContent;
-    });
-    qa('[data-meal-detail]').forEach((el, i) => {
-      if (day.meals[i]) day.meals[i].detail = el.textContent;
-    });
-    qa('[data-meal-time]').forEach((el, i) => {
-      if (day.meals[i]) day.meals[i].time = el.textContent;
-    });
-
-    const nightName = q('[data-field="nightName"]');
-    if (nightName) day.night.name = nightName.textContent;
-    const nightDesc = q('[data-field="nightDesc"]');
-    if (nightDesc) day.night.desc = nightDesc.textContent;
-
-    const aptoName = q('[data-field="aptoName"]');
-    if (aptoName) day.apto.name = aptoName.textContent;
-    const aptoWho = q('[data-field="aptoWho"]');
-    if (aptoWho) day.apto.who = aptoWho.textContent;
   });
 }
 
-// ═══════════════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════════════
-function render() {
-  const pills = document.getElementById('dayPills');
-  const track = document.getElementById('daysTrack');
-  pills.innerHTML = '';
-  track.innerHTML = '';
-
-  data.days.forEach((day, di) => {
-    // pill
-    const pill = document.createElement('button');
-    pill.className = 'day-pill' + (di === currentDay ? ' active' : '');
-    pill.textContent = `Dia ${day.num} · ${day.weekday}`;
-    pill.onclick = () => goToDay(di);
-    pills.appendChild(pill);
-
-    // screen
-    const screen = document.createElement('div');
-    screen.className = 'day-screen';
-    screen.setAttribute('data-day', di);
-    screen.innerHTML = buildDayHTML(day, di);
-    track.appendChild(screen);
-  });
-
-  updateTrack();
-  attachPhotoHandlers();
-}
-
-function buildDayHTML(day, di) {
-  return `
-  <div class="day-head">
-    <div class="day-number">Dia ${day.num} de ${data.days.length}</div>
-    <div class="day-weekday">${day.weekday}-feira</div>
-    <div class="day-full-date">${day.date} de 2026</div>
-  </div>
-
-  <div class="day-body">
-
-    <!-- KITE SPOT -->
-    <div class="section-card">
-      <div class="section-head"><span class="section-icon">🪂</span><span class="section-title">Velejo do Dia</span></div>
-      <div class="section-body">
-        <div class="spot-name" contenteditable="false" data-field="spotName">${day.kite.spot}</div>
-        <div class="spot-desc" contenteditable="false" data-field="spotDesc">${day.kite.desc}</div>
-        <div class="photo-row" id="photos-${di}">
-          ${day.kite.photos.map((url, pi) => `
-            <div class="photo-slot" data-day="${di}" data-photo="${pi}" onclick="openPhotoModal(${di},${pi})">
-              ${url ? `<img src="${url}" alt="foto ${pi+1}">` : ''}
-              <span class="photo-add-icon">${url ? '' : '📸'}</span>
-              <span class="photo-label">${url ? 'Trocar' : ''}</span>
-              ${!url ? `<span style="font-size:.65em;color:var(--muted)">Adicionar foto</span>` : ''}
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    </div>
-
-    <!-- PROGRAMAÇÃO -->
-    <div class="section-card">
-      <div class="section-head"><span class="section-icon">📋</span><span class="section-title">Programação</span></div>
-      <div class="section-body">
-        <ul class="timeline">
-          ${day.schedule.map((s, si) => `
-            <li>
-              <span class="t" contenteditable="false" data-sched-time>${s.time}</span>
-              <span contenteditable="false" data-sched-text>${s.text}</span>
-            </li>
-          `).join('')}
-        </ul>
-      </div>
-    </div>
-
-    <!-- CARDÁPIO -->
-    <div class="section-card">
-      <div class="section-head"><span class="section-icon">🍽️</span><span class="section-title">Cardápio do Dia</span></div>
-      <div class="section-body">
-        ${day.meals.map((m, mi) => `
-          <div class="meal-row">
-            <div class="meal-time-col" contenteditable="false" data-meal-time>${m.time}</div>
-            <div class="meal-col">
-              <div class="meal-name-text" contenteditable="false" data-meal-name>${m.name}</div>
-              <div class="meal-detail-text" contenteditable="false" data-meal-detail>${m.detail}</div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-
-    <!-- EVENTO DA NOITE -->
-    <div class="section-card">
-      <div class="section-head"><span class="section-icon">🌙</span><span class="section-title">Evento da Noite</span></div>
-      <div class="section-body">
-        <div class="night-row">
-          <div class="night-emoji">${day.night.emoji}</div>
-          <div class="night-info">
-            <div class="night-name" contenteditable="false" data-field="nightName">${day.night.name}</div>
-            <div class="night-desc" contenteditable="false" data-field="nightDesc">${day.night.desc}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- HOSPEDAGEM -->
-    <div class="section-card">
-      <div class="section-head"><span class="section-icon">🛏️</span><span class="section-title">Hospedagem</span></div>
-      <div class="section-body">
-        <div class="apto-row">
-          <div class="apto-icon">🏠</div>
-          <div class="apto-info">
-            <div class="apto-name" contenteditable="false" data-field="aptoName">${day.apto.name}</div>
-            <div class="apto-who" contenteditable="false" data-field="aptoWho">${day.apto.who}</div>
-          </div>
-        </div>
-        <div style="margin-top:10px;">
-          ${day.apto.link
-            ? `<a class="apto-link" href="${day.apto.link}" target="_blank">🔗 Ver apto / local</a>`
-            : `<span class="apto-link apto-link-placeholder" onclick="editAptoLink(${di})" style="cursor:pointer;">🔗 Adicionar link do apto</span>`
-          }
-          ${day.apto.link ? `<span style="margin-left:8px;font-size:.75em;color:var(--muted);cursor:pointer;" onclick="editAptoLink(${di})">✏️ trocar link</span>` : ''}
-        </div>
-      </div>
-    </div>
-
-    <!-- NAV -->
-    <div class="day-nav">
-      <button class="nav-btn ${di === 0 ? 'disabled' : ''}" onclick="goToDay(${di-1})">← Dia ${di} · ${di > 0 ? data.days[di-1].weekday : ''}</button>
-      <button class="nav-btn next ${di === data.days.length-1 ? 'disabled' : ''}" onclick="goToDay(${di+1})">Dia ${di+2} · ${di < data.days.length-1 ? data.days[di+1].weekday : ''} →</button>
-    </div>
-
-  </div>
-  `;
-}
-
-// ═══════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════
-function goToDay(di) {
-  if (di < 0 || di >= data.days.length) return;
-  currentDay = di;
-  updateTrack();
-  updatePills();
-  // scroll to top of the target day
-  const screen = document.querySelector(`[data-day="${di}"]`);
-  if (screen) screen.scrollTop = 0;
-}
-
-function updateTrack() {
-  const track = document.getElementById('daysTrack');
-  track.style.transform = `translateX(-${currentDay * 100}%)`;
-}
-
-function updatePills() {
-  document.querySelectorAll('.day-pill').forEach((p, i) => {
-    p.classList.toggle('active', i === currentDay);
-  });
-  // scroll pill into view
-  const activePill = document.querySelectorAll('.day-pill')[currentDay];
-  if (activePill) activePill.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
-}
-
-// Touch/swipe support
-let touchStartX = 0;
-let touchStartY = 0;
-document.addEventListener('touchstart', e => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-}, {passive:true});
-document.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
-    if (dx < 0) goToDay(currentDay + 1);
-    else goToDay(currentDay - 1);
-  }
-}, {passive:true});
-
-// ═══════════════════════════════════════════════
-// EDIT MODE
-// ═══════════════════════════════════════════════
-function toggleEdit() {
-  editMode = !editMode;
-  document.body.classList.toggle('edit-mode', editMode);
-  const toggle = document.getElementById('editToggle');
-  toggle.classList.toggle('active', editMode);
-  toggle.textContent = editMode ? '✅ Editando' : '✏️ Editar';
-
-  // enable/disable contenteditable on all fields
-  document.querySelectorAll('[contenteditable]').forEach(el => {
-    el.contentEditable = editMode ? 'true' : 'false';
-  });
-}
-
-// ═══════════════════════════════════════════════
-// PHOTO MODAL
-// ═══════════════════════════════════════════════
-function attachPhotoHandlers() {
-  // already handled by onclick in HTML
-}
-
-function openPhotoModal(di, pi) {
-  pendingPhotoSlot = {di, pi};
-  document.getElementById('photoUrlInput').value = data.days[di].kite.photos[pi] || '';
-  document.getElementById('photoModal').classList.add('show');
-  setTimeout(() => document.getElementById('photoUrlInput').focus(), 100);
-}
-
-function closePhotoModal(e) {
-  if (e && e.target !== document.getElementById('photoModal')) return;
-  document.getElementById('photoModal').classList.remove('show');
-  pendingPhotoSlot = null;
+function openPhotoModal(key) {
+  activeSlot = key;
+  document.getElementById('photoUrlInput').value = photoData[key] || '';
+  document.getElementById('photoModal').classList.add('open');
+  setTimeout(() => document.getElementById('photoUrlInput').focus(), 150);
 }
 
 function confirmPhoto() {
-  if (!pendingPhotoSlot) return;
   const url = document.getElementById('photoUrlInput').value.trim();
-  const {di, pi} = pendingPhotoSlot;
-  data.days[di].kite.photos[pi] = url;
-  saveAll();
-  document.getElementById('photoModal').classList.remove('show');
-  // re-render just this photo slot
-  const slot = document.querySelector(`#photos-${di} .photo-slot:nth-child(${pi+1})`);
-  if (slot) {
-    slot.innerHTML = url
-      ? `<img src="${url}" alt="foto ${pi+1}"><span class="photo-label">Trocar</span>`
-      : `<span class="photo-add-icon">📸</span><span style="font-size:.65em;color:var(--muted)">Adicionar foto</span>`;
+  if (activeSlot) {
+    photoData[activeSlot] = url;
+    localStorage.setItem('velejin_photos', JSON.stringify(photoData));
+    renderPhotos();
   }
-  pendingPhotoSlot = null;
+  closeModal('photoModal');
 }
 
-// ═══════════════════════════════════════════════
-// APTO LINK
-// ═══════════════════════════════════════════════
-function editAptoLink(di) {
-  const current = data.days[di].apto.link || '';
-  const url = prompt('Link do apto/local (Airbnb, Google Maps, etc.):', current);
-  if (url === null) return;
-  data.days[di].apto.link = url.trim();
-  saveAll();
-  // re-render the screen
-  const screen = document.querySelector(`[data-day="${di}"]`);
-  if (screen) {
-    screen.innerHTML = buildDayHTML(data.days[di], di);
-    if (editMode) {
-      screen.querySelectorAll('[contenteditable]').forEach(el => el.contentEditable = 'true');
-    }
+// ── CARDÁPIO ──
+function openCardapioModal() {
+  const saved = localStorage.getItem('velejin_cardapio_url') || '';
+  document.getElementById('cardapioUrlInput').value = saved;
+  if (saved) {
+    window.open(saved, '_blank');
+    return;
   }
+  document.getElementById('cardapioModal').classList.add('open');
 }
 
-// ═══════════════════════════════════════════════
-// SPLASH → APP
-// ═══════════════════════════════════════════════
-function startApp() {
-  const splash = document.getElementById('splash');
-  splash.classList.add('hide');
-  setTimeout(() => { splash.style.display = 'none'; }, 500);
-  document.getElementById('app').style.display = 'flex';
-  render();
+function saveCardapio() {
+  const url = document.getElementById('cardapioUrlInput').value.trim();
+  if (url) localStorage.setItem('velejin_cardapio_url', url);
+  closeModal('cardapioModal');
 }
 
-// ═══════════════════════════════════════════════
-// PWA SERVICE WORKER
-// ═══════════════════════════════════════════════
+// ── MODAL ──
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.querySelectorAll('.modal-bg').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ── PWA INSTALL ──
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBar').classList.add('show');
+});
+document.getElementById('installBtn').addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const result = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('installBar').classList.remove('show');
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBar').classList.remove('show');
+});
+
+// ── SERVICE WORKER ──
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw-velejin.js').catch(() => {});
 }
+
+// ── INIT ──
+renderPhotos();
 </script>
 </body>
 </html>
