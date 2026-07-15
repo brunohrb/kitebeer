@@ -51,6 +51,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .hero-waves svg{width:200%;animation:wv 14s linear infinite;}
 @keyframes wv{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
+/* CAMISA BANNER */
+.blusa-banner{position:relative;background:#030d16;}
+.blusa-banner-label{text-align:center;font-size:.6em;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--teal);padding:18px 0 10px;}
+.blusa-banner img{width:100%;display:block;object-fit:cover;max-height:320px;}
+.blusa-banner-slogan{text-align:center;padding:14px 0 20px;font-size:1.1em;font-weight:900;letter-spacing:-.5px;color:var(--text);}
+
 /* BODY / DAY */
 .body{background:var(--surface);}
 .day{padding-bottom:28px;}
@@ -147,14 +153,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .moto-pago{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:3px 10px;border-radius:20px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);font-size:.66em;font-weight:800;color:var(--purple);letter-spacing:.5px;}
 .moto-card.carro img{aspect-ratio:16/9;object-position:center;}
 
-/* CAMISA */
-.blusa-wrap{border-radius:16px;overflow:hidden;margin-bottom:14px;}
-.blusa-wrap img{width:100%;display:block;object-fit:cover;}
-.blusa-sizes{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;}
-.bsize{padding:10px 20px;border-radius:40px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.85em;font-weight:800;cursor:pointer;font-family:inherit;transition:all .18s;}
-.bsize.on{background:rgba(0,212,184,.15);border-color:var(--teal);color:var(--teal);}
-.blusa-sel{text-align:center;font-size:.78em;color:var(--green);font-weight:700;min-height:20px;}
-
 /* INSTALL BANNER */
 #install-banner{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:200;background:var(--card);border:1px solid var(--teal);border-radius:16px;padding:14px 20px;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);max-width:320px;width:calc(100% - 32px);}
 #install-banner.hidden{display:none!important;}
@@ -221,6 +219,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
     </svg>
   </div>
 </section>
+
+<!-- CAMISA DA TRIP -->
+<div class="blusa-banner">
+  <div class="blusa-banner-label">Kite Beer · Edição 2026</div>
+  <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/blusa.jpeg" alt="Blusa Kite Beer 2026" loading="lazy">
+  <div class="blusa-banner-slogan">Amizade e Kite 🤙</div>
+</div>
 
 <main class="body">
 
@@ -639,26 +644,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
   </div>
 </section>
 
-<!-- CAMISA DA TRIP -->
-<section class="motoristas" style="padding-top:0;">
-  <div class="moto-hdr">
-    <div class="moto-hdr-label">Kite Beer · Edição 2026</div>
-    <div class="moto-hdr-title">👕 Blusa da Trip</div>
-    <div class="moto-hdr-sub">Escolha seu tamanho</div>
-  </div>
-  <div class="blusa-wrap">
-    <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/blusa.jpeg" alt="Blusa Kite Beer 2026" loading="lazy">
-  </div>
-  <div class="blusa-sizes">
-    <button class="bsize" onclick="pickSize(this)">P</button>
-    <button class="bsize" onclick="pickSize(this)">M</button>
-    <button class="bsize" onclick="pickSize(this)">G</button>
-    <button class="bsize" onclick="pickSize(this)">GG</button>
-    <button class="bsize" onclick="pickSize(this)">XG</button>
-  </div>
-  <div class="blusa-sel" id="blusa-sel"></div>
-</section>
-
 <!-- CLOSING -->
 <div class="closing">
   <div class="closing-logo">
@@ -729,13 +714,6 @@ function installApp(){
 function dismissInstall(){
   localStorage.setItem('v26_install_dismissed','1');
   document.getElementById('install-banner').classList.add('hidden');
-}
-
-// TAMANHO BLUSA
-function pickSize(btn){
-  document.querySelectorAll('.bsize').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  document.getElementById('blusa-sel').textContent='✅ Tamanho '+btn.textContent+' selecionado';
 }
 
 // SERVICE WORKER
