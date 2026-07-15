@@ -92,7 +92,13 @@ body{
   background:radial-gradient(ellipse,rgba(0,212,184,.22) 0%,transparent 70%);
   pointer-events:none;
 }
-.hero-logo{display:inline-block;margin-bottom:22px;filter:drop-shadow(0 0 32px rgba(0,212,184,.35));}
+.hero-logo{display:inline-block;margin-bottom:26px;}
+.hero-logo img{
+  width:180px;height:180px;
+  border-radius:50%;
+  object-fit:cover;
+  box-shadow:0 0 0 4px rgba(0,212,184,.45), 0 0 60px rgba(0,212,184,.3), 0 8px 32px rgba(0,0,0,.6);
+}
 .hero-h1{
   font-size:clamp(2em,8vw,3em);font-weight:900;letter-spacing:-2px;line-height:1;
   background:linear-gradient(150deg,#fff 0%,var(--cyan) 55%,var(--teal) 100%);
@@ -303,6 +309,11 @@ body{
   text-align:center;padding:40px 24px 60px;
   background:linear-gradient(180deg,var(--surface),#030d16);
 }
+.closing-logo img{
+  width:120px;height:120px;border-radius:50%;object-fit:cover;
+  box-shadow:0 0 0 3px rgba(0,212,184,.3), 0 0 30px rgba(0,212,184,.2);
+  margin-bottom:18px;
+}
 .closing-em{font-size:2.2em;margin-bottom:10px;}
 .closing-h{font-weight:800;font-size:1em;}
 .closing-s{font-size:.78em;color:var(--muted);margin-top:5px;}
@@ -399,7 +410,7 @@ body{
 <section class="hero">
   <div class="hero-glow"></div>
   <div class="hero-logo">
-    <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/kite%20beer%20logo.jpg" alt="Kite Beer" style="width:120px;height:120px;object-fit:contain;border-radius:20px;">
+    <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/kite%20beer%20logo.jpg" alt="Kite Beer">
   </div>
   <h1 class="hero-h1">Kite Trip<br>Velejin</h1>
   <div class="hero-loc">Pec&eacute;m &middot; Cear&aacute; &middot; Brasil</div>
@@ -618,7 +629,9 @@ body{
   </div>
 
   <div class="closing">
-    <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/kite%20beer%20logo.jpg" alt="KiteBeer" style="width:130px;height:130px;object-fit:contain;border-radius:18px;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto;">
+    <div class="closing-logo">
+      <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/kite%20beer%20logo.jpg" alt="KiteBeer">
+    </div>
     <div class="closing-em">&#x1F305;</div>
     <div class="closing-h">At&eacute; a pr&oacute;xima edi&ccedil;&atilde;o!</div>
     <div class="closing-s">Kite Beer &middot; Velejin &middot; Pec&eacute;m &middot; Cear&aacute;</div>
