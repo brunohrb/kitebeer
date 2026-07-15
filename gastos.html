@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#030d16">
+<title>Gastos · Kite Beer 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+:root{
+  --bg:#030d16;--surface:#061825;--card:#0a2236;
+  --teal:#00d4b8;--cyan:#3de8ff;--gold:#f5c518;
+  --coral:#ff6347;--purple:#a78bfa;--green:#4ade80;
+  --text:rgba(255,255,255,.92);--muted:rgba(255,255,255,.48);
+  --faint:rgba(255,255,255,.06);--border:rgba(255,255,255,.09);
+  --danger:#ff4f4f;
+}
+
+html{scroll-behavior:smooth;background:var(--bg);}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:var(--text);background:var(--bg);min-height:100vh;padding-bottom:60px;}
+
+/* ─── HEADER ─── */
+.hdr{position:sticky;top:0;z-index:100;padding:max(env(safe-area-inset-top),12px) 16px 12px;display:flex;align-items:center;justify-content:space-between;background:rgba(3,13,22,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.hdr-left{display:flex;flex-direction:column;}
+.hdr-name{font-size:.92em;font-weight:800;background:linear-gradient(90deg,var(--teal),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hdr-sub{font-size:.62em;color:var(--muted);margin-top:1px;}
+.hdr-back{font-size:.75em;color:var(--muted);text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:20px;}
+
+/* ─── LOADING OVERLAY ─── */
+#overlay{display:none;position:fixed;inset:0;background:rgba(3,13,22,.85);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+#overlay.on{display:flex;}
+.spin{width:44px;height:44px;border:3px solid rgba(0,212,184,.2);border-top:3px solid var(--teal);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+#overlay p{font-size:.85em;color:var(--muted);}
+
+/* ─── CONTAINER ─── */
+.wrap{max-width:500px;margin:0 auto;padding:20px 16px;}
+
+/* ─── CARDS ─── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:16px;}
+.card-title{font-size:.8em;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:16px;}
+
+/* ─── AUTH ─── */
+.auth-tabs{display:flex;gap:8px;margin-bottom:20px;}
+.atab{flex:1;padding:11px;background:var(--faint);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:.82em;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.5px;transition:all .2s;}
+.atab.on{background:rgba(0,212,184,.15);border-color:var(--teal);color:var(--teal);}
+
+/* ─── INPUTS ─── */
+.fg{margin-bottom:14px;}
+label.lbl{display:block;font-size:.72em;font-weight:700;letter-spacing:.5px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;}
+input,select{width:100%;padding:13px 14px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:.93em;font-family:inherit;-webkit-appearance:none;}
+input:focus,select:focus{outline:none;border-color:var(--teal);background:rgba(0,212,184,.05);}
+input::placeholder{color:var(--muted);}
+select option{background:#0a2236;}
+
+/* ─── BUTTONS ─── */
+.btn{width:100%;padding:15px;border:none;border-radius:50px;background:linear-gradient(135deg,var(--teal),var(--cyan));color:#030d16;font-weight:800;font-size:.95em;cursor:pointer;font-family:inherit;letter-spacing:.5px;transition:all .2s;position:relative;}
+.btn:hover{filter:brightness(1.08);}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.btn.danger{background:rgba(255,79,79,.15);border:1px solid rgba(255,79,79,.3);color:var(--danger);}
+.btn.sm{width:auto;padding:10px 18px;border-radius:30px;font-size:.8em;}
+.btn-row{display:flex;gap:10px;align-items:center;}
+
+/* ─── GRUPO INFO ─── */
+.grupo-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(0,212,184,.07);border:1px solid rgba(0,212,184,.2);border-radius:14px;padding:14px 16px;margin-bottom:16px;}
+.grupo-bar-name{font-weight:800;font-size:.95em;}
+.grupo-bar-code{font-size:.7em;color:var(--muted);margin-top:2px;font-family:'SF Mono',monospace;}
+
+/* ─── SUMMARY CARDS ─── */
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.scard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;}
+.scard-label{font-size:.62em;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.scard-val{font-size:1.4em;font-weight:900;font-variant-numeric:tabular-nums;}
+.scard-val.teal{color:var(--teal);}
+.scard-val.gold{color:var(--gold);}
+
+/* ─── PAYMENT PLAN ─── */
+.pay-item{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:13px 14px;margin-bottom:8px;}
+.pay-names{display:flex;align-items:center;gap:8px;font-size:.88em;}
+.pay-from{color:var(--danger);font-weight:700;}
+.pay-arrow{color:var(--muted);font-size:.8em;}
+.pay-to{color:var(--green);font-weight:700;}
+.pay-val{font-weight:800;color:var(--teal);font-variant-numeric:tabular-nums;font-size:.95em;}
+
+/* ─── BALANCE LIST ─── */
+.bal-item{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);}
+.bal-item:last-child{border:none;}
+.bal-name{font-size:.88em;font-weight:600;}
+.bal-val{font-size:.88em;font-weight:800;font-variant-numeric:tabular-nums;}
+.bal-val.pos{color:var(--green);}
+.bal-val.neg{color:var(--danger);}
+
+/* ─── PEOPLE TAGS ─── */
+.people-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.ptag{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:30px;padding:7px 14px;font-size:.8em;font-weight:600;}
+.ptag-del{background:none;border:none;color:rgba(255,79,79,.6);cursor:pointer;font-size:1em;padding:0;line-height:1;width:auto;}
+.ptag-del:hover{color:var(--danger);}
+
+/* ─── PARTICIPANT CHECKBOXES ─── */
+.cbox-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.cbox-opt input{display:none;}
+.cbox-opt label{display:block;padding:9px 16px;border-radius:30px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:.8em;font-weight:700;cursor:pointer;transition:all .18s;}
+.cbox-opt input:checked + label{background:rgba(0,212,184,.15);border-color:var(--teal);color:var(--teal);}
+
+/* ─── EXPENSE LIST ─── */
+.exp-item{display:flex;justify-content:space-between;align-items:flex-start;padding:13px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;gap:10px;}
+.exp-info strong{font-size:.9em;font-weight:700;}
+.exp-info small{display:block;font-size:.72em;color:var(--muted);margin-top:3px;}
+.exp-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.exp-val{font-weight:800;font-size:.92em;color:var(--teal);font-variant-numeric:tabular-nums;}
+.exp-del{background:none;border:none;color:rgba(255,255,255,.25);font-size:1em;cursor:pointer;padding:4px;line-height:1;width:auto;}
+.exp-del:hover{color:var(--danger);}
+
+/* ─── EMPTY STATES ─── */
+.empty{text-align:center;padding:24px;color:var(--muted);font-size:.83em;}
+
+/* ─── HIDDEN ─── */
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<!-- OVERLAY -->
+<div id="overlay"><div class="spin"></div><p id="overlay-msg">Carregando...</p></div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-name">💸 Gastos · Kite Beer</div>
+    <div class="hdr-sub">Divisão de despesas 2026</div>
+  </div>
+  <a href="velejin.html" class="hdr-back">← Roteiro</a>
+</header>
+
+<!-- ════════════════ TELA DE AUTH ════════════════ -->
+<div id="auth-screen" class="wrap">
+  <div class="card">
+    <div class="auth-tabs">
+      <button class="atab on" id="tab-btn-entrar" onclick="switchTab('entrar')">ENTRAR</button>
+      <button class="atab" id="tab-btn-criar" onclick="switchTab('criar')">CRIAR GRUPO</button>
+    </div>
+
+    <!-- ENTRAR -->
+    <div id="tab-entrar">
+      <div class="card-title">🔑 Entrar no grupo</div>
+      <div class="fg">
+        <label class="lbl">Código do grupo</label>
+        <input id="login-cod" type="text" placeholder="Ex: KITE26" style="text-transform:uppercase">
+      </div>
+      <div class="fg">
+        <label class="lbl">Senha</label>
+        <input id="login-pw" type="password" placeholder="Senha do grupo">
+      </div>
+      <button class="btn" id="btn-entrar" onclick="entrar()">ENTRAR</button>
+    </div>
+
+    <!-- CRIAR -->
+    <div id="tab-criar" class="hidden">
+      <div class="card-title">✨ Novo grupo</div>
+      <div class="fg">
+        <label class="lbl">Nome do grupo</label>
+        <input id="criar-nome" type="text" placeholder="Ex: Kite Beer 2026">
+      </div>
+      <div class="fg">
+        <label class="lbl">Senha (mín. 4 caracteres)</label>
+        <input id="criar-pw" type="password" placeholder="Crie uma senha">
+      </div>
+      <div class="fg">
+        <label class="lbl">Seu nome</label>
+        <input id="criar-criador" type="text" placeholder="Quem está criando?">
+      </div>
+      <button class="btn" id="btn-criar" onclick="criar()">CRIAR GRUPO</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ TELA DO APP ════════════════ -->
+<div id="app-screen" class="wrap hidden">
+
+  <!-- GRUPO BAR -->
+  <div class="grupo-bar">
+    <div>
+      <div class="grupo-bar-name" id="g-nome"></div>
+      <div class="grupo-bar-code">Código: <span id="g-codigo"></span></div>
+    </div>
+    <button class="btn sm ghost" onclick="sair()">Sair</button>
+  </div>
+
+  <!-- TOTAIS -->
+  <div class="summary-grid">
+    <div class="scard">
+      <div class="scard-label">Total gasto</div>
+      <div class="scard-val gold" id="total-val">R$ 0</div>
+    </div>
+    <div class="scard">
+      <div class="scard-label">Despesas</div>
+      <div class="scard-val teal" id="total-count">0</div>
+    </div>
+  </div>
+
+  <!-- PLANO DE ACERTO -->
+  <div class="card">
+    <div class="card-title">✅ Como acertar</div>
+    <div id="payment-plan"><div class="empty">Lance os gastos para ver o plano.</div></div>
+  </div>
+
+  <!-- SALDO -->
+  <div class="card">
+    <div class="card-title">📊 Saldo por pessoa</div>
+    <div id="balance-list"><div class="empty">Sem dados ainda.</div></div>
+  </div>
+
+  <!-- PARTICIPANTES -->
+  <div class="card">
+    <div class="card-title">👥 Galera do grupo</div>
+    <div class="btn-row">
+      <input id="new-person" type="text" placeholder="Nome do participante" style="flex:1">
+      <button class="btn sm" id="btn-add-person" onclick="addPerson()">+</button>
+    </div>
+    <div id="people-tags" class="people-tags"></div>
+  </div>
+
+  <!-- LANÇAR GASTO -->
+  <div class="card">
+    <div class="card-title">💸 Lançar gasto</div>
+    <div class="fg">
+      <input id="desc-input" type="text" placeholder="Descrição (ex: Uber, Cerveja, Pousada)">
+    </div>
+    <div class="fg">
+      <input id="amount-input" type="number" placeholder="Valor (R$)" step="0.01" min="0">
+    </div>
+    <div class="fg">
+      <label class="lbl">Quem pagou?</label>
+      <select id="payer-select"><option value="" disabled selected>Selecione...</option></select>
+    </div>
+    <div class="fg">
+      <label class="lbl" style="color:var(--teal)">Para quem foi? (marque os envolvidos)</label>
+      <div id="cbox-container" class="cbox-grid"></div>
+    </div>
+    <button class="btn" id="btn-add-exp" onclick="addExpense()">SALVAR GASTO</button>
+  </div>
+
+  <!-- HISTÓRICO -->
+  <div class="card">
+    <div class="card-title">📜 Histórico</div>
+    <div id="expenses-list"><div class="empty">Nenhuma despesa ainda.</div></div>
+    <div style="margin-top:14px;">
+      <button class="btn danger" id="btn-limpar" onclick="limpar()">Limpar todas as despesas</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+const SUPA_URL = 'https://fwhsjzkmnfxnlrvspkyr.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3aHNqemttbmZ4bmxydnNwa3lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0Nzg3MzUsImV4cCI6MjA4MzA1NDczNX0.lT_tHpkxiOQl2HdsFc5VQr_xfkEvoGi101MaITnSLkc';
+
+const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+let grupo = null;
+let people = [];
+let expenses = [];
+
+// ─── LOADING ───
+const overlay = document.getElementById('overlay');
+const overlayMsg = document.getElementById('overlay-msg');
+function showLoad(msg='Carregando...'){overlayMsg.textContent=msg;overlay.classList.add('on');}
+function hideLoad(){overlay.classList.remove('on');}
+
+// ─── TABS AUTH ───
+window.switchTab = function(t){
+  document.getElementById('tab-entrar').classList.toggle('hidden', t!=='entrar');
+  document.getElementById('tab-criar').classList.toggle('hidden', t!=='criar');
+  document.getElementById('tab-btn-entrar').classList.toggle('on', t==='entrar');
+  document.getElementById('tab-btn-criar').classList.toggle('on', t!=='entrar');
+};
+
+// ─── CRIAR GRUPO ───
+window.criar = async function(){
+  const nome = document.getElementById('criar-nome').value.trim();
+  const pw   = document.getElementById('criar-pw').value;
+  const quem = document.getElementById('criar-criador').value.trim();
+  if(!nome||!pw||!quem){alert('Preencha todos os campos!');return;}
+  if(pw.length<4){alert('Senha mínimo 4 caracteres!');return;}
+  const codigo = Math.random().toString(36).substring(2,8).toUpperCase();
+  const btn = document.getElementById('btn-criar');
+  btn.disabled=true;btn.textContent='Criando...';
+  showLoad('Criando grupo...');
+  try{
+    const {data,error} = await sb.from('grupos').insert([{nome,senha:pw,codigo_acesso:codigo,criado_por:quem}]).select().single();
+    if(error) throw error;
+    grupo=data;
+    localStorage.setItem('kb_grupo',JSON.stringify(data));
+    people=[];expenses=[];
+    alert(`🎉 Grupo criado!\n\nCódigo: ${codigo}\nSenha: ${pw}\n\nCompartilhe com a galera!`);
+    document.getElementById('criar-nome').value='';
+    document.getElementById('criar-pw').value='';
+    document.getElementById('criar-criador').value='';
+    mostrarApp();
+    await carregarDados();
+  }catch(e){alert('Erro: '+e.message);}
+  finally{hideLoad();btn.disabled=false;btn.textContent='CRIAR GRUPO';}
+};
+
+// ─── ENTRAR ───
+window.entrar = async function(){
+  const cod = document.getElementById('login-cod').value.trim().toUpperCase();
+  const pw  = document.getElementById('login-pw').value;
+  if(!cod||!pw){alert('Preencha código e senha!');return;}
+  const btn = document.getElementById('btn-entrar');
+  btn.disabled=true;btn.textContent='Entrando...';
+  showLoad('Verificando...');
+  try{
+    const {data,error} = await sb.from('grupos').select('*').eq('codigo_acesso',cod).eq('senha',pw).eq('ativo',true).single();
+    if(error||!data){alert('❌ Código ou senha incorretos!');return;}
+    grupo=data;
+    localStorage.setItem('kb_grupo',JSON.stringify(data));
+    people=[];expenses=[];
+    document.getElementById('login-cod').value='';
+    document.getElementById('login-pw').value='';
+    mostrarApp();
+    await carregarDados();
+  }catch(e){alert('Erro: '+e.message);}
+  finally{hideLoad();btn.disabled=false;btn.textContent='ENTRAR';}
+};
+
+// ─── SAIR ───
+window.sair = function(){
+  if(!confirm('Sair do grupo?'))return;
+  grupo=null;people=[];expenses=[];
+  localStorage.removeItem('kb_grupo');
+  document.getElementById('app-screen').classList.add('hidden');
+  document.getElementById('auth-screen').classList.remove('hidden');
+};
+
+function mostrarApp(){
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('app-screen').classList.remove('hidden');
+  document.getElementById('g-nome').textContent=grupo.nome;
+  document.getElementById('g-codigo').textContent=grupo.codigo_acesso;
+}
+
+// ─── CARREGAR DADOS ───
+async function carregarDados(){
+  if(!grupo)return;
+  showLoad('Carregando dados...');
+  try{
+    await Promise.all([carregarPessoas(), carregarDespesas()]);
+  }finally{hideLoad();}
+}
+
+async function carregarPessoas(){
+  const {data,error} = await sb.from('participantes').select('nome').eq('grupo_id',grupo.id).order('nome');
+  if(error)throw error;
+  people = data?data.map(p=>p.nome):[];
+  renderUI();
+}
+
+async function carregarDespesas(){
+  const {data,error} = await sb.from('despesas').select(`id,descricao,valor,pagador,criado_em,despesas_envolvidos(participante_nome)`).eq('grupo_id',grupo.id).order('criado_em',{ascending:false});
+  if(error)throw error;
+  expenses = data?data.map(d=>({
+    id:d.id, desc:d.descricao, amount:parseFloat(d.valor),
+    payer:d.pagador, involved:d.despesas_envolvidos.map(e=>e.participante_nome)
+  })):[];
+  renderUI();
+}
+
+// ─── ADD PESSOA ───
+window.addPerson = async function(){
+  const name = document.getElementById('new-person').value.trim();
+  if(!name){alert('Digite um nome!');return;}
+  if(people.includes(name)){alert('Nome já existe!');return;}
+  const btn=document.getElementById('btn-add-person');
+  btn.disabled=true;
+  try{
+    const {error} = await sb.from('participantes').insert([{grupo_id:grupo.id,nome:name}]);
+    if(error)throw error;
+    people.push(name);
+    document.getElementById('new-person').value='';
+    renderUI();
+  }catch(e){alert('Erro: '+e.message);}
+  finally{btn.disabled=false;}
+};
+
+// ─── DELETAR PESSOA ───
+window.deletePerson = async function(nome){
+  const temDespesa = expenses.some(e=>e.payer===nome||e.involved.includes(nome));
+  if(temDespesa){alert(`❌ ${nome} tem despesas lançadas.\nRemova as despesas primeiro.`);return;}
+  if(!confirm(`Remover ${nome} do grupo?`))return;
+  showLoad('Removendo...');
+  try{
+    const {error} = await sb.from('participantes').delete().eq('grupo_id',grupo.id).eq('nome',nome);
+    if(error)throw error;
+    people=people.filter(p=>p!==nome);
+    renderUI();
+  }catch(e){alert('Erro: '+e.message);}
+  finally{hideLoad();}
+};
+
+// ─── ADD DESPESA ───
+window.addExpense = async function(){
+  const desc    = document.getElementById('desc-input').value.trim();
+  const amount  = parseFloat(document.getElementById('amount-input').value);
+  const payer   = document.getElementById('payer-select').value;
+  const checked = document.querySelectorAll('.kb-cb:checked');
+  const involved= Array.from(checked).map(c=>c.value);
+
+  if(!desc||isNaN(amount)||amount<=0||!payer||involved.length===0){
+    alert('Preencha todos os campos!');return;
+  }
+
+  const btn=document.getElementById('btn-add-exp');
+  btn.disabled=true;btn.textContent='Salvando...';
+  showLoad('Salvando gasto...');
+  try{
+    const {error:fe} = await sb.rpc('adicionar_despesa_completa',{
+      p_grupo_id:grupo.id, p_descricao:desc, p_valor:amount, p_pagador:payer, p_envolvidos:involved
+    });
+    if(fe&&fe.code==='42883'){
+      const {data:d2,error:e2} = await sb.from('despesas').insert([{grupo_id:grupo.id,descricao:desc,valor:amount,pagador:payer}]).select().single();
+      if(e2)throw e2;
+      const envs = involved.map(n=>({despesa_id:d2.id,participante_nome:n}));
+      const {error:e3} = await sb.from('despesas_envolvidos').insert(envs);
+      if(e3)throw e3;
+    }else if(fe){throw fe;}
+
+    document.getElementById('desc-input').value='';
+    document.getElementById('amount-input').value='';
+    await carregarDespesas();
+  }catch(e){alert('Erro: '+e.message);}
+  finally{hideLoad();btn.disabled=false;btn.textContent='SALVAR GASTO';}
+};
+
+// ─── DELETAR DESPESA ───
+window.removeExpense = async function(id){
+  if(!confirm('Apagar esta despesa?'))return;
+  showLoad('Removendo...');
+  try{
+    const {error} = await sb.from('despesas').delete().eq('id',id);
+    if(error)throw error;
+    await carregarDespesas();
+  }catch(e){alert('Erro: '+e.message);}
+  finally{hideLoad();}
+};
+
+// ─── LIMPAR TUDO ───
+window.limpar = async function(){
+  if(!confirm('Limpar TODAS as despesas do grupo?'))return;
+  const btn=document.getElementById('btn-limpar');
+  btn.disabled=true;
+  showLoad('Limpando...');
+  try{
+    const {error} = await sb.from('despesas').delete().eq('grupo_id',grupo.id);
+    if(error)throw error;
+    expenses=[];
+    renderUI();
+  }catch(e){alert('Erro: '+e.message);}
+  finally{hideLoad();btn.disabled=false;}
+};
+
+// ─── RENDER UI ───
+function renderUI(){
+  renderPeople();
+  renderExpenses();
+  calcBalances();
+}
+
+function renderPeople(){
+  const tags = document.getElementById('people-tags');
+  tags.innerHTML = people.map(p=>`
+    <span class="ptag">${p}
+      <button class="ptag-del" onclick="deletePerson('${p.replace(/'/g,"\\'")}')">×</button>
+    </span>`).join('');
+
+  const sel = document.getElementById('payer-select');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="" disabled selected>Selecione...</option>';
+  people.forEach(p=>{const o=document.createElement('option');o.value=o.textContent=p;sel.appendChild(o);});
+  if(people.includes(cur))sel.value=cur;
+
+  const box = document.getElementById('cbox-container');
+  const curChecked = Array.from(document.querySelectorAll('.kb-cb:checked')).map(c=>c.value);
+  box.innerHTML = people.map(p=>`
+    <div class="cbox-opt">
+      <input type="checkbox" class="kb-cb" id="cb_${p}" value="${p}" ${curChecked.includes(p)||curChecked.length===0?'checked':''}>
+      <label for="cb_${p}">${p}</label>
+    </div>`).join('');
+}
+
+function renderExpenses(){
+  const el = document.getElementById('expenses-list');
+  if(expenses.length===0){el.innerHTML='<div class="empty">Nenhuma despesa ainda.</div>';return;}
+
+  const total = expenses.reduce((s,e)=>s+e.amount,0);
+  document.getElementById('total-val').textContent='R$ '+total.toFixed(2);
+  document.getElementById('total-count').textContent=expenses.length;
+
+  el.innerHTML = expenses.map(e=>`
+    <div class="exp-item">
+      <div class="exp-info">
+        <strong>${e.desc}</strong>
+        <small>${e.payer} pagou · ${e.involved.join(', ')}</small>
+      </div>
+      <div class="exp-right">
+        <span class="exp-val">R$ ${e.amount.toFixed(2)}</span>
+        <button class="exp-del" onclick="removeExpense('${e.id}')">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function calcBalances(){
+  if(people.length===0){
+    document.getElementById('balance-list').innerHTML='<div class="empty">Adicione participantes.</div>';
+    document.getElementById('payment-plan').innerHTML='<div class="empty">Lance os gastos para ver o plano.</div>';
+    return;
+  }
+
+  const bal={};
+  people.forEach(p=>bal[p]=0);
+
+  expenses.forEach(e=>{
+    const share=e.amount/e.involved.length;
+    if(bal.hasOwnProperty(e.payer))bal[e.payer]+=e.amount;
+    e.involved.forEach(p=>{if(bal.hasOwnProperty(p))bal[p]-=share;});
+  });
+
+  const balEl = document.getElementById('balance-list');
+  const rows = Object.entries(bal).filter(([,v])=>Math.abs(v)>0.01);
+  if(rows.length===0){
+    balEl.innerHTML='<div class="empty" style="color:var(--teal)">✅ Ninguém deve nada!</div>';
+  }else{
+    balEl.innerHTML=rows.map(([p,v])=>`
+      <div class="bal-item">
+        <span class="bal-name">${p}</span>
+        <span class="bal-val ${v>0?'pos':'neg'}">${v>0?'recebe':'deve'} R$ ${Math.abs(v).toFixed(2)}</span>
+      </div>`).join('');
+  }
+
+  const debtors  = Object.entries(bal).filter(([,v])=>v<-0.01).map(([n,v])=>({n,v:Math.abs(v)})).sort((a,b)=>b.v-a.v);
+  const creditors= Object.entries(bal).filter(([,v])=>v>0.01).map(([n,v])=>({n,v})).sort((a,b)=>b.v-a.v);
+
+  const planEl = document.getElementById('payment-plan');
+  if(debtors.length===0){planEl.innerHTML='<div class="empty" style="color:var(--teal)">✅ Tudo certo!</div>';return;}
+
+  let html='';
+  let i=0,j=0;
+  while(i<debtors.length&&j<creditors.length){
+    const pay=Math.min(debtors[i].v,creditors[j].v);
+    html+=`<div class="pay-item">
+      <div class="pay-names">
+        <span class="pay-from">${debtors[i].n}</span>
+        <span class="pay-arrow">→</span>
+        <span class="pay-to">${creditors[j].n}</span>
+      </div>
+      <span class="pay-val">R$ ${pay.toFixed(2)}</span>
+    </div>`;
+    debtors[i].v-=pay; creditors[j].v-=pay;
+    if(debtors[i].v<0.01)i++;
+    if(creditors[j].v<0.01)j++;
+  }
+  planEl.innerHTML=html;
+
+  if(expenses.length===0){
+    document.getElementById('total-val').textContent='R$ 0,00';
+    document.getElementById('total-count').textContent='0';
+  }
+}
+
+// ─── INIT ───
+window.addEventListener('load',function(){
+  const saved=localStorage.getItem('kb_grupo');
+  if(saved){
+    grupo=JSON.parse(saved);
+    mostrarApp();
+    carregarDados();
+  }
+});
+
+})();
+</script>
+</body>
+</html>
