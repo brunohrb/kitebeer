@@ -1,4 +1,4 @@
-const CACHE = 'velejin-v1';
+const CACHE = 'velejin-v4';
 const FILES = ['/velejin.html', '/manifest-velejin.json'];
 
 self.addEventListener('install', e => {
