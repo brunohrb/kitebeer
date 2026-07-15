@@ -3,11 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- PWA: iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Velejin 2026">
+<link rel="apple-touch-icon" href="icon-velejin.svg">
+<!-- PWA: Android / Chrome -->
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#04111f">
 <link rel="manifest" href="manifest-velejin.json">
+<!-- SEO / Share -->
+<meta name="description" content="Roteiro da Kite Trip Velejin — 6 a 9 de Agosto de 2026, Pecém-CE">
 <title>Kite Trip Velejin 2026</title>
 <style>
 /* ── RESET & BASE ── */
@@ -469,7 +475,7 @@ body{
 
     <!-- 15:00 DW -->
     <div class="event-item">
-      <div class="event-dot kite">🪁</div>
+      <div class="event-dot kite">🏄‍♂️</div>
       <div class="event-body">
         <div class="event-time">15:00</div>
         <div class="event-title">DW Pecém → Ventaya</div>
@@ -554,7 +560,7 @@ body{
 
     <!-- 14:00 DW Pecém - Paracuru -->
     <div class="event-item">
-      <div class="event-dot kite">🪁</div>
+      <div class="event-dot kite">🏄‍♂️</div>
       <div class="event-body">
         <div class="event-time">14:00</div>
         <div class="event-title">DW Pecém → Paracuru</div>
@@ -569,10 +575,8 @@ body{
         <div class="event-time">19:00</div>
         <div class="event-title">Assado de Peixe</div>
         <div class="event-desc">O clássico da trip. Peixe fresquinho direto do mar.</div>
-        <div class="photo-slot" onclick="openPhotoModal('peixe')" id="slot-peixe">
-          <div class="photo-overlay">✏️ Trocar foto</div>
-          <span class="photo-slot-icon">📸</span>
-          <span class="photo-slot-label">Adicionar foto do assado</span>
+        <div class="photo-slot" id="slot-peixe" style="cursor:default;">
+          <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/assado%20de%20peixe.jpg" alt="Assado de Peixe" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px;">
         </div>
       </div>
     </div>
@@ -627,7 +631,7 @@ body{
 
     <!-- 15:00 Pecém - Ventaya -->
     <div class="event-item">
-      <div class="event-dot kite">🪁</div>
+      <div class="event-dot kite">🏄‍♂️</div>
       <div class="event-body">
         <div class="event-time">15:00</div>
         <div class="event-title">Pecém → Ventaya</div>
@@ -717,7 +721,7 @@ body{
 
     <!-- 11:00 Velejar -->
     <div class="event-item">
-      <div class="event-dot kite">🪁</div>
+      <div class="event-dot kite">🏄‍♂️</div>
       <div class="event-body">
         <div class="event-time">11:00</div>
         <div class="event-title">Coragem de velejar? Vamos. 🤙</div>
