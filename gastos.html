@@ -136,10 +136,9 @@ select option{background:#0a2236;}
 <script>
 (function(){
 'use strict';
-var SUPA_URL='https://fwhsjzkmnfxnlrvspkyr.supabase.co';
-var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3aHNqemttbmZ4bmxydnNwa3lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0Nzg3MzUsImV4cCI6MjA4MzA1NDczNX0.lT_tHpkxiOQl2HdsFc5VQr_xfkEvoGi101MaITnSLkc';
+var SUPA_URL='https://hisbbtddpoxufvghxqtm.supabase.co';
+var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhpc2JidGRkcG94dWZ2Z2h4cXRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyMDM0OTgsImV4cCI6MjA4Nzc3OTQ5OH0.r3VkLkBxeorkCYjB-y6WOchePdfRKsm5lWE1iSSYlrw';
 var CODIGO='KITEBEER26';
-var SENHA='kite2026';
 var sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
 var grupoId=null,people=[],expenses=[];
 
@@ -149,9 +148,9 @@ function unload(){document.getElementById('overlay').classList.remove('on');}
 window.addEventListener('load',async function(){
   load('Conectando...');
   try{
-    var r=await sb.from('grupos').select('id').eq('codigo_acesso',CODIGO).eq('ativo',true).single();
+    var r=await sb.from('kb_grupos').select('id').eq('codigo_acesso',CODIGO).eq('ativo',true).single();
     if(r.error||!r.data){
-      var cr=await sb.from('grupos').insert([{nome:'Kite Beer 2026',senha:SENHA,codigo_acesso:CODIGO,criado_por:'App'}]).select().single();
+      var cr=await sb.from('kb_grupos').insert([{nome:'Kite Beer 2026',codigo_acesso:CODIGO,criado_por:'App'}]).select().single();
       if(cr.error)throw cr.error;
       r.data=cr.data;
     }
@@ -162,14 +161,14 @@ window.addEventListener('load',async function(){
 });
 
 async function loadPeople(){
-  var r=await sb.from('participantes').select('nome').eq('grupo_id',grupoId).order('nome');
+  var r=await sb.from('kb_participantes').select('nome').eq('grupo_id',grupoId).order('nome');
   if(r.error)throw r.error;
   people=r.data?r.data.map(function(p){return p.nome;}):[]; renderUI();
 }
 async function loadExpenses(){
-  var r=await sb.from('despesas').select('id,descricao,valor,pagador,criado_em,despesas_envolvidos(participante_nome)').eq('grupo_id',grupoId).order('criado_em',{ascending:false});
+  var r=await sb.from('kb_despesas').select('id,descricao,valor,pagador,criado_em,kb_despesas_envolvidos(participante_nome)').eq('grupo_id',grupoId).order('criado_em',{ascending:false});
   if(r.error)throw r.error;
-  expenses=r.data?r.data.map(function(d){return{id:d.id,desc:d.descricao,amount:parseFloat(d.valor),payer:d.pagador,involved:d.despesas_envolvidos.map(function(e){return e.participante_nome;})};}):[]; renderUI();
+  expenses=r.data?r.data.map(function(d){return{id:d.id,desc:d.descricao,amount:parseFloat(d.valor),payer:d.pagador,involved:d.kb_despesas_envolvidos.map(function(e){return e.participante_nome;})};}):[]; renderUI();
 }
 
 window.addPerson=async function(){
@@ -178,7 +177,7 @@ window.addPerson=async function(){
   if(people.indexOf(name)>=0){alert('Nome ja existe!');return;}
   var btn=document.getElementById('btn-add-person');btn.disabled=true;
   try{
-    var r=await sb.from('participantes').insert([{grupo_id:grupoId,nome:name}]);
+    var r=await sb.from('kb_participantes').insert([{grupo_id:grupoId,nome:name}]);
     if(r.error)throw r.error;
     people.push(name);document.getElementById('new-person').value='';renderUI();
   }catch(e){alert('Erro: '+e.message);}finally{btn.disabled=false;}
@@ -189,7 +188,7 @@ window.deletePerson=async function(nome){
   if(!confirm('Remover '+nome+'?'))return;
   load('Removendo...');
   try{
-    var r=await sb.from('participantes').delete().eq('grupo_id',grupoId).eq('nome',nome);
+    var r=await sb.from('kb_participantes').delete().eq('grupo_id',grupoId).eq('nome',nome);
     if(r.error)throw r.error;
     people=people.filter(function(p){return p!==nome;});renderUI();
   }catch(e){alert('Erro: '+e.message);}finally{unload();}
@@ -204,13 +203,10 @@ window.addExpense=async function(){
   var btn=document.getElementById('btn-add-exp');btn.disabled=true;btn.textContent='Salvando...';
   load('Salvando...');
   try{
-    var fe=await sb.rpc('adicionar_despesa_completa',{p_grupo_id:grupoId,p_descricao:desc,p_valor:amount,p_pagador:payer,p_envolvidos:involved});
-    if(fe.error&&fe.error.code==='42883'){
-      var d2=await sb.from('despesas').insert([{grupo_id:grupoId,descricao:desc,valor:amount,pagador:payer}]).select().single();
-      if(d2.error)throw d2.error;
-      var e3=await sb.from('despesas_envolvidos').insert(involved.map(function(n){return{despesa_id:d2.data.id,participante_nome:n};}));
-      if(e3.error)throw e3.error;
-    }else if(fe.error)throw fe.error;
+    var d2=await sb.from('kb_despesas').insert([{grupo_id:grupoId,descricao:desc,valor:amount,pagador:payer}]).select().single();
+    if(d2.error)throw d2.error;
+    var e3=await sb.from('kb_despesas_envolvidos').insert(involved.map(function(n){return{despesa_id:d2.data.id,participante_nome:n};}));
+    if(e3.error)throw e3.error;
     document.getElementById('desc-input').value='';document.getElementById('amount-input').value='';
     await loadExpenses();
   }catch(e){alert('Erro: '+e.message);}finally{unload();btn.disabled=false;btn.textContent='SALVAR GASTO';}
@@ -219,14 +215,14 @@ window.addExpense=async function(){
 window.removeExpense=async function(id){
   if(!confirm('Apagar esta despesa?'))return;
   load('Removendo...');
-  try{var r=await sb.from('despesas').delete().eq('id',id);if(r.error)throw r.error;await loadExpenses();}
+  try{var r=await sb.from('kb_despesas').delete().eq('id',id);if(r.error)throw r.error;await loadExpenses();}
   catch(e){alert('Erro: '+e.message);}finally{unload();}
 };
 
 window.limpar=async function(){
   if(!confirm('Limpar TODAS as despesas?'))return;
   load('Limpando...');
-  try{var r=await sb.from('despesas').delete().eq('grupo_id',grupoId);if(r.error)throw r.error;expenses=[];renderUI();}
+  try{var r=await sb.from('kb_despesas').delete().eq('grupo_id',grupoId);if(r.error)throw r.error;expenses=[];renderUI();}
   catch(e){alert('Erro: '+e.message);}finally{unload();}
 };
 
