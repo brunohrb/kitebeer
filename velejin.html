@@ -199,135 +199,138 @@ body{
   transition:all .2s;
 }
 .acard:hover{background:rgba(0,212,184,.07);border-color:rgba(0,212,184,.3);}
-.acard-icon{font-size:1.25em;margin-bottom:5px;}
-.acard-name{font-size:.8em;font-weight:700;color:#fff;}
-.acard-info{font-size:.7em;color:var(--muted);margin-top:2px;}
-.acard-cta{font-size:.67em;color:var(--teal);font-weight:600;margin-top:5px;}
+.acard-icon{font-size:1.4em;margin-bottom:5px;}
+.acard-name{font-size:.8em;font-weight:700;line-height:1.3;}
+.acard-det{font-size:.68em;color:var(--muted);margin-top:3px;}
 
 /* ══ PHOTO REVEAL ══ */
 .photo-reveal{
-  margin-top:10px;border-radius:14px;overflow:hidden;
-  border:1.5px dashed rgba(0,212,184,.25);
-  background:rgba(0,212,184,.04);
-  aspect-ratio:16/9;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:8px;cursor:pointer;transition:all .22s;position:relative;
+  margin-top:12px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(0,212,184,.08),rgba(61,232,255,.04));
+  border:1.5px dashed rgba(0,212,184,.3);
+  padding:22px 16px;text-align:center;
+  cursor:pointer;transition:all .2s;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
 }
-.photo-reveal:hover{border-color:var(--teal);background:rgba(0,212,184,.08);}
-.photo-reveal-icon{font-size:2em;opacity:.6;}
-.photo-reveal-label{font-size:.76em;color:var(--teal);font-weight:600;}
-.photo-reveal-sub{font-size:.66em;color:var(--muted);}
-.photo-reveal::after{
-  content:'';position:absolute;
-  width:56px;height:56px;border-radius:50%;
-  border:2px solid rgba(0,212,184,.3);
-  animation:pulse 2.4s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{transform:scale(.9);opacity:.5}50%{transform:scale(1.15);opacity:.15}}
+.photo-reveal:hover{background:linear-gradient(135deg,rgba(0,212,184,.15),rgba(61,232,255,.08));border-color:rgba(0,212,184,.6);}
+.photo-reveal-icon{font-size:2em;}
+.photo-reveal-label{font-size:.85em;font-weight:700;color:var(--teal);}
+.photo-reveal-sub{font-size:.72em;color:var(--muted);}
 
-/* ══ PHOTO SLOT (editable) ══ */
+/* ══ PHOTO SLOT ══ */
 .photo-slot{
-  margin-top:10px;border-radius:14px;overflow:hidden;
-  border:1.5px dashed var(--border);
-  background:var(--faint);
-  aspect-ratio:16/9;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:8px;cursor:pointer;transition:all .22s;position:relative;
+  margin-top:12px;border-radius:14px;
+  background:var(--faint);border:1.5px dashed var(--border);
+  padding:22px 16px;text-align:center;
+  cursor:pointer;transition:all .2s;
+  position:relative;overflow:hidden;
 }
 .photo-slot:hover{border-color:rgba(255,255,255,.25);}
-.ps-icon{font-size:1.8em;opacity:.35;}
-.ps-label{font-size:.74em;color:var(--muted);}
-.photo-slot.has-photo{border-style:solid;border-color:transparent;padding:0;}
-.photo-slot.has-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-.photo-slot.has-photo .ps-icon,
-.photo-slot.has-photo .ps-label{display:none;}
+.photo-slot img{width:100%;border-radius:10px;display:block;}
 .ps-change{
-  display:none;position:absolute;inset:0;background:rgba(0,0,0,.55);
-  align-items:center;justify-content:center;
-  font-size:.76em;font-weight:700;color:#fff;gap:4px;
+  position:absolute;bottom:10px;right:10px;
+  font-size:.68em;background:rgba(0,0,0,.6);padding:4px 10px;
+  border-radius:20px;color:var(--muted);
 }
-.photo-slot:hover .ps-change{display:flex;}
-
-/* ══ DIVIDER ══ */
-.divider{height:1px;background:var(--border);margin:0 14px;}
+.ps-icon{font-size:2em;display:block;margin-bottom:6px;}
+.ps-label{font-size:.8em;color:var(--muted);}
 
 /* ══ LIGHTBOX ══ */
 .lbx{
-  position:fixed;inset:0;z-index:300;
+  display:none;position:fixed;inset:0;z-index:999;
   background:rgba(0,0,0,.92);backdrop-filter:blur(8px);
-  display:none;align-items:center;justify-content:center;flex-direction:column;
+  flex-direction:column;align-items:center;justify-content:center;
   padding:20px;
 }
 .lbx.open{display:flex;}
-.lbx img{max-width:100%;max-height:80vh;border-radius:12px;object-fit:contain;}
+.lbx img{
+  max-width:100%;max-height:80vh;
+  border-radius:16px;object-fit:contain;
+  box-shadow:0 0 60px rgba(0,212,184,.25);
+}
 .lbx-close{
-  position:absolute;top:max(env(safe-area-inset-top),16px);right:16px;
-  width:40px;height:40px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);
-  background:rgba(255,255,255,.08);color:#fff;font-size:1.1em;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-family:inherit;
+  position:absolute;top:max(env(safe-area-inset-top),16px);right:20px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:white;font-size:1.2em;width:38px;height:38px;
+  border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
 }
-.lbx-cap{margin-top:14px;font-size:.82em;color:var(--muted);text-align:center;}
+.lbx-cap{
+  margin-top:16px;font-size:.82em;color:rgba(255,255,255,.6);
+  text-align:center;
+}
 
-/* ══ MODAL ══ */
-.modal-bg{
-  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;
-  display:none;align-items:flex-end;justify-content:center;
-  backdrop-filter:blur(6px);
+/* ══ PHOTO MODAL ══ */
+.pmodal{
+  display:none;position:fixed;inset:0;z-index:998;
+  background:rgba(0,0,0,.8);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:20px;
 }
-.modal-bg.open{display:flex;}
-.modal{
-  width:100%;max-width:520px;
-  background:#0d2030;border-radius:22px 22px 0 0;
-  padding:22px 18px max(22px,env(safe-area-inset-bottom));
-  border-top:1px solid rgba(255,255,255,.12);
+.pmodal.open{display:flex;}
+.pmodal-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:24px;width:100%;max-width:380px;
 }
-.modal h3{font-size:.9em;font-weight:700;margin-bottom:12px;}
-.modal p{font-size:.82em;color:var(--muted);line-height:1.6;margin-bottom:12px;}
-.modal input{
-  width:100%;padding:12px 14px;border-radius:12px;
-  background:rgba(255,255,255,.07);border:1px solid var(--border);
-  color:#fff;font-size:.9em;font-family:inherit;outline:none;
+.pmodal-title{font-weight:800;margin-bottom:16px;font-size:.95em;}
+.pmodal input{
+  width:100%;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;color:var(--text);
+  font-size:.88em;font-family:inherit;
+  outline:none;transition:border-color .2s;
 }
-.modal input:focus{border-color:var(--teal);}
-.mrow{display:flex;gap:8px;margin-top:10px;}
-.mbtn{
-  flex:1;padding:12px;border-radius:12px;font-size:.87em;
-  font-weight:700;border:none;cursor:pointer;font-family:inherit;
+.pmodal input:focus{border-color:var(--teal);}
+.pmodal-btns{display:flex;gap:8px;margin-top:14px;}
+.pmodal-btns button{
+  flex:1;padding:11px;border-radius:10px;
+  font-size:.85em;font-weight:700;cursor:pointer;
+  font-family:inherit;border:none;transition:all .2s;
 }
-.mbtn-x{background:rgba(255,255,255,.08);color:var(--muted);}
-.mbtn-ok{background:linear-gradient(135deg,var(--teal),var(--cyan));color:#030d16;}
+.pbtn-ok{background:var(--teal);color:#000;}
+.pbtn-cancel{background:var(--faint);border:1px solid var(--border)!important;color:var(--muted);}
 
-/* ══ INSTALL BANNER ══ */
-.install{
-  position:fixed;bottom:0;left:0;right:0;z-index:150;
-  padding:12px 16px max(12px,env(safe-area-inset-bottom));
-  background:rgba(3,13,22,.96);border-top:1px solid var(--border);
-  display:none;align-items:center;gap:12px;
-  backdrop-filter:blur(16px);
+/* ══ CARDAPIO ══ */
+.cardapio-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin:16px 14px 0;padding:13px;
+  background:linear-gradient(135deg,rgba(245,197,24,.12),rgba(245,197,24,.06));
+  border:1.5px solid rgba(245,197,24,.3);border-radius:14px;
+  color:var(--gold);font-weight:700;font-size:.88em;
+  cursor:pointer;text-decoration:none;transition:all .2s;
 }
-.install.show{display:flex;}
-.install-txt{flex:1;font-size:.78em;color:var(--muted);}
-.install-txt strong{color:#fff;display:block;font-size:.95em;margin-bottom:2px;}
-.install-btn{
-  padding:9px 18px;border-radius:40px;border:none;cursor:pointer;
-  background:linear-gradient(135deg,var(--teal),var(--cyan));
-  color:#030d16;font-weight:800;font-size:.8em;font-family:inherit;
-  white-space:nowrap;
-}
-.install-x{color:var(--muted);background:none;border:none;font-size:1.2em;cursor:pointer;}
+.cardapio-btn:hover{background:linear-gradient(135deg,rgba(245,197,24,.2),rgba(245,197,24,.1));}
 
-/* ══ CLOSING CARD ══ */
+/* ══ CLOSING ══ */
 .closing{
-  margin:20px 14px 0;padding:22px;
-  background:linear-gradient(135deg,rgba(255,99,71,.08),rgba(245,197,24,.05));
-  border:1px solid rgba(255,99,71,.2);border-radius:18px;text-align:center;
+  text-align:center;padding:40px 24px 60px;
+  background:linear-gradient(180deg,var(--surface),#030d16);
 }
 .closing-em{font-size:2.2em;margin-bottom:10px;}
 .closing-h{font-weight:800;font-size:1em;}
 .closing-s{font-size:.78em;color:var(--muted);margin-top:5px;}
 
-/* ══ DAY COLOR THEMES ══ */
+/* ══ INSTALL BANNER ══ */
+#install-banner{
+  display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  z-index:200;background:var(--card);border:1px solid var(--teal);
+  border-radius:16px;padding:14px 20px;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  max-width:320px;width:calc(100% - 32px);
+}
+#install-banner.hidden{display:none!important;}
+.ib-text{flex:1;font-size:.82em;}
+.ib-text b{display:block;margin-bottom:2px;}
+.ib-btn{
+  padding:8px 16px;background:var(--teal);color:#000;
+  border:none;border-radius:10px;font-weight:700;
+  font-size:.82em;cursor:pointer;white-space:nowrap;
+  font-family:inherit;
+}
+.ib-close{
+  background:none;border:none;color:var(--muted);
+  cursor:pointer;font-size:1.1em;padding:2px;
+}
+
+/* ══ DAY THEMES ══ */
 .day[data-d="0"]{--day-c:var(--teal);--day-a:rgba(0,212,184,.06);}
 .day[data-d="1"]{--day-c:var(--cyan);--day-a:rgba(61,232,255,.06);}
 .day[data-d="2"]{--day-c:var(--gold);--day-a:rgba(245,197,24,.06);}
@@ -336,105 +339,71 @@ body{
 </head>
 <body>
 
-<header class="hdr">
-  <div class="hdr-brand">
-    <svg width="36" height="36" viewBox="0 0 80 80" fill="none">
-      <rect width="80" height="80" rx="16" fill="#062236"/>
-      <defs>
-        <linearGradient id="hSky" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#083050"/><stop offset="65%" stop-color="#062236"/><stop offset="100%" stop-color="#041820"/>
-        </linearGradient>
-        <linearGradient id="hK" x1="15" y1="8" x2="65" y2="26" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#00d4b8"/><stop offset="100%" stop-color="#3de8ff"/>
-        </linearGradient>
-        <linearGradient id="hW" x1="0" y1="56" x2="0" y2="80" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#083d5e"/><stop offset="100%" stop-color="#041820"/>
-        </linearGradient>
-      </defs>
-      <rect width="80" height="80" rx="16" fill="url(#hSky)"/>
-      <path d="M0 58 Q20 52 40 58 Q60 64 80 58 L80 80 L0 80Z" fill="url(#hW)"/>
-      <path d="M5 62 Q15 59 25 62" stroke="rgba(61,232,255,.4)" stroke-width="1" fill="none" stroke-linecap="round"/>
-      <path d="M40 65 Q52 62 62 65" stroke="rgba(61,232,255,.25)" stroke-width="1" fill="none" stroke-linecap="round"/>
-      <path d="M15 28 Q40 6 65 28" stroke="url(#hK)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-      <path d="M15 28 Q40 6 65 28 Q50 36 40 34 Q30 36 15 28Z" fill="rgba(0,212,184,.18)"/>
-      <line x1="28" y1="18" x2="26" y2="32" stroke="rgba(0,212,184,.35)" stroke-width="1"/>
-      <line x1="40" y1="13" x2="40" y2="34" stroke="rgba(0,212,184,.35)" stroke-width="1"/>
-      <line x1="52" y1="18" x2="54" y2="32" stroke="rgba(0,212,184,.35)" stroke-width="1"/>
-      <path d="M15 28 Q30 36 40 34 Q50 36 65 28" stroke="rgba(0,212,184,.4)" stroke-width="1" fill="none"/>
-      <line x1="32" y1="33" x2="38" y2="50" stroke="rgba(255,255,255,.22)" stroke-width=".8"/>
-      <line x1="48" y1="33" x2="42" y2="50" stroke="rgba(255,255,255,.22)" stroke-width=".8"/>
-      <rect x="33" y="49" width="14" height="2.5" rx="1.25" fill="rgba(0,212,184,.8)"/>
-      <circle cx="40" cy="54.5" r="3" fill="white"/>
-      <path d="M37.2 53 Q40 51.5 42.8 53" stroke="rgba(0,212,184,.8)" stroke-width="1.2" fill="none"/>
-      <line x1="40" y1="57" x2="40" y2="63" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
-      <line x1="40" y1="59" x2="35" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-      <line x1="40" y1="59" x2="45" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-      <line x1="40" y1="63" x2="35" y2="68" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      <line x1="40" y1="63" x2="44" y2="67" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      <rect x="26" y="66" width="28" height="4" rx="2" fill="rgba(61,232,255,.75)" transform="rotate(-5 26 66)"/>
-      <path d="M22 71 Q28 68 34 71" stroke="rgba(255,255,255,.3)" stroke-width="1" fill="none" stroke-linecap="round"/>
-    </svg>
-    <div>
-      <div class="hdr-name">Kite Trip Velejin</div>
-      <div class="hdr-sub">6 – 9 Ago 2026 · Pecém</div>
+<!-- LIGHTBOXES -->
+<div class="lbx" id="lightbox" onclick="closeLightbox()">
+  <button class="lbx-close" onclick="closeLightbox()">&#x2715;</button>
+  <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/assado%20de%20peixe.jpg" alt="Assado de Peixe" loading="lazy">
+  <div class="lbx-cap">&#x1F41F; Assado de Peixe &middot; Pec&eacute;m 2026</div>
+</div>
+
+<div class="lbx" id="lightbox-banda" onclick="closeLightboxBanda()">
+  <button class="lbx-close" onclick="closeLightboxBanda()">&#x2715;</button>
+  <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/karrolzinha.jpg" alt="Karolzinha Sonfoneira" loading="lazy">
+  <div class="lbx-cap">&#x1F3B8; Karolzinha Sonfoneira &middot; Ventaya 2026</div>
+</div>
+
+<!-- PHOTO MODAL -->
+<div class="pmodal" id="photo-modal">
+  <div class="pmodal-box">
+    <div class="pmodal-title" id="pmodal-title">Adicionar foto</div>
+    <input type="url" id="pmodal-url" placeholder="Cole a URL da imagem aqui..." inputmode="url">
+    <div class="pmodal-btns">
+      <button class="pbtn-cancel" onclick="closePhotoModal()">Cancelar</button>
+      <button class="pbtn-ok" onclick="savePhoto()">Salvar</button>
     </div>
   </div>
-  <a href="index.html" class="hdr-back">← Início</a>
+</div>
+
+<!-- CARDAPIO MODAL -->
+<div class="pmodal" id="cardapio-modal">
+  <div class="pmodal-box">
+    <div class="pmodal-title">&#x1F4CB; Link do Card&aacute;pio</div>
+    <input type="url" id="cardapio-url" placeholder="Cole o link do card&aacute;pio..." inputmode="url">
+    <div class="pmodal-btns">
+      <button class="pbtn-cancel" onclick="closeCardapioModal()">Cancelar</button>
+      <button class="pbtn-ok" onclick="saveCardapio()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-brand">
+    <div>
+      <div class="hdr-name">Kite Beer</div>
+      <div class="hdr-sub">Velejin 2026 &middot; Pec&eacute;m</div>
+    </div>
+  </div>
+  <a href="index.html" class="hdr-back">&#x2190; Home</a>
 </header>
 
+<!-- DAY TABS -->
 <nav class="tabs" id="tabs">
-  <button class="tab on" onclick="goDay(0,this)">Dia 1 · Qui</button>
-  <button class="tab"    onclick="goDay(1,this)">Dia 2 · Sex</button>
-  <button class="tab"    onclick="goDay(2,this)">Dia 3 · Sáb</button>
-  <button class="tab"    onclick="goDay(3,this)">Dia 4 · Dom</button>
+  <button class="tab on" onclick="scrollToDay(0)">&#x26C5; Qui 6</button>
+  <button class="tab" onclick="scrollToDay(1)">&#x1F3C4; Sex 7</button>
+  <button class="tab" onclick="scrollToDay(2)">&#x1F31E; S&aacute;b 8</button>
+  <button class="tab" onclick="scrollToDay(3)">&#x1F1E7;&#x1F1F7; Dom 9</button>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
   <div class="hero-glow"></div>
   <div class="hero-logo">
-    <svg width="100" height="100" viewBox="0 0 80 80" fill="none">
-      <rect width="80" height="80" rx="20" fill="#062236"/>
-      <defs>
-        <linearGradient id="hSky2" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#083050"/><stop offset="65%" stop-color="#062236"/><stop offset="100%" stop-color="#041820"/>
-        </linearGradient>
-        <linearGradient id="hK2" x1="15" y1="8" x2="65" y2="26" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#00d4b8"/><stop offset="100%" stop-color="#3de8ff"/>
-        </linearGradient>
-        <linearGradient id="hW2" x1="0" y1="56" x2="0" y2="80" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#083d5e"/><stop offset="100%" stop-color="#041820"/>
-        </linearGradient>
-        <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      </defs>
-      <rect width="80" height="80" rx="20" fill="url(#hSky2)"/>
-      <path d="M0 58 Q20 52 40 58 Q60 64 80 58 L80 80 L0 80Z" fill="url(#hW2)"/>
-      <path d="M5 62 Q15 59 25 62" stroke="rgba(61,232,255,.4)" stroke-width="1" fill="none" stroke-linecap="round"/>
-      <path d="M40 65 Q52 62 62 65" stroke="rgba(61,232,255,.25)" stroke-width="1" fill="none" stroke-linecap="round"/>
-      <path d="M15 28 Q40 6 65 28" stroke="url(#hK2)" stroke-width="3.5" fill="none" stroke-linecap="round" filter="url(#glow)"/>
-      <path d="M15 28 Q40 6 65 28 Q50 36 40 34 Q30 36 15 28Z" fill="rgba(0,212,184,.2)"/>
-      <line x1="28" y1="18" x2="26" y2="32" stroke="rgba(0,212,184,.4)" stroke-width="1"/>
-      <line x1="40" y1="13" x2="40" y2="34" stroke="rgba(0,212,184,.4)" stroke-width="1"/>
-      <line x1="52" y1="18" x2="54" y2="32" stroke="rgba(0,212,184,.4)" stroke-width="1"/>
-      <path d="M15 28 Q30 36 40 34 Q50 36 65 28" stroke="rgba(0,212,184,.45)" stroke-width="1.2" fill="none"/>
-      <line x1="32" y1="33" x2="38" y2="50" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>
-      <line x1="48" y1="33" x2="42" y2="50" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>
-      <rect x="33" y="49" width="14" height="2.5" rx="1.25" fill="rgba(0,212,184,.85)"/>
-      <circle cx="40" cy="54.5" r="3" fill="white"/>
-      <path d="M37.2 53 Q40 51.5 42.8 53" stroke="rgba(0,212,184,.8)" stroke-width="1.2" fill="none"/>
-      <line x1="40" y1="57" x2="40" y2="63" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
-      <line x1="40" y1="59" x2="35" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-      <line x1="40" y1="59" x2="45" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-      <line x1="40" y1="63" x2="35" y2="68" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      <line x1="40" y1="63" x2="44" y2="67" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      <rect x="26" y="66" width="28" height="4" rx="2" fill="rgba(61,232,255,.8)" transform="rotate(-5 26 66)"/>
-      <line x1="28" y1="69" x2="26" y2="72" stroke="rgba(61,232,255,.5)" stroke-width="1.2" stroke-linecap="round"/>
-      <line x1="52" y1="68" x2="54" y2="71" stroke="rgba(61,232,255,.5)" stroke-width="1.2" stroke-linecap="round"/>
-      <path d="M22 71 Q28 68 34 71" stroke="rgba(255,255,255,.35)" stroke-width="1" fill="none" stroke-linecap="round"/>
-    </svg>
+    <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/kite%20beer%20logo.jpg" alt="Kite Beer" style="width:120px;height:120px;object-fit:contain;border-radius:20px;">
   </div>
   <h1 class="hero-h1">Kite Trip<br>Velejin</h1>
-  <div class="hero-loc">Pecém · Ceará · Brasil</div>
-  <div class="hero-badge">📅 6 a 9 de Agosto de 2026</div>
+  <div class="hero-loc">Pec&eacute;m &middot; Cear&aacute; &middot; Brasil</div>
+  <div class="hero-badge">&#x1F4C5; 6 a 9 de Agosto de 2026</div>
   <div class="hero-waves">
     <svg viewBox="0 0 1440 52" preserveAspectRatio="none" height="52">
       <path d="M0,26 C180,50 360,2 540,26 C720,50 900,2 1080,26 C1260,50 1350,10 1440,26 L1440,52 L0,52Z" fill="#061825"/>
@@ -445,193 +414,249 @@ body{
 
 <main class="body">
 
+<!-- DIA 0: QUINTA 6/8 -->
 <section class="day" data-d="0" id="day-0">
   <div class="day-head">
-    <div class="day-num">Dia 1 de 4</div>
-    <div class="day-big">Quinta-feira</div>
-    <div class="day-date">6 de Agosto de 2026</div>
-    <div class="day-dec">1</div>
+    <div class="day-dec">01</div>
+    <div class="day-num">Dia 1</div>
+    <div class="day-big">Quinta-Feira</div>
+    <div class="day-date">6 de Agosto de 2026 &middot; Chegada</div>
   </div>
   <div class="stripe"></div>
   <div class="events">
-    <div class="ecard" style="--ei-bg:rgba(0,212,184,.1)">
-      <div class="eicon">🏠</div>
+
+    <div class="ecard">
+      <div class="eicon" style="--ei-bg:rgba(0,212,184,.12)">&#x2708;&#xFE0F;</div>
       <div class="ebody">
-        <div class="etime">12:00</div>
-        <div class="etitle">Chegada &amp; Acomodações</div>
-        <div class="edesc">Check-in nos espaços. Veja onde cada um fica:</div>
+        <div class="etime">12:00 &ndash; 18:00</div>
+        <div class="etitle">Chegada &amp; Check-in</div>
+        <div class="edesc">Pessoal chegando de Fortaleza. Transfer e instala&ccedil;&atilde;o nos aptos.</div>
         <div class="acomod">
-          <a class="acard" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank"><div class="acard-icon">🏡</div><div class="acard-name">Cs. 2.7</div><div class="acard-info">5 quartos</div><div class="acard-cta">📸 Instagram →</div></a>
-          <a class="acard" href="https://www.instagram.com/stories/highlights/18062237377636213/" target="_blank"><div class="acard-icon">🛏️</div><div class="acard-name">Apto 102C</div><div class="acard-info">2 quartos + sala</div><div class="acard-cta">📸 Instagram →</div></a>
-          <a class="acard" href="https://www.instagram.com/stories/highlights/17987787710507233/" target="_blank"><div class="acard-icon">🛏️</div><div class="acard-name">Apto 103F</div><div class="acard-info">1 quarto + sala</div><div class="acard-cta">📸 Instagram →</div></a>
-          <a class="acard" href="https://www.instagram.com/stories/highlights/18026240075521145/" target="_blank"><div class="acard-icon">🛏️</div><div class="acard-name">Apto 201H</div><div class="acard-info">1 quarto + sala</div><div class="acard-cta">📸 Instagram →</div></a>
+          <a class="acard" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">
+            <div class="acard-icon">&#x1F3E0;</div>
+            <div class="acard-name">Cs. 2.7</div>
+            <div class="acard-det">5 quartos</div>
+          </a>
+          <a class="acard" href="https://www.instagram.com/stories/highlights/18062237377636213/" target="_blank">
+            <div class="acard-icon">&#x1F6CF;&#xFE0F;</div>
+            <div class="acard-name">Apto 102C</div>
+            <div class="acard-det">2 quartos + sala</div>
+          </a>
+          <a class="acard" href="https://www.instagram.com/stories/highlights/17987787710507233/" target="_blank">
+            <div class="acard-icon">&#x1F6CF;&#xFE0F;</div>
+            <div class="acard-name">Apto 103F</div>
+            <div class="acard-det">1 quarto + sala</div>
+          </a>
+          <a class="acard" href="https://www.instagram.com/stories/highlights/18026240075521145/" target="_blank">
+            <div class="acard-icon">&#x1F6CF;&#xFE0F;</div>
+            <div class="acard-name">Apto 201H</div>
+            <div class="acard-det">1 quarto + sala</div>
+          </a>
         </div>
       </div>
     </div>
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">🍽️</div><div class="ebody"><div class="etime">12:30</div><div class="etitle">Almoço</div><div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)"><div class="eicon">🏄‍♂️</div><div class="ebody"><div class="etime">15:00</div><div class="etitle">DW Pecém → Ventaya</div><div class="edesc">Downwinder de largada. Vento alísio nordeste, condições perfeitas.</div><div class="chips"><a class="chip chip-c" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTE5NDU1MjQwODcyNDkx?story_media_id=3938348567068268435&igsh=b2NxaG80bmk5eHNy" target="_blank">📸 Barraca Ventaya</a></div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(245,197,24,.1)"><div class="eicon">🌅</div><div class="ebody"><div class="etime">17:30</div><div class="etitle">Pôr do sol no Ventaya + 🍺</div><div class="edesc">Queda obrigatória de kite às 17h30 pra não perder o sol.</div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">🍽️</div><div class="ebody"><div class="etime">19:00</div><div class="etitle">Jantar</div><div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(245,197,24,.1)"><div class="eicon">🍺</div><div class="ebody"><div class="etime">19:01</div><div class="etitle">Beer 🍺</div><div class="edesc">Essa é a parte mais fácil do roteiro.</div></div></div>
+
+    <div class="ecard">
+      <div class="eicon" style="--ei-bg:rgba(0,212,184,.12)">&#x1F37B;</div>
+      <div class="ebody">
+        <div class="etime">19:00</div>
+        <div class="etitle">Jantar &amp; Boa-Vinda</div>
+        <div class="edesc">Primeiro encontro do grupo. Cerveja gelada, papo &amp; hype para os pr&oacute;ximos dias.</div>
+      </div>
+    </div>
+
   </div>
 </section>
-<div class="divider"></div>
 
+<!-- DIA 1: SEXTA 7/8 -->
 <section class="day" data-d="1" id="day-1">
   <div class="day-head">
-    <div class="day-num">Dia 2 de 4</div>
-    <div class="day-big">Sexta-feira</div>
-    <div class="day-date">7 de Agosto de 2026</div>
-    <div class="day-dec">2</div>
+    <div class="day-dec">02</div>
+    <div class="day-num">Dia 2</div>
+    <div class="day-big">Sexta-Feira</div>
+    <div class="day-date">7 de Agosto de 2026 &middot; Kite Day</div>
   </div>
   <div class="stripe"></div>
   <div class="events">
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">☕</div><div class="ebody"><div class="etime">08:00</div><div class="etitle">Café da manhã na Cs. 2.7</div><div class="chips"><a class="chip chip-t" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Cs. 2.7</a></div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">🍽️</div><div class="ebody"><div class="etime">12:00</div><div class="etitle">Almoço</div><div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)"><div class="eicon">🏄‍♂️</div><div class="ebody"><div class="etime">14:00</div><div class="etitle">DW Pecém → Paracuru</div><div class="edesc">Downwinder longo, rumo a Paracuru. Vento firme à tarde.</div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(255,99,71,.1)">
-      <div class="eicon">🐟</div>
+
+    <div class="ecard">
+      <div class="eicon" style="--ei-bg:rgba(61,232,255,.1)">&#x1F305;</div>
       <div class="ebody">
-        <div class="etime">19:00</div><div class="etitle">Assado de Peixe</div>
-        <div class="edesc">O clássico da trip. Peixe fresquinho direto do mar.</div>
-        <div class="photo-reveal" onclick="openLightbox()">
-          <div class="photo-reveal-icon">🐟</div>
-          <div class="photo-reveal-label">Toque para ver a foto</div>
-          <div class="photo-reveal-sub">Assado de Peixe · Pecém 2026</div>
+        <div class="etime">07:00</div>
+        <div class="etitle">Caf&eacute; da Manh&atilde;</div>
+        <div class="edesc">Caf&eacute; coletivo no apartamento. Energia para o dia de kite.</div>
+      </div>
+    </div>
+
+    <div class="ecard">
+      <div class="eicon" style="--ei-bg:rgba(61,232,255,.12)">&#x1FA81;</div>
+      <div class="ebody">
+        <div class="etime">09:00 &ndash; 17:00</div>
+        <div class="etitle">Sess&atilde;o de Kite &mdash; Pec&eacute;m</div>
+        <div class="edesc">Dia inteiro na &aacute;gua. Ventos aliz&iacute;os constantes, condi&ccedil;&otilde;es perfeitas.</div>
+        <div class="chips">
+          <span class="chip chip-c">&#x1F4A8; Vento 20-25 kn</span>
+          <span class="chip chip-d">&#x1F321;&#xFE0F; 28&deg;C</span>
         </div>
       </div>
     </div>
-    <div class="ecard" style="--ei-bg:rgba(245,197,24,.1)"><div class="eicon">🍺</div><div class="ebody"><div class="etime">19:01</div><div class="etitle">Beer 🍺</div><div class="edesc">Novamente pontual.</div></div></div>
+
+    <div class="ecard">
+      <div class="eicon" style="--ei-bg:rgba(255,150,50,.1)">&#x1F41F;</div>
+      <div class="ebody">
+        <div class="etime">19:00</div>
+        <div class="etitle">Assado de Peixe</div>
+        <div class="edesc">Peixada na brasa na beira da praia. Pec&eacute;m na veia.</div>
+        <div class="photo-reveal" onclick="openLightbox()">
+          <div class="photo-reveal-icon">&#x1F41F;</div>
+          <div class="photo-reveal-label">Toque para ver a foto</div>
+          <div class="photo-reveal-sub">Assado de Peixe &middot; Pec&eacute;m 2026</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
-<div class="divider"></div>
 
+<!-- DIA 2: SABADO 8/8 -->
 <section class="day" data-d="2" id="day-2">
   <div class="day-head">
-    <div class="day-num">Dia 3 de 4</div>
-    <div class="day-big">Sábado</div>
-    <div class="day-date">8 de Agosto de 2026</div>
-    <div class="day-dec">3</div>
+    <div class="day-dec">03</div>
+    <div class="day-num">Dia 3</div>
+    <div class="day-big">S&aacute;bado</div>
+    <div class="day-date">8 de Agosto de 2026 &middot; Festa</div>
   </div>
   <div class="stripe"></div>
   <div class="events">
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">☕</div><div class="ebody"><div class="etime">09:00</div><div class="etitle">Café da manhã na Cs. 2.7</div><div class="chips"><a class="chip chip-t" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Cs. 2.7</a></div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(255,99,71,.1)"><div class="eicon">🔥</div><div class="ebody"><div class="etime">12:00</div><div class="etitle">Churrasco 🔥</div><div class="edesc">Picanha, costela, linguiça e tudo que a galera trouxer.</div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)"><div class="eicon">🏄‍♂️</div><div class="ebody"><div class="etime">15:00</div><div class="etitle">Pecém → Ventaya</div><div class="edesc">Sessão da tarde no Ventaya. Vento de tarde, melhor hora.</div><div class="chips"><a class="chip chip-c" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTE5NDU1MjQwODcyNDkx?story_media_id=3938348567068268435&igsh=b2NxaG80bmk5eHNy" target="_blank">📸 Barraca Ventaya</a></div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(167,139,250,.1)">
-      <div class="eicon">🎸</div>
+
+    <div class="ecard">
+      <div class="eicon" style="--ei-bg:rgba(245,197,24,.1)">&#x1FA81;</div>
       <div class="ebody">
-        <div class="etime">17:00</div><div class="etitle">Festa — Karolzinha Sonfoneira</div>
-        <div class="edesc">Ao vivo no Ventaya. Não pode faltar!</div>
-        <div class="photo-reveal" onclick="openLightboxBanda()">
-          <div class="photo-reveal-icon">🎸</div>
-          <div class="photo-reveal-label">Toque para ver a foto</div>
-          <div class="photo-reveal-sub">Karolzinha Sonfoneira · Ventaya 2026</div>
+        <div class="etime">09:00 &ndash; 15:00</div>
+        <div class="etitle">Kite Manh&atilde;</div>
+        <div class="edesc">Mais uma sess&atilde;o impec&aacute;vel. &Uacute;ltima chance de voar antes da festa.</div>
+      </div>
+    </div>
+
+    <div class="ecard">
+      <div class="eicon" style="--ei-bg:rgba(245,197,24,.1)">&#x1F374;</div>
+      <div class="ebody">
+        <div class="etime">16:00</div>
+        <div class="etitle">Almo&ccedil;o / Descanso</div>
+        <div class="edesc">Repor as energias antes da festa.</div>
+        <div id="cardapio-btn-container">
+          <div class="cardapio-btn" onclick="openCardapioModal()" id="cardapio-btn">
+            &#x1F4CB; Ver Card&aacute;pio
+          </div>
         </div>
       </div>
     </div>
-    <div class="ecard" style="--ei-bg:rgba(167,139,250,.1)">
-      <div class="eicon">🎧</div>
+
+    <div class="ecard">
+      <div class="eicon" style="--ei-bg:rgba(167,139,250,.12)">&#x1F3B8;</div>
       <div class="ebody">
-        <div class="etime">19:00</div><div class="etitle">DJ 🎧</div>
-        <div class="edesc">A noite continua.</div>
+        <div class="etime">19:00</div>
+        <div class="etitle">Festa &mdash; Ventaya Barraca</div>
+        <div class="edesc">A melhor barraca de Pec&eacute;m. Show ao vivo &amp; pista de dan&ccedil;a.</div>
+        <div class="chips">
+          <a class="chip chip-t" href="https://www.instagram.com/ventayabarraca/" target="_blank">&#x1F4F8; @ventayabarraca</a>
+        </div>
+        <div class="photo-reveal" onclick="openLightboxBanda()">
+          <div class="photo-reveal-icon">&#x1F3B8;</div>
+          <div class="photo-reveal-label">Toque para ver a foto</div>
+          <div class="photo-reveal-sub">Karolzinha Sonfoneira &middot; Ventaya 2026</div>
+        </div>
         <div class="photo-slot" id="slot-dj" onclick="openPhotoModal('dj')">
-          <div class="ps-change">✏️ Trocar foto</div>
-          <span class="ps-icon">🎧</span>
+          <div class="ps-change">&#x270F;&#xFE0F; Trocar foto</div>
+          <span class="ps-icon">&#x1F3A7;</span>
           <span class="ps-label">Toque para adicionar foto do DJ</span>
         </div>
       </div>
     </div>
+
   </div>
 </section>
-<div class="divider"></div>
 
+<!-- DIA 3: DOMINGO 9/8 -->
 <section class="day" data-d="3" id="day-3">
-  <div class="day-head" style="background:linear-gradient(135deg,rgba(255,99,71,.07) 0%,transparent 70%)">
-    <div class="day-num" style="color:var(--coral)">Dia 4 de 4 · Último dia</div>
+  <div class="day-head">
+    <div class="day-dec">04</div>
+    <div class="day-num">Dia 4</div>
     <div class="day-big">Domingo</div>
-    <div class="day-date">9 de Agosto de 2026</div>
-    <div class="day-dec">4</div>
+    <div class="day-date">9 de Agosto de 2026 &middot; At&eacute; a pr&oacute;xima!</div>
   </div>
   <div class="stripe"></div>
   <div class="events">
-    <div class="ecard" style="--ei-bg:rgba(200,200,255,.08)"><div class="eicon">🙏</div><div class="ebody"><div class="etime">08:00</div><div class="etitle">Rezar para acordar bem</div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(200,200,255,.08)"><div class="eicon">🙏</div><div class="ebody"><div class="etime">08:20</div><div class="etitle">Rezar pra ter coragem</div><div class="edesc">Depois de ontem... vai precisar.</div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">☕</div><div class="ebody"><div class="etime">09:00</div><div class="etitle">Café da manhã na Cs. 2.7</div><div class="chips"><a class="chip chip-t" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Cs. 2.7</a></div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)"><div class="eicon">🏄‍♂️</div><div class="ebody"><div class="etime">11:00</div><div class="etitle">Coragem de velejar? Vamos. 🤙</div><div class="edesc">Última sessão da trip. Despedida do mar.</div></div></div>
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">🍽️</div><div class="ebody"><div class="etime">14:00</div><div class="etitle">Almoço de encerramento</div><div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div></div></div>
+
+    <div class="ecard">
+      <div class="eicon" style="--ei-bg:rgba(255,99,71,.1)">&#x2615;</div>
+      <div class="ebody">
+        <div class="etime">09:00</div>
+        <div class="etitle">Caf&eacute; &amp; Desemba&ccedil;o</div>
+        <div class="edesc">&Uacute;ltimo caf&eacute; juntos. Curtir o fim de manh&atilde; antes de ir embora.</div>
+      </div>
+    </div>
+
+    <div class="ecard">
+      <div class="eicon" style="--ei-bg:rgba(255,99,71,.12)">&#x1F6A3;</div>
+      <div class="ebody">
+        <div class="etime">10:00</div>
+        <div class="etitle">Kite Bonus</div>
+        <div class="edesc">Pra quem ainda tiver f&ocirc;lego: sess&atilde;o extra na &aacute;gua.</div>
+      </div>
+    </div>
+
+    <div class="ecard">
+      <div class="eicon" style="--ei-bg:rgba(255,99,71,.1)">&#x1F4E6;</div>
+      <div class="ebody">
+        <div class="etime">14:00</div>
+        <div class="etitle">Check-out &amp; Retorno</div>
+        <div class="edesc">Fechar as malas e voltar pra Fortaleza. At&eacute; o Velejin 2027!</div>
+      </div>
+    </div>
+
   </div>
+
   <div class="closing">
     <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/kite%20beer%20logo.jpg" alt="KiteBeer" style="width:130px;height:130px;object-fit:contain;border-radius:18px;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto;">
-    <div class="closing-em">🌅</div>
-    <div class="closing-h">Até a próxima edição!</div>
-    <div class="closing-s">Kite Beer · Velejin · Pecém · Ceará</div>
+    <div class="closing-em">&#x1F305;</div>
+    <div class="closing-h">At&eacute; a pr&oacute;xima edi&ccedil;&atilde;o!</div>
+    <div class="closing-s">Kite Beer &middot; Velejin &middot; Pec&eacute;m &middot; Cear&aacute;</div>
   </div>
+
 </section>
 
 </main>
 
-<div class="lbx" id="lightbox" onclick="closeLightbox()">
-  <button class="lbx-close" onclick="closeLightbox()">✕</button>
-  <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/assado%20de%20peixe.jpg" alt="Assado de Peixe" loading="lazy">
-  <div class="lbx-cap">🐟 Assado de Peixe · Pecém 2026</div>
-</div>
-
-<div class="lbx" id="lightbox-banda" onclick="closeLightboxBanda()">
-  <button class="lbx-close" onclick="closeLightboxBanda()">✕</button>
-  <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/karrolzinha.jpg" alt="Karolzinha Sonfoneira" loading="lazy">
-  <div class="lbx-cap">🎸 Karolzinha Sonfoneira · Ventaya 2026</div>
-</div>
-
-<div class="modal-bg" id="photoModal">
-  <div class="modal">
-    <h3>📸 Link da foto</h3>
-    <p>Cole o link da foto (Google Fotos, etc.):</p>
-    <input id="photoUrl" type="url" placeholder="https://...">
-    <div class="mrow">
-      <button class="mbtn mbtn-x" onclick="closeModal('photoModal')">Cancelar</button>
-      <button class="mbtn mbtn-ok" onclick="savePhoto()">Salvar</button>
-    </div>
+<!-- INSTALL BANNER -->
+<div id="install-banner" class="hidden">
+  <div class="ib-text">
+    <b>Kite Beer Velejin</b>
+    Instalar no celular
   </div>
-</div>
-
-<div class="modal-bg" id="cardapioModal">
-  <div class="modal">
-    <h3>🍴 Cardápio</h3>
-    <p>O cardápio ainda está sendo definido.<br>Quando estiver pronto, adicione o link abaixo:</p>
-    <input id="cardapioUrl" type="url" placeholder="https://...">
-    <div class="mrow">
-      <button class="mbtn mbtn-x" onclick="closeModal('cardapioModal')">Fechar</button>
-      <button class="mbtn mbtn-ok" onclick="saveCardapio()">Salvar link</button>
-    </div>
-  </div>
-</div>
-
-<div class="install" id="installBar">
-  <div class="install-txt"><strong>Instalar no celular</strong>Acesse offline como um app nativo</div>
-  <button class="install-btn" id="installBtn">Instalar</button>
-  <button class="install-x" onclick="document.getElementById('installBar').classList.remove('show')">✕</button>
+  <button class="ib-btn" onclick="installApp()">Instalar</button>
+  <button class="ib-close" onclick="dismissInstall()">&#x2715;</button>
 </div>
 
 <script>
-function goDay(i,btn){
-  const el=document.getElementById('day-'+i);
-  if(!el)return;
-  const top=el.getBoundingClientRect().top+scrollY-108;
-  scrollTo({top,behavior:'smooth'});
-  document.querySelectorAll('.tab').forEach((b,j)=>b.classList.toggle('on',j===i));
-}
-const DAYS=['day-0','day-1','day-2','day-3'];
-const TABS=document.querySelectorAll('.tab');
-addEventListener('scroll',()=>{
-  let cur=0;
-  DAYS.forEach((id,i)=>{
-    const el=document.getElementById(id);
-    if(el&&el.getBoundingClientRect().top<=120)cur=i;
+// ── SCROLL SPY ──
+const days = document.querySelectorAll('.day');
+const tabs = document.querySelectorAll('.tab');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      const i = e.target.dataset.d;
+      tabs.forEach((t,j) => t.classList.toggle('on', j==i));
+    }
   });
-  TABS.forEach((b,i)=>b.classList.toggle('on',i===cur));
-},{passive:true});
+},{threshold:.35});
+days.forEach(d => obs.observe(d));
 
+function scrollToDay(i){
+  document.getElementById('day-'+i).scrollIntoView({behavior:'smooth'});
+}
+
+// ── LIGHTBOX ASSADO ──
 function openLightbox(){
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow='hidden';
@@ -640,6 +665,8 @@ function closeLightbox(){
   document.getElementById('lightbox').classList.remove('open');
   document.body.style.overflow='';
 }
+
+// ── LIGHTBOX BANDA ──
 function openLightboxBanda(){
   document.getElementById('lightbox-banda').classList.add('open');
   document.body.style.overflow='hidden';
@@ -649,52 +676,76 @@ function closeLightboxBanda(){
   document.body.style.overflow='';
 }
 
-let activeSlot=null;
-const photos=JSON.parse(localStorage.getItem('v26_photos')||'{}');
-function renderPhotos(){
-  const el=document.getElementById('slot-dj');
-  if(el&&photos['dj']){
-    el.classList.add('has-photo');
-    let img=el.querySelector('img');
-    if(!img){img=document.createElement('img');img.alt='dj';el.prepend(img);}
-    img.src=photos['dj'];
-  }
+// ── PHOTO SLOTS ──
+const photos = JSON.parse(localStorage.getItem('v26_photos')||'{}');
+let currentSlot = '';
+function renderSlots(){
+  Object.entries(photos).forEach(([k,url])=>{
+    const el = document.getElementById('slot-'+k);
+    if(!el||!url) return;
+    el.innerHTML = `<div class="ps-change">&#x270F;&#xFE0F; Trocar foto</div><img src="${url}" alt="foto" loading="lazy">`;
+  });
 }
-function openPhotoModal(k){
-  activeSlot=k;
-  document.getElementById('photoUrl').value=photos[k]||'';
-  document.getElementById('photoModal').classList.add('open');
-  setTimeout(()=>document.getElementById('photoUrl').focus(),150);
+renderSlots();
+function openPhotoModal(slot){
+  currentSlot = slot;
+  document.getElementById('pmodal-title').textContent = 'Adicionar foto: ' + slot;
+  document.getElementById('pmodal-url').value = photos[slot]||'';
+  document.getElementById('photo-modal').classList.add('open');
+}
+function closePhotoModal(){
+  document.getElementById('photo-modal').classList.remove('open');
 }
 function savePhoto(){
-  const url=document.getElementById('photoUrl').value.trim();
-  if(activeSlot){photos[activeSlot]=url;localStorage.setItem('v26_photos',JSON.stringify(photos));renderPhotos();}
-  closeModal('photoModal');
+  const url = document.getElementById('pmodal-url').value.trim();
+  if(url){ photos[currentSlot]=url; localStorage.setItem('v26_photos',JSON.stringify(photos)); renderSlots(); }
+  closePhotoModal();
 }
-function openCardapio(){
-  const saved=localStorage.getItem('v26_cardapio')||'';
-  if(saved){open(saved,'_blank');return;}
-  document.getElementById('cardapioUrl').value='';
-  document.getElementById('cardapioModal').classList.add('open');
+
+// ── CARDAPIO ──
+const savedCardapio = localStorage.getItem('v26_cardapio');
+if(savedCardapio){
+  const btn = document.getElementById('cardapio-btn');
+  btn.href = savedCardapio;
+  btn.onclick = null;
+  btn.setAttribute('target','_blank');
 }
+function openCardapioModal(){ document.getElementById('cardapio-modal').classList.add('open'); }
+function closeCardapioModal(){ document.getElementById('cardapio-modal').classList.remove('open'); }
 function saveCardapio(){
-  const url=document.getElementById('cardapioUrl').value.trim();
-  if(url)localStorage.setItem('v26_cardapio',url);
-  closeModal('cardapioModal');
+  const url = document.getElementById('cardapio-url').value.trim();
+  if(url){
+    localStorage.setItem('v26_cardapio',url);
+    const btn = document.getElementById('cardapio-btn');
+    btn.href = url;
+    btn.onclick = null;
+    btn.setAttribute('target','_blank');
+  }
+  closeCardapioModal();
 }
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-document.querySelectorAll('.modal-bg').forEach(m=>{
-  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
+
+// ── PWA INSTALL ──
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e =>{
+  e.preventDefault(); deferredPrompt = e;
+  const b = document.getElementById('install-banner');
+  if(!localStorage.getItem('v26_install_dismissed')){ b.classList.remove('hidden'); b.style.display='flex'; }
 });
-let dPE;
-addEventListener('beforeinstallprompt',e=>{e.preventDefault();dPE=e;document.getElementById('installBar').classList.add('show');});
-document.getElementById('installBtn').addEventListener('click',async()=>{
-  if(!dPE)return;dPE.prompt();await dPE.userChoice;dPE=null;
-  document.getElementById('installBar').classList.remove('show');
-});
-addEventListener('appinstalled',()=>document.getElementById('installBar').classList.remove('show'));
-if('serviceWorker'in navigator)navigator.serviceWorker.register('sw-velejin.js').catch(()=>{});
-renderPhotos();
+function installApp(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(()=>{ dismissInstall(); deferredPrompt=null; });
+}
+function dismissInstall(){
+  localStorage.setItem('v26_install_dismissed','1');
+  const b = document.getElementById('install-banner');
+  b.classList.add('hidden');
+}
+
+// ── SERVICE WORKER ──
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw-velejin.js').catch(()=>{});
+}
 </script>
 </body>
 </html>

@@ -1,8 +1,8 @@
-const CACHE = 'velejin-v4';
-const FILES = ['/velejin.html', '/manifest-velejin.json'];
+const CACHE = 'velejin-v5';
+const STATIC = ['/manifest-velejin.json'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(STATIC)));
   self.skipWaiting();
 });
 
@@ -14,6 +14,19 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
+  // Network-first for the HTML — always fetches fresh, falls back to cache offline
+  if (url.pathname.endsWith('velejin.html') || url.pathname === '/') {
+    e.respondWith(
+      fetch(e.request).then(r => {
+        const clone = r.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return r;
+      }).catch(() => caches.match(e.request))
+    );
+    return;
+  }
+  // Cache-first for everything else
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request))
   );
