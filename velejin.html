@@ -204,7 +204,7 @@ body{
 .acard-info{font-size:.7em;color:var(--muted);margin-top:2px;}
 .acard-cta{font-size:.67em;color:var(--teal);font-weight:600;margin-top:5px;}
 
-/* ══ PHOTO REVEAL (assado) ══ */
+/* ══ PHOTO REVEAL ══ */
 .photo-reveal{
   margin-top:10px;border-radius:14px;overflow:hidden;
   border:1.5px dashed rgba(0,212,184,.25);
@@ -336,7 +336,6 @@ body{
 </head>
 <body>
 
-<!-- ── HEADER ── -->
 <header class="hdr">
   <div class="hdr-brand">
     <svg width="36" height="36" viewBox="0 0 80 80" fill="none">
@@ -383,7 +382,6 @@ body{
   <a href="index.html" class="hdr-back">← Início</a>
 </header>
 
-<!-- ── DAY TABS ── -->
 <nav class="tabs" id="tabs">
   <button class="tab on" onclick="goDay(0,this)">Dia 1 · Qui</button>
   <button class="tab"    onclick="goDay(1,this)">Dia 2 · Sex</button>
@@ -391,7 +389,6 @@ body{
   <button class="tab"    onclick="goDay(3,this)">Dia 4 · Dom</button>
 </nav>
 
-<!-- ── HERO ── -->
 <section class="hero">
   <div class="hero-glow"></div>
   <div class="hero-logo">
@@ -448,7 +445,6 @@ body{
 
 <main class="body">
 
-<!-- ─── DIA 1 ─── -->
 <section class="day" data-d="0" id="day-0">
   <div class="day-head">
     <div class="day-num">Dia 1 de 4</div>
@@ -465,62 +461,22 @@ body{
         <div class="etitle">Chegada &amp; Acomodações</div>
         <div class="edesc">Check-in nos espaços. Veja onde cada um fica:</div>
         <div class="acomod">
-          <a class="acard" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">
-            <div class="acard-icon">🏡</div><div class="acard-name">Cs. 2.7</div><div class="acard-info">5 quartos</div><div class="acard-cta">📸 Instagram →</div>
-          </a>
-          <a class="acard" href="https://www.instagram.com/stories/highlights/18062237377636213/" target="_blank">
-            <div class="acard-icon">🛏️</div><div class="acard-name">Apto 102C</div><div class="acard-info">2 quartos + sala</div><div class="acard-cta">📸 Instagram →</div>
-          </a>
-          <a class="acard" href="https://www.instagram.com/stories/highlights/17987787710507233/" target="_blank">
-            <div class="acard-icon">🛏️</div><div class="acard-name">Apto 103F</div><div class="acard-info">1 quarto + sala</div><div class="acard-cta">📸 Instagram →</div>
-          </a>
-          <a class="acard" href="https://www.instagram.com/stories/highlights/18026240075521145/" target="_blank">
-            <div class="acard-icon">🛏️</div><div class="acard-name">Apto 201H</div><div class="acard-info">1 quarto + sala</div><div class="acard-cta">📸 Instagram →</div>
-          </a>
+          <a class="acard" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank"><div class="acard-icon">🏡</div><div class="acard-name">Cs. 2.7</div><div class="acard-info">5 quartos</div><div class="acard-cta">📸 Instagram →</div></a>
+          <a class="acard" href="https://www.instagram.com/stories/highlights/18062237377636213/" target="_blank"><div class="acard-icon">🛏️</div><div class="acard-name">Apto 102C</div><div class="acard-info">2 quartos + sala</div><div class="acard-cta">📸 Instagram →</div></a>
+          <a class="acard" href="https://www.instagram.com/stories/highlights/17987787710507233/" target="_blank"><div class="acard-icon">🛏️</div><div class="acard-name">Apto 103F</div><div class="acard-info">1 quarto + sala</div><div class="acard-cta">📸 Instagram →</div></a>
+          <a class="acard" href="https://www.instagram.com/stories/highlights/18026240075521145/" target="_blank"><div class="acard-icon">🛏️</div><div class="acard-name">Apto 201H</div><div class="acard-info">1 quarto + sala</div><div class="acard-cta">📸 Instagram →</div></a>
         </div>
       </div>
     </div>
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
-      <div class="eicon">🍽️</div>
-      <div class="ebody">
-        <div class="etime">12:30</div><div class="etitle">Almoço</div>
-        <div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div>
-      </div>
-    </div>
-    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)">
-      <div class="eicon">🏄‍♂️</div>
-      <div class="ebody">
-        <div class="etime">15:00</div><div class="etitle">DW Pecém → Ventaya</div>
-        <div class="edesc">Downwinder de largada. Vento alísio nordeste, condições perfeitas.</div>
-        <div class="chips"><a class="chip chip-c" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTE5NDU1MjQwODcyNDkx?story_media_id=3938348567068268435&igsh=b2NxaG80bmk5eHNy" target="_blank">📸 Barraca Ventaya</a></div>
-      </div>
-    </div>
-    <div class="ecard" style="--ei-bg:rgba(245,197,24,.1)">
-      <div class="eicon">🌅</div>
-      <div class="ebody">
-        <div class="etime">17:30</div><div class="etitle">Pôr do sol no Ventaya + 🍺</div>
-        <div class="edesc">Queda obrigatória de kite às 17h30 pra não perder o sol.</div>
-      </div>
-    </div>
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
-      <div class="eicon">🍽️</div>
-      <div class="ebody">
-        <div class="etime">19:00</div><div class="etitle">Jantar</div>
-        <div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div>
-      </div>
-    </div>
-    <div class="ecard" style="--ei-bg:rgba(245,197,24,.1)">
-      <div class="eicon">🍺</div>
-      <div class="ebody">
-        <div class="etime">19:01</div><div class="etitle">Beer 🍺</div>
-        <div class="edesc">Essa é a parte mais fácil do roteiro.</div>
-      </div>
-    </div>
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">🍽️</div><div class="ebody"><div class="etime">12:30</div><div class="etitle">Almoço</div><div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div></div></div>
+    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)"><div class="eicon">🏄‍♂️</div><div class="ebody"><div class="etime">15:00</div><div class="etitle">DW Pecém → Ventaya</div><div class="edesc">Downwinder de largada. Vento alísio nordeste, condições perfeitas.</div><div class="chips"><a class="chip chip-c" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTE5NDU1MjQwODcyNDkx?story_media_id=3938348567068268435&igsh=b2NxaG80bmk5eHNy" target="_blank">📸 Barraca Ventaya</a></div></div></div>
+    <div class="ecard" style="--ei-bg:rgba(245,197,24,.1)"><div class="eicon">🌅</div><div class="ebody"><div class="etime">17:30</div><div class="etitle">Pôr do sol no Ventaya + 🍺</div><div class="edesc">Queda obrigatória de kite às 17h30 pra não perder o sol.</div></div></div>
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">🍽️</div><div class="ebody"><div class="etime">19:00</div><div class="etitle">Jantar</div><div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div></div></div>
+    <div class="ecard" style="--ei-bg:rgba(245,197,24,.1)"><div class="eicon">🍺</div><div class="ebody"><div class="etime">19:01</div><div class="etitle">Beer 🍺</div><div class="edesc">Essa é a parte mais fácil do roteiro.</div></div></div>
   </div>
 </section>
 <div class="divider"></div>
 
-<!-- ─── DIA 2 ─── -->
 <section class="day" data-d="1" id="day-1">
   <div class="day-head">
     <div class="day-num">Dia 2 de 4</div>
@@ -530,51 +486,26 @@ body{
   </div>
   <div class="stripe"></div>
   <div class="events">
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
-      <div class="eicon">☕</div>
-      <div class="ebody">
-        <div class="etime">08:00</div><div class="etitle">Café da manhã na Cs. 2.7</div>
-        <div class="chips"><a class="chip chip-t" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Cs. 2.7</a></div>
-      </div>
-    </div>
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
-      <div class="eicon">🍽️</div>
-      <div class="ebody">
-        <div class="etime">12:00</div><div class="etitle">Almoço</div>
-        <div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div>
-      </div>
-    </div>
-    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)">
-      <div class="eicon">🏄‍♂️</div>
-      <div class="ebody">
-        <div class="etime">14:00</div><div class="etitle">DW Pecém → Paracuru</div>
-        <div class="edesc">Downwinder longo, rumo a Paracuru. Vento firme à tarde.</div>
-      </div>
-    </div>
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">☕</div><div class="ebody"><div class="etime">08:00</div><div class="etitle">Café da manhã na Cs. 2.7</div><div class="chips"><a class="chip chip-t" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Cs. 2.7</a></div></div></div>
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">🍽️</div><div class="ebody"><div class="etime">12:00</div><div class="etitle">Almoço</div><div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div></div></div>
+    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)"><div class="eicon">🏄‍♂️</div><div class="ebody"><div class="etime">14:00</div><div class="etitle">DW Pecém → Paracuru</div><div class="edesc">Downwinder longo, rumo a Paracuru. Vento firme à tarde.</div></div></div>
     <div class="ecard" style="--ei-bg:rgba(255,99,71,.1)">
       <div class="eicon">🐟</div>
       <div class="ebody">
         <div class="etime">19:00</div><div class="etitle">Assado de Peixe</div>
         <div class="edesc">O clássico da trip. Peixe fresquinho direto do mar.</div>
-        <div class="photo-reveal" id="reveal-peixe" onclick="openLightbox()">
+        <div class="photo-reveal" onclick="openLightbox()">
           <div class="photo-reveal-icon">🐟</div>
           <div class="photo-reveal-label">Toque para ver a foto</div>
           <div class="photo-reveal-sub">Assado de Peixe · Pecém 2026</div>
         </div>
       </div>
     </div>
-    <div class="ecard" style="--ei-bg:rgba(245,197,24,.1)">
-      <div class="eicon">🍺</div>
-      <div class="ebody">
-        <div class="etime">19:01</div><div class="etitle">Beer 🍺</div>
-        <div class="edesc">Novamente pontual.</div>
-      </div>
-    </div>
+    <div class="ecard" style="--ei-bg:rgba(245,197,24,.1)"><div class="eicon">🍺</div><div class="ebody"><div class="etime">19:01</div><div class="etitle">Beer 🍺</div><div class="edesc">Novamente pontual.</div></div></div>
   </div>
 </section>
 <div class="divider"></div>
 
-<!-- ─── DIA 3 ─── -->
 <section class="day" data-d="2" id="day-2">
   <div class="day-head">
     <div class="day-num">Dia 3 de 4</div>
@@ -584,37 +515,18 @@ body{
   </div>
   <div class="stripe"></div>
   <div class="events">
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
-      <div class="eicon">☕</div>
-      <div class="ebody">
-        <div class="etime">09:00</div><div class="etitle">Café da manhã na Cs. 2.7</div>
-        <div class="chips"><a class="chip chip-t" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Cs. 2.7</a></div>
-      </div>
-    </div>
-    <div class="ecard" style="--ei-bg:rgba(255,99,71,.1)">
-      <div class="eicon">🔥</div>
-      <div class="ebody">
-        <div class="etime">12:00</div><div class="etitle">Churrasco 🔥</div>
-        <div class="edesc">Picanha, costela, linguiça e tudo que a galera trouxer.</div>
-      </div>
-    </div>
-    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)">
-      <div class="eicon">🏄‍♂️</div>
-      <div class="ebody">
-        <div class="etime">15:00</div><div class="etitle">Pecém → Ventaya</div>
-        <div class="edesc">Sessão da tarde no Ventaya. Vento de tarde, melhor hora.</div>
-        <div class="chips"><a class="chip chip-c" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTE5NDU1MjQwODcyNDkx?story_media_id=3938348567068268435&igsh=b2NxaG80bmk5eHNy" target="_blank">📸 Barraca Ventaya</a></div>
-      </div>
-    </div>
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">☕</div><div class="ebody"><div class="etime">09:00</div><div class="etitle">Café da manhã na Cs. 2.7</div><div class="chips"><a class="chip chip-t" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Cs. 2.7</a></div></div></div>
+    <div class="ecard" style="--ei-bg:rgba(255,99,71,.1)"><div class="eicon">🔥</div><div class="ebody"><div class="etime">12:00</div><div class="etitle">Churrasco 🔥</div><div class="edesc">Picanha, costela, linguiça e tudo que a galera trouxer.</div></div></div>
+    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)"><div class="eicon">🏄‍♂️</div><div class="ebody"><div class="etime">15:00</div><div class="etitle">Pecém → Ventaya</div><div class="edesc">Sessão da tarde no Ventaya. Vento de tarde, melhor hora.</div><div class="chips"><a class="chip chip-c" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTE5NDU1MjQwODcyNDkx?story_media_id=3938348567068268435&igsh=b2NxaG80bmk5eHNy" target="_blank">📸 Barraca Ventaya</a></div></div></div>
     <div class="ecard" style="--ei-bg:rgba(167,139,250,.1)">
       <div class="eicon">🎸</div>
       <div class="ebody">
         <div class="etime">17:00</div><div class="etitle">Festa — Karolzinha Sonfoneira</div>
         <div class="edesc">Ao vivo no Ventaya. Não pode faltar!</div>
-        <div class="photo-slot" id="slot-banda" onclick="openPhotoModal('banda')">
-          <div class="ps-change">✏️ Trocar foto</div>
-          <span class="ps-icon">🎸</span>
-          <span class="ps-label">Toque para adicionar foto da Banda</span>
+        <div class="photo-reveal" onclick="openLightboxBanda()">
+          <div class="photo-reveal-icon">🎸</div>
+          <div class="photo-reveal-label">Toque para ver a foto</div>
+          <div class="photo-reveal-sub">Karolzinha Sonfoneira · Ventaya 2026</div>
         </div>
       </div>
     </div>
@@ -634,7 +546,6 @@ body{
 </section>
 <div class="divider"></div>
 
-<!-- ─── DIA 4 ─── -->
 <section class="day" data-d="3" id="day-3">
   <div class="day-head" style="background:linear-gradient(135deg,rgba(255,99,71,.07) 0%,transparent 70%)">
     <div class="day-num" style="color:var(--coral)">Dia 4 de 4 · Último dia</div>
@@ -644,40 +555,14 @@ body{
   </div>
   <div class="stripe"></div>
   <div class="events">
-    <div class="ecard" style="--ei-bg:rgba(200,200,255,.08)">
-      <div class="eicon">🙏</div>
-      <div class="ebody"><div class="etime">08:00</div><div class="etitle">Rezar para acordar bem</div></div>
-    </div>
-    <div class="ecard" style="--ei-bg:rgba(200,200,255,.08)">
-      <div class="eicon">🙏</div>
-      <div class="ebody">
-        <div class="etime">08:20</div><div class="etitle">Rezar pra ter coragem</div>
-        <div class="edesc">Depois de ontem... vai precisar.</div>
-      </div>
-    </div>
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
-      <div class="eicon">☕</div>
-      <div class="ebody">
-        <div class="etime">09:00</div><div class="etitle">Café da manhã na Cs. 2.7</div>
-        <div class="chips"><a class="chip chip-t" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Cs. 2.7</a></div>
-      </div>
-    </div>
-    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)">
-      <div class="eicon">🏄‍♂️</div>
-      <div class="ebody">
-        <div class="etime">11:00</div><div class="etitle">Coragem de velejar? Vamos. 🤙</div>
-        <div class="edesc">Última sessão da trip. Despedida do mar.</div>
-      </div>
-    </div>
-    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
-      <div class="eicon">🍽️</div>
-      <div class="ebody">
-        <div class="etime">14:00</div><div class="etitle">Almoço de encerramento</div>
-        <div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div>
-      </div>
-    </div>
+    <div class="ecard" style="--ei-bg:rgba(200,200,255,.08)"><div class="eicon">🙏</div><div class="ebody"><div class="etime">08:00</div><div class="etitle">Rezar para acordar bem</div></div></div>
+    <div class="ecard" style="--ei-bg:rgba(200,200,255,.08)"><div class="eicon">🙏</div><div class="ebody"><div class="etime">08:20</div><div class="etitle">Rezar pra ter coragem</div><div class="edesc">Depois de ontem... vai precisar.</div></div></div>
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">☕</div><div class="ebody"><div class="etime">09:00</div><div class="etitle">Café da manhã na Cs. 2.7</div><div class="chips"><a class="chip chip-t" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Cs. 2.7</a></div></div></div>
+    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)"><div class="eicon">🏄‍♂️</div><div class="ebody"><div class="etime">11:00</div><div class="etitle">Coragem de velejar? Vamos. 🤙</div><div class="edesc">Última sessão da trip. Despedida do mar.</div></div></div>
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)"><div class="eicon">🍽️</div><div class="ebody"><div class="etime">14:00</div><div class="etitle">Almoço de encerramento</div><div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div></div></div>
   </div>
   <div class="closing">
+    <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/kite%20beer%20logo.jpg" alt="KiteBeer" style="width:130px;height:130px;object-fit:contain;border-radius:18px;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto;">
     <div class="closing-em">🌅</div>
     <div class="closing-h">Até a próxima edição!</div>
     <div class="closing-s">Kite Beer · Velejin · Pecém · Ceará</div>
@@ -686,14 +571,18 @@ body{
 
 </main>
 
-<!-- LIGHTBOX -->
 <div class="lbx" id="lightbox" onclick="closeLightbox()">
   <button class="lbx-close" onclick="closeLightbox()">✕</button>
   <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/assado%20de%20peixe.jpg" alt="Assado de Peixe" loading="lazy">
   <div class="lbx-cap">🐟 Assado de Peixe · Pecém 2026</div>
 </div>
 
-<!-- PHOTO MODAL -->
+<div class="lbx" id="lightbox-banda" onclick="closeLightboxBanda()">
+  <button class="lbx-close" onclick="closeLightboxBanda()">✕</button>
+  <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/karrolzinha.jpg" alt="Karolzinha Sonfoneira" loading="lazy">
+  <div class="lbx-cap">🎸 Karolzinha Sonfoneira · Ventaya 2026</div>
+</div>
+
 <div class="modal-bg" id="photoModal">
   <div class="modal">
     <h3>📸 Link da foto</h3>
@@ -706,7 +595,6 @@ body{
   </div>
 </div>
 
-<!-- CARDÁPIO MODAL -->
 <div class="modal-bg" id="cardapioModal">
   <div class="modal">
     <h3>🍴 Cardápio</h3>
@@ -719,12 +607,8 @@ body{
   </div>
 </div>
 
-<!-- INSTALL BANNER -->
 <div class="install" id="installBar">
-  <div class="install-txt">
-    <strong>Instalar no celular</strong>
-    Acesse offline como um app nativo
-  </div>
+  <div class="install-txt"><strong>Instalar no celular</strong>Acesse offline como um app nativo</div>
   <button class="install-btn" id="installBtn">Instalar</button>
   <button class="install-x" onclick="document.getElementById('installBar').classList.remove('show')">✕</button>
 </div>
@@ -756,18 +640,25 @@ function closeLightbox(){
   document.getElementById('lightbox').classList.remove('open');
   document.body.style.overflow='';
 }
+function openLightboxBanda(){
+  document.getElementById('lightbox-banda').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLightboxBanda(){
+  document.getElementById('lightbox-banda').classList.remove('open');
+  document.body.style.overflow='';
+}
 
 let activeSlot=null;
 const photos=JSON.parse(localStorage.getItem('v26_photos')||'{}');
 function renderPhotos(){
-  ['banda','dj'].forEach(k=>{
-    const el=document.getElementById('slot-'+k);
-    if(!el||!photos[k])return;
+  const el=document.getElementById('slot-dj');
+  if(el&&photos['dj']){
     el.classList.add('has-photo');
     let img=el.querySelector('img');
-    if(!img){img=document.createElement('img');img.alt=k;el.prepend(img);}
-    img.src=photos[k];
-  });
+    if(!img){img=document.createElement('img');img.alt='dj';el.prepend(img);}
+    img.src=photos['dj'];
+  }
 }
 function openPhotoModal(k){
   activeSlot=k;
@@ -795,7 +686,6 @@ function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-bg').forEach(m=>{
   m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
 });
-
 let dPE;
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();dPE=e;document.getElementById('installBar').classList.add('show');});
 document.getElementById('installBtn').addEventListener('click',async()=>{
