@@ -3,899 +3,807 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<!-- PWA: iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Velejin 2026">
 <link rel="apple-touch-icon" href="icon-velejin.svg">
-<!-- PWA: Android / Chrome -->
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#04111f">
+<meta name="theme-color" content="#030d16">
 <link rel="manifest" href="manifest-velejin.json">
-<!-- SEO / Share -->
 <meta name="description" content="Roteiro da Kite Trip Velejin — 6 a 9 de Agosto de 2026, Pecém-CE">
 <title>Kite Trip Velejin 2026</title>
 <style>
-/* ── RESET & BASE ── */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
 :root{
-  --sky:#04111f;
-  --ocean:#062236;
-  --teal:#00c9b1;
-  --cyan:#38d9f5;
-  --sun:#f7c948;
-  --sunset:#f4845f;
-  --white:rgba(255,255,255,0.92);
-  --dim:rgba(255,255,255,0.45);
-  --faint:rgba(255,255,255,0.08);
-  --border:rgba(255,255,255,0.11);
-  --r16:16px;--r12:12px;--r8:8px;
+  --bg:       #030d16;
+  --surface:  #061825;
+  --card:     #0a2236;
+  --teal:     #00d4b8;
+  --cyan:     #3de8ff;
+  --gold:     #f5c518;
+  --coral:    #ff6347;
+  --purple:   #a78bfa;
+  --text:     rgba(255,255,255,.92);
+  --muted:    rgba(255,255,255,.48);
+  --faint:    rgba(255,255,255,.06);
+  --border:   rgba(255,255,255,.09);
+  --teal-glow:rgba(0,212,184,.18);
 }
-html{scroll-behavior:smooth;background:var(--sky);}
+
+html{scroll-behavior:smooth;background:var(--bg);}
 body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  color:var(--white);min-height:100vh;
-  background:var(--sky);overflow-x:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  color:var(--text);background:var(--bg);
+  min-height:100vh;overflow-x:hidden;
 }
 
-/* ── FIXED HEADER ── */
-.site-header{
+/* ══ HEADER ══ */
+.hdr{
   position:fixed;top:0;left:0;right:0;z-index:100;
-  padding:max(env(safe-area-inset-top),10px) 18px 10px;
-  background:rgba(4,17,31,0.88);backdrop-filter:blur(16px) saturate(180%);
-  border-bottom:1px solid var(--border);
+  padding:max(env(safe-area-inset-top),10px) 16px 10px;
   display:flex;align-items:center;justify-content:space-between;
-}
-.header-brand{display:flex;align-items:center;gap:10px;}
-.brand-text{line-height:1.2;}
-.brand-name{font-size:.95em;font-weight:800;letter-spacing:-.3px;
-  background:linear-gradient(90deg,var(--teal),var(--cyan));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.brand-sub{font-size:.68em;color:var(--dim);font-weight:500;}
-.header-back{
-  font-size:.78em;color:var(--dim);text-decoration:none;
-  padding:6px 12px;border:1px solid var(--border);border-radius:20px;
-  transition:color .2s,border-color .2s;
-}
-.header-back:hover{color:var(--teal);border-color:var(--teal);}
-
-/* ── STICKY DAY NAV ── */
-.day-nav-bar{
-  position:sticky;top:56px;z-index:90;
-  display:flex;gap:8px;padding:10px 18px;
-  overflow-x:auto;scrollbar-width:none;
-  background:rgba(4,17,31,0.75);backdrop-filter:blur(12px);
+  background:rgba(3,13,22,.82);backdrop-filter:blur(20px) saturate(180%);
   border-bottom:1px solid var(--border);
 }
-.day-nav-bar::-webkit-scrollbar{display:none;}
-.dnav{
-  flex-shrink:0;padding:7px 16px;border-radius:50px;
-  border:1px solid var(--border);background:var(--faint);
-  color:var(--dim);font-size:.78em;font-weight:700;
-  cursor:pointer;transition:all .22s;white-space:nowrap;
-}
-.dnav.active,.dnav:hover{
-  background:rgba(0,201,177,.15);border-color:rgba(0,201,177,.5);color:var(--teal);
-}
-
-/* ── HERO ── */
-.hero{
-  padding-top:110px;
-  text-align:center;
-  padding-bottom:50px;
-  position:relative;
-  overflow:hidden;
-}
-.hero::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 60% at 50% 20%, rgba(0,201,177,.12) 0%, transparent 70%);
-  pointer-events:none;
-}
-.hero-logo{margin-bottom:20px;display:inline-block;}
-.hero-title{
-  font-size:2.6em;font-weight:900;letter-spacing:-1.5px;line-height:1;
-  background:linear-gradient(135deg,#fff 0%,var(--cyan) 60%,var(--teal) 100%);
+.hdr-brand{display:flex;align-items:center;gap:10px;}
+.hdr-name{
+  font-size:.92em;font-weight:800;letter-spacing:-.2px;
+  background:linear-gradient(90deg,var(--teal),var(--cyan));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
-.hero-edition{
-  display:inline-block;margin-top:10px;
-  font-size:.75em;letter-spacing:3px;text-transform:uppercase;color:var(--dim);font-weight:600;
+.hdr-sub{font-size:.64em;color:var(--muted);margin-top:1px;font-weight:500;}
+.hdr-back{
+  font-size:.75em;color:var(--muted);text-decoration:none;
+  padding:6px 12px;border:1px solid var(--border);border-radius:20px;
+  transition:all .2s;
 }
-.hero-dates{
-  display:inline-flex;align-items:center;gap:8px;
-  margin-top:16px;padding:10px 22px;border-radius:50px;
-  background:rgba(0,201,177,.1);border:1px solid rgba(0,201,177,.3);
-  font-size:.9em;color:var(--teal);font-weight:700;
-}
-.hero-waves{
-  position:absolute;bottom:0;left:0;width:200%;height:60px;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60'%3E%3Cpath d='M0,30 C240,55 480,5 720,30 C960,55 1200,5 1440,30 L1440,60 L0,60Z' fill='%23062236'/%3E%3C/svg%3E");
-  background-size:50% 100%;animation:waveScroll 16s linear infinite;
-}
-@keyframes waveScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.hdr-back:hover{color:var(--teal);border-color:var(--teal);}
 
-/* ── PAGE BODY ── */
-.page-body{background:var(--ocean);padding-bottom:60px;}
-
-/* ── DAY SECTION ── */
-.day-section{padding:0 0 32px;}
-.day-banner{
-  padding:28px 18px 22px;
-  background:linear-gradient(180deg,rgba(0,201,177,.07) 0%,transparent 100%);
+/* ══ DAY TABS ══ */
+.tabs{
+  position:sticky;top:54px;z-index:90;
+  display:flex;gap:6px;padding:8px 14px;
+  overflow-x:auto;scrollbar-width:none;
+  background:rgba(3,13,22,.72);backdrop-filter:blur(16px);
   border-bottom:1px solid var(--border);
-  position:relative;overflow:hidden;
 }
-.day-banner::after{
-  content:'';position:absolute;right:-20px;top:50%;transform:translateY(-50%);
-  width:120px;height:120px;border-radius:50%;
-  background:radial-gradient(circle,rgba(0,201,177,.12) 0%,transparent 70%);
+.tabs::-webkit-scrollbar{display:none;}
+.tab{
+  flex-shrink:0;padding:7px 16px;border-radius:40px;
+  border:1.5px solid var(--border);background:transparent;
+  color:var(--muted);font-size:.76em;font-weight:700;
+  cursor:pointer;transition:all .2s;white-space:nowrap;font-family:inherit;
+}
+.tab.on{
+  background:linear-gradient(135deg,rgba(0,212,184,.2),rgba(61,232,255,.1));
+  border-color:var(--teal);color:var(--teal);
+}
+
+/* ══ HERO ══ */
+.hero{
+  padding-top:100px;padding-bottom:56px;
+  text-align:center;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,#040f1c 0%,#062030 50%,var(--surface) 100%);
+}
+.hero-glow{
+  position:absolute;top:60px;left:50%;transform:translateX(-50%);
+  width:360px;height:200px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(0,212,184,.22) 0%,transparent 70%);
   pointer-events:none;
 }
-.day-tag{
-  display:inline-block;
-  font-size:.68em;font-weight:800;letter-spacing:2px;text-transform:uppercase;
-  color:var(--teal);margin-bottom:6px;
+.hero-logo{display:inline-block;margin-bottom:22px;filter:drop-shadow(0 0 32px rgba(0,212,184,.35));}
+.hero-h1{
+  font-size:clamp(2em,8vw,3em);font-weight:900;letter-spacing:-2px;line-height:1;
+  background:linear-gradient(150deg,#fff 0%,var(--cyan) 55%,var(--teal) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
-.day-weekday{font-size:2.2em;font-weight:900;line-height:1;color:#fff;letter-spacing:-1px;}
-.day-date{font-size:.88em;color:var(--dim);margin-top:4px;font-weight:500;}
+.hero-loc{
+  margin-top:10px;font-size:.72em;letter-spacing:4px;
+  text-transform:uppercase;color:var(--muted);font-weight:600;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  margin-top:18px;padding:9px 22px;border-radius:50px;
+  background:rgba(0,212,184,.1);border:1.5px solid rgba(0,212,184,.35);
+  font-size:.88em;font-weight:700;color:var(--teal);
+}
+.hero-waves{position:absolute;bottom:-1px;left:0;right:0;height:52px;overflow:hidden;}
+.hero-waves svg{width:200%;animation:wv 14s linear infinite;}
+@keyframes wv{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* ── DAY EVENTS (timeline) ── */
-.events-wrap{padding:16px 18px 0;}
-.event-item{
-  display:flex;gap:14px;padding:0 0 20px;position:relative;
+/* ══ BODY ══ */
+.body{background:var(--surface);}
+
+/* ══ DAY SECTION ══ */
+.day{padding-bottom:28px;}
+
+.day-head{
+  padding:26px 18px 20px;position:relative;overflow:hidden;
 }
-.event-item::before{
-  content:'';position:absolute;left:19px;top:36px;bottom:0;
-  width:1px;background:linear-gradient(to bottom,var(--border),transparent);
+.day-head::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--day-a,.06) 0%,transparent 60%);
 }
-.event-item:last-child::before{display:none;}
-.event-dot{
-  flex-shrink:0;width:40px;height:40px;border-radius:50%;
-  background:rgba(0,201,177,.12);border:1.5px solid rgba(0,201,177,.3);
+.day-num{
+  font-size:.66em;font-weight:800;letter-spacing:3px;text-transform:uppercase;
+  color:var(--day-c,var(--teal));margin-bottom:5px;position:relative;
+}
+.day-big{font-size:2em;font-weight:900;letter-spacing:-1px;line-height:1;position:relative;}
+.day-date{font-size:.84em;color:var(--muted);margin-top:5px;position:relative;}
+.day-dec{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  font-size:5.5em;font-weight:900;line-height:1;
+  color:rgba(255,255,255,.04);letter-spacing:-4px;pointer-events:none;
+  font-variant-numeric:tabular-nums;
+}
+
+/* ══ ACCENT STRIPE ══ */
+.stripe{
+  height:3px;
+  background:linear-gradient(90deg,var(--day-c,var(--teal)),transparent);
+  opacity:.6;
+}
+
+/* ══ EVENT CARDS ══ */
+.events{padding:14px 14px 0;}
+.ecard{
+  display:flex;gap:12px;margin-bottom:10px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:14px 14px;
+  transition:border-color .2s;
+  position:relative;overflow:hidden;
+}
+.ecard::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--day-c,var(--teal));opacity:.6;border-radius:0 3px 3px 0;
+}
+.ecard:hover{border-color:rgba(255,255,255,.18);}
+.eicon{
+  flex-shrink:0;width:40px;height:40px;border-radius:12px;
   display:flex;align-items:center;justify-content:center;
-  font-size:1.1em;position:relative;z-index:1;
+  font-size:1.15em;
+  background:var(--ei-bg,rgba(0,212,184,.1));
 }
-.event-dot.beer{background:rgba(247,201,72,.1);border-color:rgba(247,201,72,.3);}
-.event-dot.kite{background:rgba(56,217,245,.1);border-color:rgba(56,217,245,.3);}
-.event-dot.night{background:rgba(244,132,95,.1);border-color:rgba(244,132,95,.3);}
-.event-dot.food{background:rgba(100,220,130,.1);border-color:rgba(100,220,130,.3);}
-.event-dot.pray{background:rgba(200,200,255,.1);border-color:rgba(200,200,255,.3);}
-.event-body{flex:1;padding-top:8px;}
-.event-time{font-size:.72em;font-weight:700;color:var(--teal);letter-spacing:.5px;margin-bottom:3px;}
-.event-title{font-size:.97em;font-weight:700;color:#fff;line-height:1.3;}
-.event-desc{font-size:.8em;color:var(--dim);margin-top:3px;line-height:1.5;}
+.ebody{flex:1;min-width:0;}
+.etime{
+  font-size:.7em;font-weight:700;letter-spacing:.5px;
+  color:var(--day-c,var(--teal));margin-bottom:3px;
+  font-variant-numeric:tabular-nums;font-family:'SF Mono',ui-monospace,monospace;
+}
+.etitle{font-size:.93em;font-weight:700;line-height:1.3;}
+.edesc{font-size:.78em;color:var(--muted);margin-top:4px;line-height:1.5;}
 
-/* ── LINK CHIP ── */
+/* ══ CHIPS ══ */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
 .chip{
-  display:inline-flex;align-items:center;gap:5px;
-  margin-top:8px;padding:6px 14px;border-radius:50px;
-  font-size:.76em;font-weight:600;text-decoration:none;
-  transition:all .2s;cursor:pointer;
+  display:inline-flex;align-items:center;gap:4px;
+  padding:5px 12px;border-radius:40px;
+  font-size:.72em;font-weight:600;text-decoration:none;cursor:pointer;
+  transition:all .18s;border:1px solid;
 }
-.chip-teal{background:rgba(0,201,177,.12);border:1px solid rgba(0,201,177,.3);color:var(--teal);}
-.chip-teal:hover{background:rgba(0,201,177,.22);border-color:var(--teal);}
-.chip-sun{background:rgba(247,201,72,.1);border:1px solid rgba(247,201,72,.3);color:var(--sun);}
-.chip-sun:hover{background:rgba(247,201,72,.2);}
-.chip-cyan{background:rgba(56,217,245,.1);border:1px solid rgba(56,217,245,.3);color:var(--cyan);}
-.chip-cyan:hover{background:rgba(56,217,245,.2);}
-.chip-dim{background:var(--faint);border:1px dashed var(--border);color:var(--dim);}
-.chips-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.chip-t{background:rgba(0,212,184,.1);border-color:rgba(0,212,184,.3);color:var(--teal);}
+.chip-t:hover{background:rgba(0,212,184,.2);}
+.chip-c{background:rgba(61,232,255,.08);border-color:rgba(61,232,255,.3);color:var(--cyan);}
+.chip-c:hover{background:rgba(61,232,255,.18);}
+.chip-d{background:var(--faint);border-color:var(--border);color:var(--muted);}
+.chip-d:hover{background:rgba(255,255,255,.1);}
 
-/* ── ACCOMMODATION GRID ── */
-.acomod-grid{
+/* ══ ACCOMMODATION ══ */
+.acomod{
   display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;
 }
-.acomod-card{
-  background:rgba(255,255,255,.05);border:1px solid var(--border);
-  border-radius:var(--r12);padding:12px;text-decoration:none;
-  transition:all .22s;display:block;
+.acard{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:12px;padding:12px;text-decoration:none;display:block;
+  transition:all .2s;
 }
-.acomod-card:hover{background:rgba(0,201,177,.08);border-color:rgba(0,201,177,.3);}
-.acomod-icon{font-size:1.4em;margin-bottom:6px;}
-.acomod-name{font-size:.82em;font-weight:700;color:#fff;}
-.acomod-detail{font-size:.72em;color:var(--dim);margin-top:2px;}
-.acomod-link-tag{
-  display:inline-flex;align-items:center;gap:3px;
-  margin-top:6px;font-size:.68em;color:var(--teal);font-weight:600;
-}
+.acard:hover{background:rgba(0,212,184,.07);border-color:rgba(0,212,184,.3);}
+.acard-icon{font-size:1.25em;margin-bottom:5px;}
+.acard-name{font-size:.8em;font-weight:700;color:#fff;}
+.acard-info{font-size:.7em;color:var(--muted);margin-top:2px;}
+.acard-cta{font-size:.67em;color:var(--teal);font-weight:600;margin-top:5px;}
 
-/* ── PHOTO SLOT ── */
+/* ══ PHOTO REVEAL (assado) ══ */
+.photo-reveal{
+  margin-top:10px;border-radius:14px;overflow:hidden;
+  border:1.5px dashed rgba(0,212,184,.25);
+  background:rgba(0,212,184,.04);
+  aspect-ratio:16/9;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;cursor:pointer;transition:all .22s;position:relative;
+}
+.photo-reveal:hover{border-color:var(--teal);background:rgba(0,212,184,.08);}
+.photo-reveal-icon{font-size:2em;opacity:.6;}
+.photo-reveal-label{font-size:.76em;color:var(--teal);font-weight:600;}
+.photo-reveal-sub{font-size:.66em;color:var(--muted);}
+.photo-reveal::after{
+  content:'';position:absolute;
+  width:56px;height:56px;border-radius:50%;
+  border:2px solid rgba(0,212,184,.3);
+  animation:pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(.9);opacity:.5}50%{transform:scale(1.15);opacity:.15}}
+
+/* ══ PHOTO SLOT (editable) ══ */
 .photo-slot{
-  position:relative;border-radius:var(--r12);overflow:hidden;
-  background:rgba(255,255,255,.05);border:1px dashed var(--border);
-  aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:6px;cursor:pointer;transition:border-color .2s;
-  margin-top:10px;
+  margin-top:10px;border-radius:14px;overflow:hidden;
+  border:1.5px dashed var(--border);
+  background:var(--faint);
+  aspect-ratio:16/9;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;cursor:pointer;transition:all .22s;position:relative;
 }
-.photo-slot:hover{border-color:var(--teal);}
-.photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-.photo-slot-label{font-size:.72em;color:var(--dim);position:relative;z-index:1;}
-.photo-slot-icon{font-size:1.6em;opacity:.5;position:relative;z-index:1;}
-.photo-overlay{
-  position:absolute;inset:0;z-index:2;background:rgba(0,0,0,.45);
-  display:none;align-items:center;justify-content:center;
-  font-size:.72em;color:#fff;font-weight:600;gap:4px;
+.photo-slot:hover{border-color:rgba(255,255,255,.25);}
+.ps-icon{font-size:1.8em;opacity:.35;}
+.ps-label{font-size:.74em;color:var(--muted);}
+.photo-slot.has-photo{border-style:solid;border-color:transparent;padding:0;}
+.photo-slot.has-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.photo-slot.has-photo .ps-icon,
+.photo-slot.has-photo .ps-label{display:none;}
+.ps-change{
+  display:none;position:absolute;inset:0;background:rgba(0,0,0,.55);
+  align-items:center;justify-content:center;
+  font-size:.76em;font-weight:700;color:#fff;gap:4px;
 }
-.photo-slot:hover .photo-overlay{display:flex;}
+.photo-slot:hover .ps-change{display:flex;}
 
-/* ── DIVIDER ── */
-.day-divider{
-  height:4px;margin:0;
-  background:linear-gradient(90deg,var(--teal),var(--cyan),transparent);
-  opacity:.25;
-}
+/* ══ DIVIDER ══ */
+.divider{height:1px;background:var(--border);margin:0 14px;}
 
-/* ── MODAL ── */
+/* ══ LIGHTBOX ══ */
+.lbx{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,.92);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;flex-direction:column;
+  padding:20px;
+}
+.lbx.open{display:flex;}
+.lbx img{max-width:100%;max-height:80vh;border-radius:12px;object-fit:contain;}
+.lbx-close{
+  position:absolute;top:max(env(safe-area-inset-top),16px);right:16px;
+  width:40px;height:40px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);
+  background:rgba(255,255,255,.08);color:#fff;font-size:1.1em;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-family:inherit;
+}
+.lbx-cap{margin-top:14px;font-size:.82em;color:var(--muted);text-align:center;}
+
+/* ══ MODAL ══ */
 .modal-bg{
-  position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;
+  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;
   display:none;align-items:flex-end;justify-content:center;
-  backdrop-filter:blur(4px);
+  backdrop-filter:blur(6px);
 }
 .modal-bg.open{display:flex;}
-.modal-box{
+.modal{
   width:100%;max-width:520px;
-  background:#0d2236;border-radius:22px 22px 0 0;
+  background:#0d2030;border-radius:22px 22px 0 0;
   padding:22px 18px max(22px,env(safe-area-inset-bottom));
-  border-top:1px solid var(--border);
+  border-top:1px solid rgba(255,255,255,.12);
 }
-.modal-title{font-size:.92em;font-weight:700;margin-bottom:12px;color:#fff;}
-.modal-input{
-  width:100%;padding:12px 14px;border-radius:var(--r12);
+.modal h3{font-size:.9em;font-weight:700;margin-bottom:12px;}
+.modal p{font-size:.82em;color:var(--muted);line-height:1.6;margin-bottom:12px;}
+.modal input{
+  width:100%;padding:12px 14px;border-radius:12px;
   background:rgba(255,255,255,.07);border:1px solid var(--border);
   color:#fff;font-size:.9em;font-family:inherit;outline:none;
 }
-.modal-input:focus{border-color:var(--teal);}
-.modal-row{display:flex;gap:10px;margin-top:10px;}
-.mbtn{flex:1;padding:12px;border-radius:var(--r12);font-size:.88em;font-weight:700;border:none;cursor:pointer;}
-.mbtn-cancel{background:rgba(255,255,255,.08);color:var(--dim);}
-.mbtn-ok{background:linear-gradient(135deg,var(--teal),var(--cyan));color:#04111f;}
+.modal input:focus{border-color:var(--teal);}
+.mrow{display:flex;gap:8px;margin-top:10px;}
+.mbtn{
+  flex:1;padding:12px;border-radius:12px;font-size:.87em;
+  font-weight:700;border:none;cursor:pointer;font-family:inherit;
+}
+.mbtn-x{background:rgba(255,255,255,.08);color:var(--muted);}
+.mbtn-ok{background:linear-gradient(135deg,var(--teal),var(--cyan));color:#030d16;}
 
-/* ── INSTALL BANNER ── */
-.install-bar{
+/* ══ INSTALL BANNER ══ */
+.install{
   position:fixed;bottom:0;left:0;right:0;z-index:150;
-  padding:12px 18px max(12px,env(safe-area-inset-bottom));
-  background:rgba(4,17,31,.95);border-top:1px solid var(--border);
-  display:none;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 16px max(12px,env(safe-area-inset-bottom));
+  background:rgba(3,13,22,.96);border-top:1px solid var(--border);
+  display:none;align-items:center;gap:12px;
   backdrop-filter:blur(16px);
 }
-.install-bar.show{display:flex;}
-.install-text{font-size:.8em;color:var(--dim);}
-.install-text strong{color:#fff;display:block;font-size:.95em;}
+.install.show{display:flex;}
+.install-txt{flex:1;font-size:.78em;color:var(--muted);}
+.install-txt strong{color:#fff;display:block;font-size:.95em;margin-bottom:2px;}
 .install-btn{
-  flex-shrink:0;padding:9px 18px;border-radius:50px;border:none;
+  padding:9px 18px;border-radius:40px;border:none;cursor:pointer;
   background:linear-gradient(135deg,var(--teal),var(--cyan));
-  color:#04111f;font-weight:800;font-size:.82em;cursor:pointer;
+  color:#030d16;font-weight:800;font-size:.8em;font-family:inherit;
+  white-space:nowrap;
 }
-.install-close{color:var(--dim);background:none;border:none;font-size:1.2em;cursor:pointer;flex-shrink:0;}
+.install-x{color:var(--muted);background:none;border:none;font-size:1.2em;cursor:pointer;}
 
-/* ── ANIMATIONS ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.day-section{animation:fadeUp .4s ease both;}
-.day-section:nth-child(2){animation-delay:.05s}
-.day-section:nth-child(3){animation-delay:.1s}
-.day-section:nth-child(4){animation-delay:.15s}
+/* ══ CLOSING CARD ══ */
+.closing{
+  margin:20px 14px 0;padding:22px;
+  background:linear-gradient(135deg,rgba(255,99,71,.08),rgba(245,197,24,.05));
+  border:1px solid rgba(255,99,71,.2);border-radius:18px;text-align:center;
+}
+.closing-em{font-size:2.2em;margin-bottom:10px;}
+.closing-h{font-weight:800;font-size:1em;}
+.closing-s{font-size:.78em;color:var(--muted);margin-top:5px;}
+
+/* ══ DAY COLOR THEMES ══ */
+.day[data-d="0"]{--day-c:var(--teal);--day-a:rgba(0,212,184,.06);}
+.day[data-d="1"]{--day-c:var(--cyan);--day-a:rgba(61,232,255,.06);}
+.day[data-d="2"]{--day-c:var(--gold);--day-a:rgba(245,197,24,.06);}
+.day[data-d="3"]{--day-c:var(--coral);--day-a:rgba(255,99,71,.06);}
 </style>
 </head>
 <body>
 
-<!-- ══════════ FIXED HEADER ══════════ -->
-<header class="site-header">
-  <div class="header-brand">
-    <!-- LOGO: kite surfer profissional -->
-    <svg width="38" height="38" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- ── HEADER ── -->
+<header class="hdr">
+  <div class="hdr-brand">
+    <svg width="36" height="36" viewBox="0 0 80 80" fill="none">
       <rect width="80" height="80" rx="16" fill="#062236"/>
-      <!-- Sky gradient -->
       <defs>
-        <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#083050"/>
-          <stop offset="65%" stop-color="#062236"/>
-          <stop offset="100%" stop-color="#041820"/>
-        </linearGradient>
-        <linearGradient id="kiteG" x1="15" y1="8" x2="65" y2="26" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#00c9b1"/>
-          <stop offset="100%" stop-color="#38d9f5"/>
-        </linearGradient>
-        <linearGradient id="waterG" x1="0" y1="56" x2="0" y2="80" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#083d5e"/>
-          <stop offset="100%" stop-color="#041820"/>
-        </linearGradient>
-      </defs>
-      <rect width="80" height="80" rx="16" fill="url(#skyG)"/>
-      <!-- Water -->
-      <path d="M0 58 Q20 52 40 58 Q60 64 80 58 L80 80 L0 80Z" fill="url(#waterG)"/>
-      <!-- Water shimmer -->
-      <path d="M5 62 Q15 59 25 62" stroke="rgba(56,217,245,.35)" stroke-width="1" fill="none" stroke-linecap="round"/>
-      <path d="M40 65 Q52 62 62 65" stroke="rgba(56,217,245,.25)" stroke-width="1" fill="none" stroke-linecap="round"/>
-      <!-- KITE: large arc / bow kite (forma real do kite) -->
-      <!-- Leading edge arc -->
-      <path d="M15 28 Q40 6 65 28" stroke="url(#kiteG)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-      <!-- Kite body fill (canopy) -->
-      <path d="M15 28 Q40 6 65 28 Q50 36 40 34 Q30 36 15 28Z" fill="rgba(0,201,177,.18)" stroke="none"/>
-      <!-- Kite cells (vertical lines) -->
-      <line x1="28" y1="18" x2="26" y2="32" stroke="rgba(0,201,177,.35)" stroke-width="1"/>
-      <line x1="40" y1="13" x2="40" y2="34" stroke="rgba(0,201,177,.35)" stroke-width="1"/>
-      <line x1="52" y1="18" x2="54" y2="32" stroke="rgba(0,201,177,.35)" stroke-width="1"/>
-      <!-- Trailing edge (bottom of kite) -->
-      <path d="M15 28 Q30 36 40 34 Q50 36 65 28" stroke="rgba(0,201,177,.4)" stroke-width="1" fill="none"/>
-      <!-- BRIDLE LINES: from kite center-bottom to bar -->
-      <line x1="32" y1="33" x2="38" y2="50" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>
-      <line x1="48" y1="33" x2="42" y2="50" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>
-      <!-- Control bar -->
-      <rect x="33" y="49" width="14" height="2.5" rx="1.25" fill="rgba(0,201,177,.8)"/>
-      <!-- RIDER: body (crouching position) -->
-      <!-- Head -->
-      <circle cx="40" cy="54.5" r="3" fill="white"/>
-      <!-- Helmet stripe -->
-      <path d="M37.2 53 Q40 51.5 42.8 53" stroke="rgba(0,201,177,.8)" stroke-width="1.2" fill="none"/>
-      <!-- Torso -->
-      <line x1="40" y1="57" x2="40" y2="63" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
-      <!-- Arms up to bar -->
-      <line x1="40" y1="59" x2="35" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-      <line x1="40" y1="59" x2="45" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-      <!-- Front leg bent forward -->
-      <line x1="40" y1="63" x2="35" y2="68" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      <!-- Back leg -->
-      <line x1="40" y1="63" x2="44" y2="67" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      <!-- BOARD: twin-tip, angled -->
-      <rect x="26" y="66" width="28" height="4" rx="2" fill="rgba(56,217,245,.75)" transform="rotate(-5 26 66)"/>
-      <!-- Board fins suggestion -->
-      <line x1="28" y1="69" x2="26" y2="72" stroke="rgba(56,217,245,.5)" stroke-width="1.2" stroke-linecap="round"/>
-      <line x1="52" y1="68" x2="54" y2="71" stroke="rgba(56,217,245,.5)" stroke-width="1.2" stroke-linecap="round"/>
-      <!-- Wake/spray -->
-      <path d="M22 71 Q28 68 34 71" stroke="rgba(255,255,255,.3)" stroke-width="1" fill="none" stroke-linecap="round"/>
-    </svg>
-    <div class="brand-text">
-      <div class="brand-name">Kite Trip Velejin</div>
-      <div class="brand-sub">6 – 9 Ago 2026 · Pecém</div>
-    </div>
-  </div>
-  <a href="index.html" class="header-back">← Início</a>
-</header>
-
-<!-- ══════════ DAY NAV BAR ══════════ -->
-<nav class="day-nav-bar" id="dayNav">
-  <button class="dnav active" onclick="scrollToDay(0,this)">Dia 1 · Qui</button>
-  <button class="dnav" onclick="scrollToDay(1,this)">Dia 2 · Sex</button>
-  <button class="dnav" onclick="scrollToDay(2,this)">Dia 3 · Sáb</button>
-  <button class="dnav" onclick="scrollToDay(3,this)">Dia 4 · Dom</button>
-</nav>
-
-<!-- ══════════ HERO ══════════ -->
-<section class="hero">
-  <!-- Full logo no hero -->
-  <div class="hero-logo">
-    <svg width="110" height="110" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="80" height="80" rx="20" fill="#062236"/>
-      <defs>
-        <linearGradient id="skyG2" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse">
+        <linearGradient id="hSky" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stop-color="#083050"/><stop offset="65%" stop-color="#062236"/><stop offset="100%" stop-color="#041820"/>
         </linearGradient>
-        <linearGradient id="kiteG2" x1="15" y1="8" x2="65" y2="26" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#00c9b1"/><stop offset="100%" stop-color="#38d9f5"/>
+        <linearGradient id="hK" x1="15" y1="8" x2="65" y2="26" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00d4b8"/><stop offset="100%" stop-color="#3de8ff"/>
         </linearGradient>
-        <linearGradient id="waterG2" x1="0" y1="56" x2="0" y2="80" gradientUnits="userSpaceOnUse">
+        <linearGradient id="hW" x1="0" y1="56" x2="0" y2="80" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stop-color="#083d5e"/><stop offset="100%" stop-color="#041820"/>
         </linearGradient>
-        <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
       </defs>
-      <rect width="80" height="80" rx="20" fill="url(#skyG2)"/>
-      <path d="M0 58 Q20 52 40 58 Q60 64 80 58 L80 80 L0 80Z" fill="url(#waterG2)"/>
-      <path d="M5 62 Q15 59 25 62" stroke="rgba(56,217,245,.35)" stroke-width="1" fill="none" stroke-linecap="round"/>
-      <path d="M40 65 Q52 62 62 65" stroke="rgba(56,217,245,.25)" stroke-width="1" fill="none" stroke-linecap="round"/>
-      <path d="M15 28 Q40 6 65 28" stroke="url(#kiteG2)" stroke-width="3.5" fill="none" stroke-linecap="round" filter="url(#glow)"/>
-      <path d="M15 28 Q40 6 65 28 Q50 36 40 34 Q30 36 15 28Z" fill="rgba(0,201,177,.18)"/>
-      <line x1="28" y1="18" x2="26" y2="32" stroke="rgba(0,201,177,.35)" stroke-width="1"/>
-      <line x1="40" y1="13" x2="40" y2="34" stroke="rgba(0,201,177,.35)" stroke-width="1"/>
-      <line x1="52" y1="18" x2="54" y2="32" stroke="rgba(0,201,177,.35)" stroke-width="1"/>
-      <path d="M15 28 Q30 36 40 34 Q50 36 65 28" stroke="rgba(0,201,177,.4)" stroke-width="1" fill="none"/>
-      <line x1="32" y1="33" x2="38" y2="50" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>
-      <line x1="48" y1="33" x2="42" y2="50" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>
-      <rect x="33" y="49" width="14" height="2.5" rx="1.25" fill="rgba(0,201,177,.8)"/>
+      <rect width="80" height="80" rx="16" fill="url(#hSky)"/>
+      <path d="M0 58 Q20 52 40 58 Q60 64 80 58 L80 80 L0 80Z" fill="url(#hW)"/>
+      <path d="M5 62 Q15 59 25 62" stroke="rgba(61,232,255,.4)" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <path d="M40 65 Q52 62 62 65" stroke="rgba(61,232,255,.25)" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <path d="M15 28 Q40 6 65 28" stroke="url(#hK)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M15 28 Q40 6 65 28 Q50 36 40 34 Q30 36 15 28Z" fill="rgba(0,212,184,.18)"/>
+      <line x1="28" y1="18" x2="26" y2="32" stroke="rgba(0,212,184,.35)" stroke-width="1"/>
+      <line x1="40" y1="13" x2="40" y2="34" stroke="rgba(0,212,184,.35)" stroke-width="1"/>
+      <line x1="52" y1="18" x2="54" y2="32" stroke="rgba(0,212,184,.35)" stroke-width="1"/>
+      <path d="M15 28 Q30 36 40 34 Q50 36 65 28" stroke="rgba(0,212,184,.4)" stroke-width="1" fill="none"/>
+      <line x1="32" y1="33" x2="38" y2="50" stroke="rgba(255,255,255,.22)" stroke-width=".8"/>
+      <line x1="48" y1="33" x2="42" y2="50" stroke="rgba(255,255,255,.22)" stroke-width=".8"/>
+      <rect x="33" y="49" width="14" height="2.5" rx="1.25" fill="rgba(0,212,184,.8)"/>
       <circle cx="40" cy="54.5" r="3" fill="white"/>
-      <path d="M37.2 53 Q40 51.5 42.8 53" stroke="rgba(0,201,177,.8)" stroke-width="1.2" fill="none"/>
+      <path d="M37.2 53 Q40 51.5 42.8 53" stroke="rgba(0,212,184,.8)" stroke-width="1.2" fill="none"/>
       <line x1="40" y1="57" x2="40" y2="63" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
       <line x1="40" y1="59" x2="35" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
       <line x1="40" y1="59" x2="45" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
       <line x1="40" y1="63" x2="35" y2="68" stroke="white" stroke-width="2" stroke-linecap="round"/>
       <line x1="40" y1="63" x2="44" y2="67" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      <rect x="26" y="66" width="28" height="4" rx="2" fill="rgba(56,217,245,.75)" transform="rotate(-5 26 66)"/>
-      <line x1="28" y1="69" x2="26" y2="72" stroke="rgba(56,217,245,.5)" stroke-width="1.2" stroke-linecap="round"/>
-      <line x1="52" y1="68" x2="54" y2="71" stroke="rgba(56,217,245,.5)" stroke-width="1.2" stroke-linecap="round"/>
+      <rect x="26" y="66" width="28" height="4" rx="2" fill="rgba(61,232,255,.75)" transform="rotate(-5 26 66)"/>
       <path d="M22 71 Q28 68 34 71" stroke="rgba(255,255,255,.3)" stroke-width="1" fill="none" stroke-linecap="round"/>
     </svg>
+    <div>
+      <div class="hdr-name">Kite Trip Velejin</div>
+      <div class="hdr-sub">6 – 9 Ago 2026 · Pecém</div>
+    </div>
   </div>
-  <h1 class="hero-title">Kite Trip Velejin</h1>
-  <div class="hero-edition">Pecém · Ceará · Brasil</div>
-  <div class="hero-dates">📅 6 a 9 de Agosto de 2026</div>
-  <div class="hero-waves"></div>
+  <a href="index.html" class="hdr-back">← Início</a>
+</header>
+
+<!-- ── DAY TABS ── -->
+<nav class="tabs" id="tabs">
+  <button class="tab on" onclick="goDay(0,this)">Dia 1 · Qui</button>
+  <button class="tab"    onclick="goDay(1,this)">Dia 2 · Sex</button>
+  <button class="tab"    onclick="goDay(2,this)">Dia 3 · Sáb</button>
+  <button class="tab"    onclick="goDay(3,this)">Dia 4 · Dom</button>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-logo">
+    <svg width="100" height="100" viewBox="0 0 80 80" fill="none">
+      <rect width="80" height="80" rx="20" fill="#062236"/>
+      <defs>
+        <linearGradient id="hSky2" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#083050"/><stop offset="65%" stop-color="#062236"/><stop offset="100%" stop-color="#041820"/>
+        </linearGradient>
+        <linearGradient id="hK2" x1="15" y1="8" x2="65" y2="26" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00d4b8"/><stop offset="100%" stop-color="#3de8ff"/>
+        </linearGradient>
+        <linearGradient id="hW2" x1="0" y1="56" x2="0" y2="80" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#083d5e"/><stop offset="100%" stop-color="#041820"/>
+        </linearGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="80" height="80" rx="20" fill="url(#hSky2)"/>
+      <path d="M0 58 Q20 52 40 58 Q60 64 80 58 L80 80 L0 80Z" fill="url(#hW2)"/>
+      <path d="M5 62 Q15 59 25 62" stroke="rgba(61,232,255,.4)" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <path d="M40 65 Q52 62 62 65" stroke="rgba(61,232,255,.25)" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <path d="M15 28 Q40 6 65 28" stroke="url(#hK2)" stroke-width="3.5" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+      <path d="M15 28 Q40 6 65 28 Q50 36 40 34 Q30 36 15 28Z" fill="rgba(0,212,184,.2)"/>
+      <line x1="28" y1="18" x2="26" y2="32" stroke="rgba(0,212,184,.4)" stroke-width="1"/>
+      <line x1="40" y1="13" x2="40" y2="34" stroke="rgba(0,212,184,.4)" stroke-width="1"/>
+      <line x1="52" y1="18" x2="54" y2="32" stroke="rgba(0,212,184,.4)" stroke-width="1"/>
+      <path d="M15 28 Q30 36 40 34 Q50 36 65 28" stroke="rgba(0,212,184,.45)" stroke-width="1.2" fill="none"/>
+      <line x1="32" y1="33" x2="38" y2="50" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>
+      <line x1="48" y1="33" x2="42" y2="50" stroke="rgba(255,255,255,.25)" stroke-width=".8"/>
+      <rect x="33" y="49" width="14" height="2.5" rx="1.25" fill="rgba(0,212,184,.85)"/>
+      <circle cx="40" cy="54.5" r="3" fill="white"/>
+      <path d="M37.2 53 Q40 51.5 42.8 53" stroke="rgba(0,212,184,.8)" stroke-width="1.2" fill="none"/>
+      <line x1="40" y1="57" x2="40" y2="63" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="40" y1="59" x2="35" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="40" y1="59" x2="45" y2="52" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="40" y1="63" x2="35" y2="68" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="40" y1="63" x2="44" y2="67" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <rect x="26" y="66" width="28" height="4" rx="2" fill="rgba(61,232,255,.8)" transform="rotate(-5 26 66)"/>
+      <line x1="28" y1="69" x2="26" y2="72" stroke="rgba(61,232,255,.5)" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="52" y1="68" x2="54" y2="71" stroke="rgba(61,232,255,.5)" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M22 71 Q28 68 34 71" stroke="rgba(255,255,255,.35)" stroke-width="1" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <h1 class="hero-h1">Kite Trip<br>Velejin</h1>
+  <div class="hero-loc">Pecém · Ceará · Brasil</div>
+  <div class="hero-badge">📅 6 a 9 de Agosto de 2026</div>
+  <div class="hero-waves">
+    <svg viewBox="0 0 1440 52" preserveAspectRatio="none" height="52">
+      <path d="M0,26 C180,50 360,2 540,26 C720,50 900,2 1080,26 C1260,50 1350,10 1440,26 L1440,52 L0,52Z" fill="#061825"/>
+      <path d="M0,36 C200,52 400,16 600,36 C800,52 1000,16 1200,36 C1320,46 1380,28 1440,36 L1440,52 L0,52Z" fill="#061825" opacity=".5"/>
+    </svg>
+  </div>
 </section>
 
-<!-- ══════════ PAGE BODY ══════════ -->
-<main class="page-body">
+<main class="body">
 
-<!-- ─────────────────────────────────────
-     DIA 1 · QUINTA · 6 AGOSTO
-───────────────────────────────────── -->
-<section class="day-section" id="day-0">
-  <div class="day-banner">
-    <div class="day-tag">Dia 1 de 4</div>
-    <div class="day-weekday">Quinta-feira</div>
+<!-- ─── DIA 1 ─── -->
+<section class="day" data-d="0" id="day-0">
+  <div class="day-head">
+    <div class="day-num">Dia 1 de 4</div>
+    <div class="day-big">Quinta-feira</div>
     <div class="day-date">6 de Agosto de 2026</div>
+    <div class="day-dec">1</div>
   </div>
-
-  <div class="events-wrap">
-
-    <!-- 12:00 Chegada -->
-    <div class="event-item">
-      <div class="event-dot">🏠</div>
-      <div class="event-body">
-        <div class="event-time">12:00</div>
-        <div class="event-title">Chegada & Acomodações</div>
-        <div class="event-desc">Check-in nos espaços. Veja abaixo onde cada um fica:</div>
-        <div class="acomod-grid">
-          <a class="acomod-card" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">
-            <div class="acomod-icon">🏡</div>
-            <div class="acomod-name">Cs. 2.7</div>
-            <div class="acomod-detail">5 quartos</div>
-            <div class="acomod-link-tag">📸 Ver no Instagram →</div>
+  <div class="stripe"></div>
+  <div class="events">
+    <div class="ecard" style="--ei-bg:rgba(0,212,184,.1)">
+      <div class="eicon">🏠</div>
+      <div class="ebody">
+        <div class="etime">12:00</div>
+        <div class="etitle">Chegada &amp; Acomodações</div>
+        <div class="edesc">Check-in nos espaços. Veja onde cada um fica:</div>
+        <div class="acomod">
+          <a class="acard" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">
+            <div class="acard-icon">🏡</div><div class="acard-name">Cs. 2.7</div><div class="acard-info">5 quartos</div><div class="acard-cta">📸 Instagram →</div>
           </a>
-          <a class="acomod-card" href="https://www.instagram.com/stories/highlights/18062237377636213/" target="_blank">
-            <div class="acomod-icon">🛏️</div>
-            <div class="acomod-name">Apto 102C</div>
-            <div class="acomod-detail">2 quartos + sala</div>
-            <div class="acomod-link-tag">📸 Ver no Instagram →</div>
+          <a class="acard" href="https://www.instagram.com/stories/highlights/18062237377636213/" target="_blank">
+            <div class="acard-icon">🛏️</div><div class="acard-name">Apto 102C</div><div class="acard-info">2 quartos + sala</div><div class="acard-cta">📸 Instagram →</div>
           </a>
-          <a class="acomod-card" href="https://www.instagram.com/stories/highlights/17987787710507233/" target="_blank">
-            <div class="acomod-icon">🛏️</div>
-            <div class="acomod-name">Apto 103F</div>
-            <div class="acomod-detail">1 quarto + sala</div>
-            <div class="acomod-link-tag">📸 Ver no Instagram →</div>
+          <a class="acard" href="https://www.instagram.com/stories/highlights/17987787710507233/" target="_blank">
+            <div class="acard-icon">🛏️</div><div class="acard-name">Apto 103F</div><div class="acard-info">1 quarto + sala</div><div class="acard-cta">📸 Instagram →</div>
           </a>
-          <a class="acomod-card" href="https://www.instagram.com/stories/highlights/18026240075521145/" target="_blank">
-            <div class="acomod-icon">🛏️</div>
-            <div class="acomod-name">Apto 201H</div>
-            <div class="acomod-detail">1 quarto + sala</div>
-            <div class="acomod-link-tag">📸 Ver no Instagram →</div>
+          <a class="acard" href="https://www.instagram.com/stories/highlights/18026240075521145/" target="_blank">
+            <div class="acard-icon">🛏️</div><div class="acard-name">Apto 201H</div><div class="acard-info">1 quarto + sala</div><div class="acard-cta">📸 Instagram →</div>
           </a>
         </div>
       </div>
     </div>
-
-    <!-- 12:30 Almoço -->
-    <div class="event-item">
-      <div class="event-dot food">🍽️</div>
-      <div class="event-body">
-        <div class="event-time">12:30</div>
-        <div class="event-title">Almoço</div>
-        <div class="chips-row">
-          <span class="chip chip-dim" onclick="openCardapioModal()">🍴 Ver Cardápio</span>
-        </div>
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
+      <div class="eicon">🍽️</div>
+      <div class="ebody">
+        <div class="etime">12:30</div><div class="etitle">Almoço</div>
+        <div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div>
       </div>
     </div>
-
-    <!-- 15:00 DW -->
-    <div class="event-item">
-      <div class="event-dot kite">🏄‍♂️</div>
-      <div class="event-body">
-        <div class="event-time">15:00</div>
-        <div class="event-title">DW Pecém → Ventaya</div>
-        <div class="event-desc">Downwinder de largada. Vento alísio nordeste, condiçoes perfeitas.</div>
-        <div class="chips-row">
-          <a class="chip chip-cyan" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTE5NDU1MjQwODcyNDkx?story_media_id=3938348567068268435&igsh=b2NxaG80bmk5eHNy" target="_blank">📸 Barraca Ventaya</a>
-        </div>
+    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)">
+      <div class="eicon">🏄‍♂️</div>
+      <div class="ebody">
+        <div class="etime">15:00</div><div class="etitle">DW Pecém → Ventaya</div>
+        <div class="edesc">Downwinder de largada. Vento alísio nordeste, condições perfeitas.</div>
+        <div class="chips"><a class="chip chip-c" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTE5NDU1MjQwODcyNDkx?story_media_id=3938348567068268435&igsh=b2NxaG80bmk5eHNy" target="_blank">📸 Barraca Ventaya</a></div>
       </div>
     </div>
-
-    <!-- 17:30 Pôr do sol -->
-    <div class="event-item">
-      <div class="event-dot beer">🌅</div>
-      <div class="event-body">
-        <div class="event-time">17:30</div>
-        <div class="event-title">Pôr do sol no Ventaya + 🍺</div>
-        <div class="event-desc">Quem tiver nas áreas, queda obrigatória de kite às 17h30 pra não perder o sol.</div>
+    <div class="ecard" style="--ei-bg:rgba(245,197,24,.1)">
+      <div class="eicon">🌅</div>
+      <div class="ebody">
+        <div class="etime">17:30</div><div class="etitle">Pôr do sol no Ventaya + 🍺</div>
+        <div class="edesc">Queda obrigatória de kite às 17h30 pra não perder o sol.</div>
       </div>
     </div>
-
-    <!-- 19:00 Janta -->
-    <div class="event-item">
-      <div class="event-dot food">🍽️</div>
-      <div class="event-body">
-        <div class="event-time">19:00</div>
-        <div class="event-title">Jantar</div>
-        <div class="chips-row">
-          <span class="chip chip-dim" onclick="openCardapioModal()">🍴 Ver Cardápio</span>
-        </div>
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
+      <div class="eicon">🍽️</div>
+      <div class="ebody">
+        <div class="etime">19:00</div><div class="etitle">Jantar</div>
+        <div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div>
       </div>
     </div>
-
-    <!-- 19:01 Beer -->
-    <div class="event-item">
-      <div class="event-dot beer">🍺</div>
-      <div class="event-body">
-        <div class="event-time">19:01</div>
-        <div class="event-title">Beer 🍺</div>
-        <div class="event-desc">Essa é a parte mais fácil do roteiro.</div>
+    <div class="ecard" style="--ei-bg:rgba(245,197,24,.1)">
+      <div class="eicon">🍺</div>
+      <div class="ebody">
+        <div class="etime">19:01</div><div class="etitle">Beer 🍺</div>
+        <div class="edesc">Essa é a parte mais fácil do roteiro.</div>
       </div>
     </div>
-
   </div>
 </section>
-<div class="day-divider"></div>
+<div class="divider"></div>
 
-<!-- ─────────────────────────────────────
-     DIA 2 · SEXTA · 7 AGOSTO
-───────────────────────────────────── -->
-<section class="day-section" id="day-1">
-  <div class="day-banner">
-    <div class="day-tag">Dia 2 de 4</div>
-    <div class="day-weekday">Sexta-feira</div>
+<!-- ─── DIA 2 ─── -->
+<section class="day" data-d="1" id="day-1">
+  <div class="day-head">
+    <div class="day-num">Dia 2 de 4</div>
+    <div class="day-big">Sexta-feira</div>
     <div class="day-date">7 de Agosto de 2026</div>
+    <div class="day-dec">2</div>
   </div>
-
-  <div class="events-wrap">
-
-    <!-- 08:00 Café da manhã -->
-    <div class="event-item">
-      <div class="event-dot food">☕</div>
-      <div class="event-body">
-        <div class="event-time">08:00</div>
-        <div class="event-title">Café da manhã na Cs. 2.7</div>
-        <div class="chips-row">
-          <a class="chip chip-teal" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Ver Cs. 2.7</a>
+  <div class="stripe"></div>
+  <div class="events">
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
+      <div class="eicon">☕</div>
+      <div class="ebody">
+        <div class="etime">08:00</div><div class="etitle">Café da manhã na Cs. 2.7</div>
+        <div class="chips"><a class="chip chip-t" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Cs. 2.7</a></div>
+      </div>
+    </div>
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
+      <div class="eicon">🍽️</div>
+      <div class="ebody">
+        <div class="etime">12:00</div><div class="etitle">Almoço</div>
+        <div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div>
+      </div>
+    </div>
+    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)">
+      <div class="eicon">🏄‍♂️</div>
+      <div class="ebody">
+        <div class="etime">14:00</div><div class="etitle">DW Pecém → Paracuru</div>
+        <div class="edesc">Downwinder longo, rumo a Paracuru. Vento firme à tarde.</div>
+      </div>
+    </div>
+    <div class="ecard" style="--ei-bg:rgba(255,99,71,.1)">
+      <div class="eicon">🐟</div>
+      <div class="ebody">
+        <div class="etime">19:00</div><div class="etitle">Assado de Peixe</div>
+        <div class="edesc">O clássico da trip. Peixe fresquinho direto do mar.</div>
+        <div class="photo-reveal" id="reveal-peixe" onclick="openLightbox()">
+          <div class="photo-reveal-icon">🐟</div>
+          <div class="photo-reveal-label">Toque para ver a foto</div>
+          <div class="photo-reveal-sub">Assado de Peixe · Pecém 2026</div>
         </div>
       </div>
     </div>
-
-    <!-- 12:00 Almoço -->
-    <div class="event-item">
-      <div class="event-dot food">🍽️</div>
-      <div class="event-body">
-        <div class="event-time">12:00</div>
-        <div class="event-title">Almoço</div>
-        <div class="chips-row">
-          <span class="chip chip-dim" onclick="openCardapioModal()">🍴 Ver Cardápio</span>
-        </div>
+    <div class="ecard" style="--ei-bg:rgba(245,197,24,.1)">
+      <div class="eicon">🍺</div>
+      <div class="ebody">
+        <div class="etime">19:01</div><div class="etitle">Beer 🍺</div>
+        <div class="edesc">Novamente pontual.</div>
       </div>
     </div>
-
-    <!-- 14:00 DW Pecém - Paracuru -->
-    <div class="event-item">
-      <div class="event-dot kite">🏄‍♂️</div>
-      <div class="event-body">
-        <div class="event-time">14:00</div>
-        <div class="event-title">DW Pecém → Paracuru</div>
-        <div class="event-desc">Downwinder longo, rumo a Paracuru. Vento firme à tarde.</div>
-      </div>
-    </div>
-
-    <!-- 19:00 Assado de Peixe -->
-    <div class="event-item">
-      <div class="event-dot night">🐟</div>
-      <div class="event-body">
-        <div class="event-time">19:00</div>
-        <div class="event-title">Assado de Peixe</div>
-        <div class="event-desc">O clássico da trip. Peixe fresquinho direto do mar.</div>
-        <div class="photo-slot" id="slot-peixe" style="cursor:default;">
-          <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/assado%20de%20peixe.jpg" alt="Assado de Peixe" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px;">
-        </div>
-      </div>
-    </div>
-
-    <!-- 19:01 Beer -->
-    <div class="event-item">
-      <div class="event-dot beer">🍺</div>
-      <div class="event-body">
-        <div class="event-time">19:01</div>
-        <div class="event-title">Beer 🍺</div>
-        <div class="event-desc">Novamente pontual.</div>
-      </div>
-    </div>
-
   </div>
 </section>
-<div class="day-divider"></div>
+<div class="divider"></div>
 
-<!-- ─────────────────────────────────────
-     DIA 3 · SÁBADO · 8 AGOSTO
-───────────────────────────────────── -->
-<section class="day-section" id="day-2">
-  <div class="day-banner">
-    <div class="day-tag">Dia 3 de 4</div>
-    <div class="day-weekday">Sábado</div>
+<!-- ─── DIA 3 ─── -->
+<section class="day" data-d="2" id="day-2">
+  <div class="day-head">
+    <div class="day-num">Dia 3 de 4</div>
+    <div class="day-big">Sábado</div>
     <div class="day-date">8 de Agosto de 2026</div>
+    <div class="day-dec">3</div>
   </div>
-
-  <div class="events-wrap">
-
-    <!-- 09:00 Café -->
-    <div class="event-item">
-      <div class="event-dot food">☕</div>
-      <div class="event-body">
-        <div class="event-time">09:00</div>
-        <div class="event-title">Café da manhã na Cs. 2.7</div>
-        <div class="chips-row">
-          <a class="chip chip-teal" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Ver Cs. 2.7</a>
+  <div class="stripe"></div>
+  <div class="events">
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
+      <div class="eicon">☕</div>
+      <div class="ebody">
+        <div class="etime">09:00</div><div class="etitle">Café da manhã na Cs. 2.7</div>
+        <div class="chips"><a class="chip chip-t" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Cs. 2.7</a></div>
+      </div>
+    </div>
+    <div class="ecard" style="--ei-bg:rgba(255,99,71,.1)">
+      <div class="eicon">🔥</div>
+      <div class="ebody">
+        <div class="etime">12:00</div><div class="etitle">Churrasco 🔥</div>
+        <div class="edesc">Picanha, costela, linguiça e tudo que a galera trouxer.</div>
+      </div>
+    </div>
+    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)">
+      <div class="eicon">🏄‍♂️</div>
+      <div class="ebody">
+        <div class="etime">15:00</div><div class="etitle">Pecém → Ventaya</div>
+        <div class="edesc">Sessão da tarde no Ventaya. Vento de tarde, melhor hora.</div>
+        <div class="chips"><a class="chip chip-c" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTE5NDU1MjQwODcyNDkx?story_media_id=3938348567068268435&igsh=b2NxaG80bmk5eHNy" target="_blank">📸 Barraca Ventaya</a></div>
+      </div>
+    </div>
+    <div class="ecard" style="--ei-bg:rgba(167,139,250,.1)">
+      <div class="eicon">🎸</div>
+      <div class="ebody">
+        <div class="etime">17:00</div><div class="etitle">Festa — Karolzinha Sonfoneira</div>
+        <div class="edesc">Ao vivo no Ventaya. Não pode faltar!</div>
+        <div class="photo-slot" id="slot-banda" onclick="openPhotoModal('banda')">
+          <div class="ps-change">✏️ Trocar foto</div>
+          <span class="ps-icon">🎸</span>
+          <span class="ps-label">Toque para adicionar foto da Banda</span>
         </div>
       </div>
     </div>
-
-    <!-- 12:00 Churrasco -->
-    <div class="event-item">
-      <div class="event-dot night">🔥</div>
-      <div class="event-body">
-        <div class="event-time">12:00</div>
-        <div class="event-title">Churrasco 🔥</div>
-        <div class="event-desc">Picanha, costela, linguiça e tudo que a galera trouxer.</div>
-      </div>
-    </div>
-
-    <!-- 15:00 Pecém - Ventaya -->
-    <div class="event-item">
-      <div class="event-dot kite">🏄‍♂️</div>
-      <div class="event-body">
-        <div class="event-time">15:00</div>
-        <div class="event-title">Pecém → Ventaya</div>
-        <div class="event-desc">Sessão da tarde no Ventaya. Vento de tarde, melhor hora.</div>
-        <div class="chips-row">
-          <a class="chip chip-cyan" href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE4MTE5NDU1MjQwODcyNDkx?story_media_id=3938348567068268435&igsh=b2NxaG80bmk5eHNy" target="_blank">📸 Barraca Ventaya</a>
+    <div class="ecard" style="--ei-bg:rgba(167,139,250,.1)">
+      <div class="eicon">🎧</div>
+      <div class="ebody">
+        <div class="etime">19:00</div><div class="etitle">DJ 🎧</div>
+        <div class="edesc">A noite continua.</div>
+        <div class="photo-slot" id="slot-dj" onclick="openPhotoModal('dj')">
+          <div class="ps-change">✏️ Trocar foto</div>
+          <span class="ps-icon">🎧</span>
+          <span class="ps-label">Toque para adicionar foto do DJ</span>
         </div>
       </div>
     </div>
-
-    <!-- 17:00 Karolzinha -->
-    <div class="event-item">
-      <div class="event-dot night">🎸</div>
-      <div class="event-body">
-        <div class="event-time">17:00</div>
-        <div class="event-title">Festa — Karolzinha Sonfoneira no Ventaya</div>
-        <div class="event-desc">Ao vivo no Ventaya. Não pode faltar!</div>
-        <div class="photo-slot" onclick="openPhotoModal('banda')" id="slot-banda">
-          <div class="photo-overlay">✏️ Trocar foto</div>
-          <span class="photo-slot-icon">🎸</span>
-          <span class="photo-slot-label">Adicionar foto da Banda</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 19:00 DJ -->
-    <div class="event-item">
-      <div class="event-dot night">🎧</div>
-      <div class="event-body">
-        <div class="event-time">19:00</div>
-        <div class="event-title">DJ 🎧</div>
-        <div class="event-desc">A noite continua.</div>
-        <div class="photo-slot" onclick="openPhotoModal('dj')" id="slot-dj">
-          <div class="photo-overlay">✏️ Trocar foto</div>
-          <span class="photo-slot-icon">🎧</span>
-          <span class="photo-slot-label">Adicionar foto do DJ</span>
-        </div>
-      </div>
-    </div>
-
   </div>
 </section>
-<div class="day-divider"></div>
+<div class="divider"></div>
 
-<!-- ─────────────────────────────────────
-     DIA 4 · DOMINGO · 9 AGOSTO
-───────────────────────────────────── -->
-<section class="day-section" id="day-3">
-  <div class="day-banner" style="background:linear-gradient(180deg,rgba(244,132,95,.07) 0%,transparent 100%);">
-    <div class="day-tag" style="color:var(--sunset);">Dia 4 de 4 · Último dia</div>
-    <div class="day-weekday">Domingo</div>
+<!-- ─── DIA 4 ─── -->
+<section class="day" data-d="3" id="day-3">
+  <div class="day-head" style="background:linear-gradient(135deg,rgba(255,99,71,.07) 0%,transparent 70%)">
+    <div class="day-num" style="color:var(--coral)">Dia 4 de 4 · Último dia</div>
+    <div class="day-big">Domingo</div>
     <div class="day-date">9 de Agosto de 2026</div>
+    <div class="day-dec">4</div>
   </div>
-
-  <div class="events-wrap">
-
-    <!-- 08:00 Rezar -->
-    <div class="event-item">
-      <div class="event-dot pray">🙏</div>
-      <div class="event-body">
-        <div class="event-time">08:00</div>
-        <div class="event-title">Rezar para acordar bem</div>
+  <div class="stripe"></div>
+  <div class="events">
+    <div class="ecard" style="--ei-bg:rgba(200,200,255,.08)">
+      <div class="eicon">🙏</div>
+      <div class="ebody"><div class="etime">08:00</div><div class="etitle">Rezar para acordar bem</div></div>
+    </div>
+    <div class="ecard" style="--ei-bg:rgba(200,200,255,.08)">
+      <div class="eicon">🙏</div>
+      <div class="ebody">
+        <div class="etime">08:20</div><div class="etitle">Rezar pra ter coragem</div>
+        <div class="edesc">Depois de ontem... vai precisar.</div>
       </div>
     </div>
-
-    <!-- 08:20 Rezar de novo -->
-    <div class="event-item">
-      <div class="event-dot pray">🙏</div>
-      <div class="event-body">
-        <div class="event-time">08:20</div>
-        <div class="event-title">Rezar pra ter coragem</div>
-        <div class="event-desc">Depois de ontem... vai precisar.</div>
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
+      <div class="eicon">☕</div>
+      <div class="ebody">
+        <div class="etime">09:00</div><div class="etitle">Café da manhã na Cs. 2.7</div>
+        <div class="chips"><a class="chip chip-t" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Cs. 2.7</a></div>
       </div>
     </div>
-
-    <!-- 09:00 Café -->
-    <div class="event-item">
-      <div class="event-dot food">☕</div>
-      <div class="event-body">
-        <div class="event-time">09:00</div>
-        <div class="event-title">Café da manhã na Cs. 2.7</div>
-        <div class="chips-row">
-          <a class="chip chip-teal" href="https://www.instagram.com/stories/highlights/18039440441088408/" target="_blank">🏡 Ver Cs. 2.7</a>
-        </div>
+    <div class="ecard" style="--ei-bg:rgba(61,232,255,.1)">
+      <div class="eicon">🏄‍♂️</div>
+      <div class="ebody">
+        <div class="etime">11:00</div><div class="etitle">Coragem de velejar? Vamos. 🤙</div>
+        <div class="edesc">Última sessão da trip. Despedida do mar.</div>
       </div>
     </div>
-
-    <!-- 11:00 Velejar -->
-    <div class="event-item">
-      <div class="event-dot kite">🏄‍♂️</div>
-      <div class="event-body">
-        <div class="event-time">11:00</div>
-        <div class="event-title">Coragem de velejar? Vamos. 🤙</div>
-        <div class="event-desc">Última sessão da trip. Despedida do mar.</div>
+    <div class="ecard" style="--ei-bg:rgba(100,220,130,.1)">
+      <div class="eicon">🍽️</div>
+      <div class="ebody">
+        <div class="etime">14:00</div><div class="etitle">Almoço de encerramento</div>
+        <div class="chips"><span class="chip chip-d" onclick="openCardapio()">🍴 Cardápio</span></div>
       </div>
     </div>
-
-    <!-- 14:00 Almoço -->
-    <div class="event-item">
-      <div class="event-dot food">🍽️</div>
-      <div class="event-body">
-        <div class="event-time">14:00</div>
-        <div class="event-title">Almoço de encerramento</div>
-        <div class="chips-row">
-          <span class="chip chip-dim" onclick="openCardapioModal()">🍴 Ver Cardápio</span>
-        </div>
-      </div>
-    </div>
-
   </div>
-
-  <!-- Encerramento -->
-  <div style="margin:24px 18px 0;padding:20px;background:rgba(244,132,95,.08);border:1px solid rgba(244,132,95,.2);border-radius:16px;text-align:center;">
-    <div style="font-size:2em;margin-bottom:8px;">🌅</div>
-    <div style="font-weight:800;font-size:1em;color:#fff;">Até a próxima edição!</div>
-    <div style="font-size:.8em;color:var(--dim);margin-top:6px;">Kite Beer · Velejin · Pecém · Ceará</div>
+  <div class="closing">
+    <div class="closing-em">🌅</div>
+    <div class="closing-h">Até a próxima edição!</div>
+    <div class="closing-s">Kite Beer · Velejin · Pecém · Ceará</div>
   </div>
 </section>
 
-</main><!-- end page-body -->
+</main>
 
-<!-- ══════════ PHOTO MODAL ══════════ -->
+<!-- LIGHTBOX -->
+<div class="lbx" id="lightbox" onclick="closeLightbox()">
+  <button class="lbx-close" onclick="closeLightbox()">✕</button>
+  <img src="https://raw.githubusercontent.com/brunohrb/kitebeer/main/assado%20de%20peixe.jpg" alt="Assado de Peixe" loading="lazy">
+  <div class="lbx-cap">🐟 Assado de Peixe · Pecém 2026</div>
+</div>
+
+<!-- PHOTO MODAL -->
 <div class="modal-bg" id="photoModal">
-  <div class="modal-box">
-    <div class="modal-title" id="photoModalTitle">📸 Link da foto</div>
-    <input class="modal-input" id="photoUrlInput" type="url" placeholder="https://... (Google Fotos, Instagram, etc.)">
-    <div class="modal-row">
-      <button class="mbtn mbtn-cancel" onclick="closeModal('photoModal')">Cancelar</button>
-      <button class="mbtn mbtn-ok" onclick="confirmPhoto()">Salvar</button>
+  <div class="modal">
+    <h3>📸 Link da foto</h3>
+    <p>Cole o link da foto (Google Fotos, etc.):</p>
+    <input id="photoUrl" type="url" placeholder="https://...">
+    <div class="mrow">
+      <button class="mbtn mbtn-x" onclick="closeModal('photoModal')">Cancelar</button>
+      <button class="mbtn mbtn-ok" onclick="savePhoto()">Salvar</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════ CARDÁPIO MODAL ══════════ -->
+<!-- CARDÁPIO MODAL -->
 <div class="modal-bg" id="cardapioModal">
-  <div class="modal-box">
-    <div class="modal-title">🍴 Cardápio — em breve!</div>
-    <p style="font-size:.85em;color:var(--dim);line-height:1.6;">
-      O cardápio ainda está sendo definido.<br>
-      Quando estiver pronto, adicione o link abaixo:
-    </p>
-    <input class="modal-input" id="cardapioUrlInput" type="url" placeholder="https://..." style="margin-top:12px;">
-    <div class="modal-row">
-      <button class="mbtn mbtn-cancel" onclick="closeModal('cardapioModal')">Fechar</button>
+  <div class="modal">
+    <h3>🍴 Cardápio</h3>
+    <p>O cardápio ainda está sendo definido.<br>Quando estiver pronto, adicione o link abaixo:</p>
+    <input id="cardapioUrl" type="url" placeholder="https://...">
+    <div class="mrow">
+      <button class="mbtn mbtn-x" onclick="closeModal('cardapioModal')">Fechar</button>
       <button class="mbtn mbtn-ok" onclick="saveCardapio()">Salvar link</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════ INSTALL BANNER ══════════ -->
-<div class="install-bar" id="installBar">
-  <div class="install-text">
+<!-- INSTALL BANNER -->
+<div class="install" id="installBar">
+  <div class="install-txt">
     <strong>Instalar no celular</strong>
-    Acesse offline como um app
+    Acesse offline como um app nativo
   </div>
   <button class="install-btn" id="installBtn">Instalar</button>
-  <button class="install-close" onclick="document.getElementById('installBar').classList.remove('show')">✕</button>
+  <button class="install-x" onclick="document.getElementById('installBar').classList.remove('show')">✕</button>
 </div>
 
 <script>
-// ── SCROLL TO DAY ──
-function scrollToDay(idx, btn) {
-  const sec = document.getElementById('day-' + idx);
-  if (!sec) return;
-  const offset = 110; // header + nav height
-  const top = sec.getBoundingClientRect().top + window.scrollY - offset;
-  window.scrollTo({top, behavior:'smooth'});
-  document.querySelectorAll('.dnav').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+function goDay(i,btn){
+  const el=document.getElementById('day-'+i);
+  if(!el)return;
+  const top=el.getBoundingClientRect().top+scrollY-108;
+  scrollTo({top,behavior:'smooth'});
+  document.querySelectorAll('.tab').forEach((b,j)=>b.classList.toggle('on',j===i));
+}
+const DAYS=['day-0','day-1','day-2','day-3'];
+const TABS=document.querySelectorAll('.tab');
+addEventListener('scroll',()=>{
+  let cur=0;
+  DAYS.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el&&el.getBoundingClientRect().top<=120)cur=i;
+  });
+  TABS.forEach((b,i)=>b.classList.toggle('on',i===cur));
+},{passive:true});
+
+function openLightbox(){
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow='';
 }
 
-// ── AUTO ACTIVE NAV ON SCROLL ──
-const dayIds = ['day-0','day-1','day-2','day-3'];
-const navBtns = document.querySelectorAll('.dnav');
-window.addEventListener('scroll', () => {
-  let current = 0;
-  dayIds.forEach((id, i) => {
-    const el = document.getElementById(id);
-    if (el && el.getBoundingClientRect().top <= 130) current = i;
-  });
-  navBtns.forEach((b, i) => b.classList.toggle('active', i === current));
-}, {passive: true});
-
-// ── PHOTO SLOTS ──
-let activeSlot = null;
-const photoData = JSON.parse(localStorage.getItem('velejin_photos') || '{}');
-
-function renderPhotos() {
-  ['peixe','banda','dj'].forEach(key => {
-    const slot = document.getElementById('slot-' + key);
-    if (!slot) return;
-    if (photoData[key]) {
-      slot.innerHTML = `<img src="${photoData[key]}" alt="${key}"><div class="photo-overlay">✏️ Trocar foto</div>`;
-      slot.onclick = () => openPhotoModal(key);
-    }
+let activeSlot=null;
+const photos=JSON.parse(localStorage.getItem('v26_photos')||'{}');
+function renderPhotos(){
+  ['banda','dj'].forEach(k=>{
+    const el=document.getElementById('slot-'+k);
+    if(!el||!photos[k])return;
+    el.classList.add('has-photo');
+    let img=el.querySelector('img');
+    if(!img){img=document.createElement('img');img.alt=k;el.prepend(img);}
+    img.src=photos[k];
   });
 }
-
-function openPhotoModal(key) {
-  activeSlot = key;
-  document.getElementById('photoUrlInput').value = photoData[key] || '';
+function openPhotoModal(k){
+  activeSlot=k;
+  document.getElementById('photoUrl').value=photos[k]||'';
   document.getElementById('photoModal').classList.add('open');
-  setTimeout(() => document.getElementById('photoUrlInput').focus(), 150);
+  setTimeout(()=>document.getElementById('photoUrl').focus(),150);
 }
-
-function confirmPhoto() {
-  const url = document.getElementById('photoUrlInput').value.trim();
-  if (activeSlot) {
-    photoData[activeSlot] = url;
-    localStorage.setItem('velejin_photos', JSON.stringify(photoData));
-    renderPhotos();
-  }
+function savePhoto(){
+  const url=document.getElementById('photoUrl').value.trim();
+  if(activeSlot){photos[activeSlot]=url;localStorage.setItem('v26_photos',JSON.stringify(photos));renderPhotos();}
   closeModal('photoModal');
 }
-
-// ── CARDÁPIO ──
-function openCardapioModal() {
-  const saved = localStorage.getItem('velejin_cardapio_url') || '';
-  document.getElementById('cardapioUrlInput').value = saved;
-  if (saved) {
-    window.open(saved, '_blank');
-    return;
-  }
+function openCardapio(){
+  const saved=localStorage.getItem('v26_cardapio')||'';
+  if(saved){open(saved,'_blank');return;}
+  document.getElementById('cardapioUrl').value='';
   document.getElementById('cardapioModal').classList.add('open');
 }
-
-function saveCardapio() {
-  const url = document.getElementById('cardapioUrlInput').value.trim();
-  if (url) localStorage.setItem('velejin_cardapio_url', url);
+function saveCardapio(){
+  const url=document.getElementById('cardapioUrl').value.trim();
+  if(url)localStorage.setItem('v26_cardapio',url);
   closeModal('cardapioModal');
 }
-
-// ── MODAL ──
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-}
-document.querySelectorAll('.modal-bg').forEach(m => {
-  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-bg').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
 });
 
-// ── PWA INSTALL ──
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('installBar').classList.add('show');
-});
-document.getElementById('installBtn').addEventListener('click', async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const result = await deferredPrompt.userChoice;
-  deferredPrompt = null;
+let dPE;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dPE=e;document.getElementById('installBar').classList.add('show');});
+document.getElementById('installBtn').addEventListener('click',async()=>{
+  if(!dPE)return;dPE.prompt();await dPE.userChoice;dPE=null;
   document.getElementById('installBar').classList.remove('show');
 });
-window.addEventListener('appinstalled', () => {
-  document.getElementById('installBar').classList.remove('show');
-});
-
-// ── SERVICE WORKER ──
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw-velejin.js').catch(() => {});
-}
-
-// ── INIT ──
+addEventListener('appinstalled',()=>document.getElementById('installBar').classList.remove('show'));
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw-velejin.js').catch(()=>{});
 renderPhotos();
 </script>
 </body>
