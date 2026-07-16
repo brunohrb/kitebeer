@@ -133,7 +133,7 @@ select option{background:#0a2236;}
     <div class="info-box">
       <b>Normal</b> &mdash; divide igual &nbsp;|&nbsp;
       <b style="color:var(--teal)">Velejador</b> &mdash; recebe gastos exclusivos de kite &nbsp;|&nbsp;
-      <b style="color:var(--gold)">Baba</b> &mdash; paga 70% da cota (30% vai para o respons&aacute;vel)
+      <b style="color:var(--gold)">Baba</b> &mdash; n&atilde;o paga nada; o respons&aacute;vel paga 70% da cota dela
     </div>
     <div class="person-form">
       <input id="new-person" type="text" placeholder="Nome do participante">
@@ -379,30 +379,28 @@ function calcBalances(){
     return;
   }
   var bal={};
-  people.forEach(function(p){bal[p.nome]=0;});
+  people.forEach(function(p){if(p.tipo!=='baba')bal[p.nome]=0;});
 
   expenses.forEach(function(e){
     var share=e.amount/e.involved.length;
     if(bal.hasOwnProperty(e.payer))bal[e.payer]+=e.amount;
     e.involved.forEach(function(nome){
-      if(!bal.hasOwnProperty(nome))return;
       var p=people.find(function(x){return x.nome===nome;});
       if(p&&p.tipo==='baba'){
-        bal[nome]-=share*0.7;
         if(p.responsavel_nome&&bal.hasOwnProperty(p.responsavel_nome)){
-          bal[p.responsavel_nome]-=share*0.3;
+          bal[p.responsavel_nome]-=share*0.7;
         }
       }else{
-        bal[nome]-=share;
+        if(bal.hasOwnProperty(nome))bal[nome]-=share;
       }
     });
   });
 
-  var rows=people.map(function(p){return{nome:p.nome,tipo:p.tipo,v:bal[p.nome]};}).filter(function(x){return Math.abs(x.v)>0.01;});
+  var rows=people.filter(function(p){return p.tipo!=='baba';}).map(function(p){return{nome:p.nome,tipo:p.tipo,v:bal[p.nome]};}).filter(function(x){return Math.abs(x.v)>0.01;});
   document.getElementById('balance-list').innerHTML=!rows.length
     ?'<div class="empty" style="color:var(--teal)">&#x2705; Ninguem deve nada!</div>'
     :rows.map(function(x){
-      var badge=x.tipo==='velejador'?'<span class="tag-vel">Vel</span>':x.tipo==='baba'?'<span class="tag-baba">Baba</span>':'';
+      var badge=x.tipo==='velejador'?'<span class="tag-vel">Vel</span>':'';
       return '<div class="bal-row"><span class="bal-name">'+badge+x.nome+'</span><span class="bal-val '+(x.v>0?'pos':'neg')+'">'+( x.v>0?'recebe':'deve')+' R$ '+fmt(Math.abs(x.v))+'</span></div>';
     }).join('');
 
