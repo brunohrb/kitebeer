@@ -6,11 +6,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#030d16">
-<title>Gastos · Kite Beer 2026</title>
+<title>Gastos &middot; Kite Beer 2026</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#030d16;--surface:#061825;--card:#0a2236;--teal:#00d4b8;--cyan:#3de8ff;--gold:#f5c518;--green:#4ade80;--danger:#ff4f4f;--text:rgba(255,255,255,.92);--muted:rgba(255,255,255,.48);--faint:rgba(255,255,255,.06);--border:rgba(255,255,255,.09);}
+:root{--bg:#030d16;--surface:#061825;--card:#0a2236;--teal:#00d4b8;--cyan:#3de8ff;--gold:#f5c518;--green:#4ade80;--danger:#ff4f4f;--purple:#b48aff;--text:rgba(255,255,255,.92);--muted:rgba(255,255,255,.48);--faint:rgba(255,255,255,.06);--border:rgba(255,255,255,.09);}
 html{scroll-behavior:smooth;background:var(--bg);}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:var(--text);background:var(--bg);min-height:100vh;padding-bottom:60px;}
 .hdr{position:sticky;top:0;z-index:100;padding:max(env(safe-area-inset-top),12px) 16px 12px;display:flex;align-items:center;justify-content:space-between;background:rgba(3,13,22,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
@@ -39,7 +39,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .pay-val{font-weight:800;color:var(--teal);font-variant-numeric:tabular-nums;white-space:nowrap;}
 .bal-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
 .bal-row:last-child{border:none;}
-.bal-name{font-size:.86em;font-weight:600;}
+.bal-name{font-size:.86em;font-weight:600;display:flex;align-items:center;gap:6px;}
 .bal-val{font-size:.86em;font-weight:800;font-variant-numeric:tabular-nums;}
 .bal-val.pos{color:var(--green);}
 .bal-val.neg{color:var(--danger);}
@@ -54,16 +54,22 @@ select option{background:#0a2236;}
 .btn:disabled{opacity:.45;cursor:not-allowed;}
 .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--muted);}
 .btn.danger{background:rgba(255,79,79,.12);border:1px solid rgba(255,79,79,.3);color:var(--danger);}
-.btn.sm{width:auto;padding:10px 18px;border-radius:30px;font-size:.8em;}
+.btn.sm{width:auto;padding:9px 16px;border-radius:30px;font-size:.8em;}
 .btn-row{display:flex;gap:10px;align-items:center;}
 .ptags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
-.ptag{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:30px;padding:7px 14px;font-size:.8em;font-weight:600;}
-.pdel{background:none;border:none;color:rgba(255,79,79,.55);cursor:pointer;font-size:1em;padding:0;line-height:1;width:auto;}
+.ptag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:30px;padding:6px 12px;font-size:.8em;font-weight:600;}
+.ptag-badge{font-size:.65em;font-weight:800;padding:2px 6px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;}
+.ptag-badge.velejador{background:rgba(0,212,184,.18);color:var(--teal);}
+.ptag-badge.baba{background:rgba(245,197,24,.15);color:var(--gold);}
+.pdel{background:none;border:none;color:rgba(255,79,79,.45);cursor:pointer;font-size:1em;padding:0;line-height:1;width:auto;}
 .pdel:hover{color:var(--danger);}
 .cbgrid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
 .cbopt input{display:none;}
 .cbopt label{display:block;padding:8px 15px;border-radius:30px;border:1.5px solid var(--border);color:var(--muted);font-size:.8em;font-weight:700;cursor:pointer;transition:all .18s;}
 .cbopt input:checked + label{background:rgba(0,212,184,.15);border-color:var(--teal);color:var(--teal);}
+.cbopt.vel input:checked + label{background:rgba(0,212,184,.2);border-color:var(--teal);color:var(--teal);}
+.cbopt.baba label{border-color:rgba(245,197,24,.3);}
+.cbopt.baba input:checked + label{background:rgba(245,197,24,.1);border-color:var(--gold);color:var(--gold);}
 .exp-item{display:flex;justify-content:space-between;align-items:flex-start;padding:12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;gap:10px;}
 .exp-info strong{font-size:.88em;font-weight:700;display:block;}
 .exp-info small{font-size:.7em;color:var(--muted);margin-top:2px;display:block;}
@@ -71,7 +77,27 @@ select option{background:#0a2236;}
 .exp-val{font-weight:800;font-size:.9em;color:var(--teal);font-variant-numeric:tabular-nums;}
 .exp-del{background:none;border:none;color:rgba(255,255,255,.22);font-size:1em;cursor:pointer;padding:4px;line-height:1;width:auto;}
 .exp-del:hover{color:var(--danger);}
+.tag-vel{font-size:.62em;font-weight:800;padding:2px 7px;border-radius:20px;background:rgba(0,212,184,.15);color:var(--teal);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;}
+.tag-baba{font-size:.62em;font-weight:800;padding:2px 7px;border-radius:20px;background:rgba(245,197,24,.12);color:var(--gold);letter-spacing:.5px;white-space:nowrap;}
 .empty{text-align:center;padding:22px;color:var(--muted);font-size:.82em;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0 4px;}
+.toggle-lbl{font-size:.78em;font-weight:700;color:var(--muted);}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:30px;transition:.2s;cursor:pointer;border:1px solid var(--border);}
+.toggle input:checked + .toggle-track{background:var(--teal);}
+.toggle-track:before{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:2px;left:2px;transition:.2s;}
+.toggle input:checked + .toggle-track:before{transform:translateX(20px);}
+.info-box{background:rgba(0,212,184,.06);border:1px solid rgba(0,212,184,.18);border-radius:12px;padding:10px 14px;font-size:.75em;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.info-box b{color:var(--teal);}
+.resp-row{display:none;margin-top:-4px;margin-bottom:0;}
+.resp-row.show{display:block;}
+.person-form{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.tipo-btns{display:flex;gap:6px;}
+.tipo-btn{flex:1;padding:9px 6px;background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:12px;color:var(--muted);font-size:.75em;font-weight:700;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit;}
+.tipo-btn.active-normal{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3);color:var(--text);}
+.tipo-btn.active-velejador{background:rgba(0,212,184,.15);border-color:var(--teal);color:var(--teal);}
+.tipo-btn.active-baba{background:rgba(245,197,24,.12);border-color:var(--gold);color:var(--gold);}
 </style>
 </head>
 <body>
@@ -104,9 +130,24 @@ select option{background:#0a2236;}
 
   <div class="card">
     <div class="card-title">&#x1F465; Galera da trip</div>
-    <div class="btn-row">
-      <input id="new-person" type="text" placeholder="Nome do participante" style="flex:1">
-      <button class="btn sm" id="btn-add-person" onclick="addPerson()">+</button>
+    <div class="info-box">
+      <b>Normal</b> &mdash; divide igual &nbsp;|&nbsp;
+      <b style="color:var(--teal)">Velejador</b> &mdash; recebe gastos exclusivos de kite &nbsp;|&nbsp;
+      <b style="color:var(--gold)">Baba</b> &mdash; paga 70% da cota (30% vai para o respons&aacute;vel)
+    </div>
+    <div class="person-form">
+      <input id="new-person" type="text" placeholder="Nome do participante">
+      <div class="tipo-btns">
+        <button class="tipo-btn active-normal" id="tbtn-normal" onclick="setTipo('normal')">Normal</button>
+        <button class="tipo-btn" id="tbtn-velejador" onclick="setTipo('velejador')">&#x1F3AA; Velejador</button>
+        <button class="tipo-btn" id="tbtn-baba" onclick="setTipo('baba')">&#x1F476; Baba</button>
+      </div>
+      <div class="resp-row" id="resp-row">
+        <select id="responsavel-select">
+          <option value="" disabled selected>Respons&aacute;vel pela baba...</option>
+        </select>
+      </div>
+      <button class="btn" id="btn-add-person" onclick="addPerson()">+ Adicionar participante</button>
     </div>
     <div id="ptags" class="ptags"></div>
   </div>
@@ -120,7 +161,16 @@ select option{background:#0a2236;}
       <select id="payer-select"><option value="" disabled selected>Selecione...</option></select>
     </div>
     <div class="fg">
-      <label class="lbl" style="color:var(--teal)">Para quem foi? (marque os envolvidos)</label>
+      <div class="toggle-row">
+        <span class="toggle-lbl">&#x1F3AA; S&oacute; para velejadores</span>
+        <label class="toggle">
+          <input type="checkbox" id="vel-toggle" onchange="onVelToggle()">
+          <div class="toggle-track"></div>
+        </label>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="lbl" id="involved-lbl">Para quem foi? (marque os envolvidos)</label>
       <div id="cbox-container" class="cbgrid"></div>
     </div>
     <button class="btn" id="btn-add-exp" onclick="addExpense()">SALVAR GASTO</button>
@@ -141,6 +191,7 @@ var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 var CODIGO='KITEBEER26';
 var sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
 var grupoId=null,people=[],expenses=[];
+var tipoSelecionado='normal';
 
 function load(m){document.getElementById('overlay-msg').textContent=m||'Carregando...';document.getElementById('overlay').classList.add('on');}
 function unload(){document.getElementById('overlay').classList.remove('on');}
@@ -161,53 +212,92 @@ window.addEventListener('load',async function(){
 });
 
 async function loadPeople(){
-  var r=await sb.from('kb_participantes').select('nome').eq('grupo_id',grupoId).order('nome');
+  var r=await sb.from('kb_participantes').select('nome,tipo,responsavel_nome').eq('grupo_id',grupoId).order('nome');
   if(r.error)throw r.error;
-  people=r.data?r.data.map(function(p){return p.nome;}):[]; renderUI();
+  people=r.data||[];
+  renderUI();
 }
+
 async function loadExpenses(){
-  var r=await sb.from('kb_despesas').select('id,descricao,valor,pagador,criado_em,kb_despesas_envolvidos(participante_nome)').eq('grupo_id',grupoId).order('criado_em',{ascending:false});
+  var r=await sb.from('kb_despesas').select('id,descricao,valor,pagador,somente_velejadores,criado_em,kb_despesas_envolvidos(participante_nome)').eq('grupo_id',grupoId).order('criado_em',{ascending:false});
   if(r.error)throw r.error;
-  expenses=r.data?r.data.map(function(d){return{id:d.id,desc:d.descricao,amount:parseFloat(d.valor),payer:d.pagador,involved:d.kb_despesas_envolvidos.map(function(e){return e.participante_nome;})};}):[]; renderUI();
+  expenses=r.data?r.data.map(function(d){
+    return{id:d.id,desc:d.descricao,amount:parseFloat(d.valor),payer:d.pagador,somente_velejadores:d.somente_velejadores,
+           involved:d.kb_despesas_envolvidos.map(function(e){return e.participante_nome;})};
+  }):[];
+  renderUI();
 }
+
+window.setTipo=function(t){
+  tipoSelecionado=t;
+  ['normal','velejador','baba'].forEach(function(x){
+    var btn=document.getElementById('tbtn-'+x);
+    btn.className='tipo-btn'+(t===x?' active-'+x:'');
+  });
+  var rr=document.getElementById('resp-row');
+  rr.className='resp-row'+(t==='baba'?' show':'');
+};
 
 window.addPerson=async function(){
   var name=document.getElementById('new-person').value.trim();
   if(!name){alert('Digite um nome!');return;}
-  if(people.indexOf(name)>=0){alert('Nome ja existe!');return;}
+  if(people.some(function(p){return p.nome===name;})){alert('Nome ja existe!');return;}
+  var responsavel=null;
+  if(tipoSelecionado==='baba'){
+    responsavel=document.getElementById('responsavel-select').value;
+    if(!responsavel){alert('Selecione o responsavel pela baba!');return;}
+  }
   var btn=document.getElementById('btn-add-person');btn.disabled=true;
   try{
-    var r=await sb.from('kb_participantes').insert([{grupo_id:grupoId,nome:name}]);
+    var r=await sb.from('kb_participantes').insert([{grupo_id:grupoId,nome:name,tipo:tipoSelecionado,responsavel_nome:responsavel}]);
     if(r.error)throw r.error;
-    people.push(name);document.getElementById('new-person').value='';renderUI();
+    document.getElementById('new-person').value='';
+    setTipo('normal');
+    await loadPeople();
   }catch(e){alert('Erro: '+e.message);}finally{btn.disabled=false;}
 };
 
 window.deletePerson=async function(nome){
-  if(expenses.some(function(e){return e.payer===nome||e.involved.indexOf(nome)>=0;})){alert(nome+' tem despesas lancadas.\nRemova primeiro.');return;}
+  if(expenses.some(function(e){return e.payer===nome||e.involved.indexOf(nome)>=0;})){
+    alert(nome+' tem despesas lancadas.\nRemova primeiro.');return;
+  }
   if(!confirm('Remover '+nome+'?'))return;
   load('Removendo...');
   try{
     var r=await sb.from('kb_participantes').delete().eq('grupo_id',grupoId).eq('nome',nome);
     if(r.error)throw r.error;
-    people=people.filter(function(p){return p!==nome;});renderUI();
+    await loadPeople();
   }catch(e){alert('Erro: '+e.message);}finally{unload();}
+};
+
+window.onVelToggle=function(){
+  renderCboxes();
+  var on=document.getElementById('vel-toggle').checked;
+  document.getElementById('involved-lbl').textContent=on
+    ?'Velejadores envolvidos (selecionados automaticamente)'
+    :'Para quem foi? (marque os envolvidos)';
 };
 
 window.addExpense=async function(){
   var desc=document.getElementById('desc-input').value.trim();
   var amount=parseFloat(document.getElementById('amount-input').value);
   var payer=document.getElementById('payer-select').value;
+  var somente_vel=document.getElementById('vel-toggle').checked;
   var involved=Array.from(document.querySelectorAll('.kb-cb:checked')).map(function(c){return c.value;});
-  if(!desc||isNaN(amount)||amount<=0||!payer||!involved.length){alert('Preencha todos os campos!');return;}
+  if(!desc||isNaN(amount)||amount<=0||!payer||!involved.length){
+    alert('Preencha todos os campos e selecione ao menos um envolvido!');return;
+  }
   var btn=document.getElementById('btn-add-exp');btn.disabled=true;btn.textContent='Salvando...';
   load('Salvando...');
   try{
-    var d2=await sb.from('kb_despesas').insert([{grupo_id:grupoId,descricao:desc,valor:amount,pagador:payer}]).select().single();
+    var d2=await sb.from('kb_despesas').insert([{grupo_id:grupoId,descricao:desc,valor:amount,pagador:payer,somente_velejadores:somente_vel}]).select().single();
     if(d2.error)throw d2.error;
     var e3=await sb.from('kb_despesas_envolvidos').insert(involved.map(function(n){return{despesa_id:d2.data.id,participante_nome:n};}));
     if(e3.error)throw e3.error;
-    document.getElementById('desc-input').value='';document.getElementById('amount-input').value='';
+    document.getElementById('desc-input').value='';
+    document.getElementById('amount-input').value='';
+    document.getElementById('vel-toggle').checked=false;
+    document.getElementById('involved-lbl').textContent='Para quem foi? (marque os envolvidos)';
     await loadExpenses();
   }catch(e){alert('Erro: '+e.message);}finally{unload();btn.disabled=false;btn.textContent='SALVAR GASTO';}
 };
@@ -229,45 +319,93 @@ window.limpar=async function(){
 function renderUI(){renderPeople();renderExpenses();calcBalances();}
 
 function renderPeople(){
-  document.getElementById('ptags').innerHTML=people.map(function(p){
-    return '<span class="ptag">'+p+'<button class="pdel" onclick="deletePerson(\''+p.replace(/'/g,"\\'")+'\')">&times;</button></span>';
+  var tags=document.getElementById('ptags');
+  tags.innerHTML=people.map(function(p){
+    var badge='';
+    if(p.tipo==='velejador')badge='<span class="ptag-badge velejador">Vel</span>';
+    else if(p.tipo==='baba')badge='<span class="ptag-badge baba">Baba</span>';
+    var resp=p.tipo==='baba'&&p.responsavel_nome?'<span style="font-size:.7em;color:var(--muted);">/'+p.responsavel_nome+'</span>':'';
+    return '<span class="ptag">'+badge+p.nome+resp+'<button class="pdel" onclick="deletePerson(\''+esc(p.nome)+'\')">&times;</button></span>';
   }).join('');
+
   var sel=document.getElementById('payer-select'),cur=sel.value;
   sel.innerHTML='<option value="" disabled selected>Selecione...</option>';
-  people.forEach(function(p){var o=document.createElement('option');o.value=o.textContent=p;sel.appendChild(o);});
-  if(people.indexOf(cur)>=0)sel.value=cur;
+  people.forEach(function(p){var o=document.createElement('option');o.value=o.textContent=p.nome;sel.appendChild(o);});
+  if(people.some(function(p){return p.nome===cur;}))sel.value=cur;
+
+  var rsel=document.getElementById('responsavel-select'),rcur=rsel.value;
+  rsel.innerHTML='<option value="" disabled selected>Responsável pela baba...</option>';
+  people.filter(function(p){return p.tipo!=='baba';}).forEach(function(p){
+    var o=document.createElement('option');o.value=o.textContent=p.nome;rsel.appendChild(o);
+  });
+  if(people.some(function(p){return p.nome===rcur&&p.tipo!=='baba';}))rsel.value=rcur;
+
+  renderCboxes();
+}
+
+function renderCboxes(){
+  var somente_vel=document.getElementById('vel-toggle').checked;
   var checked=Array.from(document.querySelectorAll('.kb-cb:checked')).map(function(c){return c.value;});
-  document.getElementById('cbox-container').innerHTML=people.map(function(p){
-    return '<div class="cbopt"><input type="checkbox" class="kb-cb" id="cb_'+p+'" value="'+p+'" '+(checked.indexOf(p)>=0||!checked.length?'checked':'')+'><label for="cb_'+p+'">'+p+'</label></div>';
+  var list=somente_vel?people.filter(function(p){return p.tipo==='velejador';}):people;
+  document.getElementById('cbox-container').innerHTML=list.map(function(p){
+    var cls='cbopt'+(p.tipo==='velejador'?' vel':p.tipo==='baba'?' baba':'');
+    var isChecked=somente_vel||(checked.indexOf(p.nome)>=0)||(checked.length===0);
+    var badge=p.tipo==='velejador'?'&#x1F3AA; ':p.tipo==='baba'?'&#x1F476; ':'';
+    return '<div class="'+cls+'"><input type="checkbox" class="kb-cb" id="cb_'+p.nome+'" value="'+p.nome+'" '+(isChecked?'checked':'')+'><label for="cb_'+p.nome+'">'+badge+p.nome+'</label></div>';
   }).join('');
 }
 
 function renderExpenses(){
   var el=document.getElementById('expenses-list');
-  if(!expenses.length){el.innerHTML='<div class="empty">Nenhuma despesa ainda.</div>';document.getElementById('total-val').textContent='R$ 0,00';document.getElementById('total-count').textContent='0';return;}
+  if(!expenses.length){
+    el.innerHTML='<div class="empty">Nenhuma despesa ainda.</div>';
+    document.getElementById('total-val').textContent='R$ 0,00';
+    document.getElementById('total-count').textContent='0';
+    return;
+  }
   var total=expenses.reduce(function(s,e){return s+e.amount;},0);
-  document.getElementById('total-val').textContent='R$ '+total.toFixed(2);
+  document.getElementById('total-val').textContent='R$ '+fmt(total);
   document.getElementById('total-count').textContent=expenses.length;
   el.innerHTML=expenses.map(function(e){
-    return '<div class="exp-item"><div class="exp-info"><strong>'+e.desc+'</strong><small>'+e.payer+' pagou &middot; '+e.involved.join(', ')+'</small></div><div class="exp-right"><span class="exp-val">R$ '+e.amount.toFixed(2)+'</span><button class="exp-del" onclick="removeExpense(\''+e.id+'\')">&times;</button></div></div>';
+    var vtag=e.somente_velejadores?'<span class="tag-vel">Kite</span>':'';
+    return '<div class="exp-item"><div class="exp-info"><strong>'+e.desc+' '+vtag+'</strong><small>'+e.payer+' pagou &middot; '+e.involved.join(', ')+'</small></div><div class="exp-right"><span class="exp-val">R$ '+fmt(e.amount)+'</span><button class="exp-del" onclick="removeExpense(\''+e.id+'\')">&times;</button></div></div>';
   }).join('');
 }
 
 function calcBalances(){
   if(!people.length){
     document.getElementById('balance-list').innerHTML='<div class="empty">Adicione participantes.</div>';
-    document.getElementById('payment-plan').innerHTML='<div class="empty">Lance os gastos para ver o plano.</div>';return;
+    document.getElementById('payment-plan').innerHTML='<div class="empty">Lance os gastos para ver o plano.</div>';
+    return;
   }
-  var bal={};people.forEach(function(p){bal[p]=0;});
+  var bal={};
+  people.forEach(function(p){bal[p.nome]=0;});
+
   expenses.forEach(function(e){
     var share=e.amount/e.involved.length;
     if(bal.hasOwnProperty(e.payer))bal[e.payer]+=e.amount;
-    e.involved.forEach(function(p){if(bal.hasOwnProperty(p))bal[p]-=share;});
+    e.involved.forEach(function(nome){
+      if(!bal.hasOwnProperty(nome))return;
+      var p=people.find(function(x){return x.nome===nome;});
+      if(p&&p.tipo==='baba'){
+        bal[nome]-=share*0.7;
+        if(p.responsavel_nome&&bal.hasOwnProperty(p.responsavel_nome)){
+          bal[p.responsavel_nome]-=share*0.3;
+        }
+      }else{
+        bal[nome]-=share;
+      }
+    });
   });
-  var rows=Object.entries(bal).filter(function(x){return Math.abs(x[1])>0.01;});
+
+  var rows=people.map(function(p){return{nome:p.nome,tipo:p.tipo,v:bal[p.nome]};}).filter(function(x){return Math.abs(x.v)>0.01;});
   document.getElementById('balance-list').innerHTML=!rows.length
     ?'<div class="empty" style="color:var(--teal)">&#x2705; Ninguem deve nada!</div>'
-    :rows.map(function(x){return '<div class="bal-row"><span class="bal-name">'+x[0]+'</span><span class="bal-val '+(x[1]>0?'pos':'neg')+'">'+(x[1]>0?'recebe':'deve')+' R$ '+Math.abs(x[1]).toFixed(2)+'</span></div>';}).join('');
+    :rows.map(function(x){
+      var badge=x.tipo==='velejador'?'<span class="tag-vel">Vel</span>':x.tipo==='baba'?'<span class="tag-baba">Baba</span>':'';
+      return '<div class="bal-row"><span class="bal-name">'+badge+x.nome+'</span><span class="bal-val '+(x.v>0?'pos':'neg')+'">'+( x.v>0?'recebe':'deve')+' R$ '+fmt(Math.abs(x.v))+'</span></div>';
+    }).join('');
+
   var deb=Object.entries(bal).filter(function(x){return x[1]<-0.01;}).map(function(x){return{n:x[0],v:Math.abs(x[1])};}).sort(function(a,b){return b.v-a.v;});
   var cred=Object.entries(bal).filter(function(x){return x[1]>0.01;}).map(function(x){return{n:x[0],v:x[1]};}).sort(function(a,b){return b.v-a.v;});
   var planEl=document.getElementById('payment-plan');
@@ -275,12 +413,15 @@ function calcBalances(){
   var html='',i=0,j=0;
   while(i<deb.length&&j<cred.length){
     var pay=Math.min(deb[i].v,cred[j].v);
-    html+='<div class="pay-item"><div class="pay-names"><span class="pay-from">'+deb[i].n+'</span><span class="pay-arr">&rarr;</span><span class="pay-to">'+cred[j].n+'</span></div><span class="pay-val">R$ '+pay.toFixed(2)+'</span></div>';
+    html+='<div class="pay-item"><div class="pay-names"><span class="pay-from">'+deb[i].n+'</span><span class="pay-arr">&rarr;</span><span class="pay-to">'+cred[j].n+'</span></div><span class="pay-val">R$ '+fmt(pay)+'</span></div>';
     deb[i].v-=pay;cred[j].v-=pay;
     if(deb[i].v<0.01)i++;if(cred[j].v<0.01)j++;
   }
   planEl.innerHTML=html;
 }
+
+function fmt(n){return n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
 })();
 </script>
 </body>
