@@ -139,7 +139,7 @@ select option{background:#0a2236;}
       <input id="new-person" type="text" placeholder="Nome do participante">
       <div class="tipo-btns">
         <button class="tipo-btn active-normal" id="tbtn-normal" onclick="setTipo('normal')">Normal</button>
-        <button class="tipo-btn" id="tbtn-velejador" onclick="setTipo('velejador')">&#x1F3AA; Velejador</button>
+        <button class="tipo-btn" id="tbtn-velejador" onclick="setTipo('velejador')"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" style="vertical-align:middle;margin-right:4px"><polygon points="16,2 28,14 16,22 4,14"/><line x1="16" y1="22" x2="16" y2="30" stroke="currentColor" stroke-width="2"/><line x1="16" y1="30" x2="13" y2="30" stroke="currentColor" stroke-width="1.5"/></svg> Velejador</button>
         <button class="tipo-btn" id="tbtn-baba" onclick="setTipo('baba')">&#x1F476; Baba</button>
       </div>
       <div class="resp-row" id="resp-row">
@@ -162,7 +162,7 @@ select option{background:#0a2236;}
     </div>
     <div class="fg">
       <div class="toggle-row">
-        <span class="toggle-lbl">&#x1F3AA; S&oacute; para velejadores</span>
+        <span class="toggle-lbl"><svg width="14" height="14" viewBox="0 0 32 32" fill="currentColor" style="vertical-align:middle;margin-right:4px"><polygon points="16,2 28,14 16,22 4,14"/><line x1="16" y1="22" x2="16" y2="30" stroke="currentColor" stroke-width="2"/><line x1="16" y1="30" x2="13" y2="30" stroke="currentColor" stroke-width="1.5"/></svg> S&oacute; para velejadores</span>
         <label class="toggle">
           <input type="checkbox" id="vel-toggle" onchange="onVelToggle()">
           <div class="toggle-track"></div>
@@ -324,7 +324,7 @@ function renderPeople(){
     var badge='';
     if(p.tipo==='velejador')badge='<span class="ptag-badge velejador">Vel</span>';
     else if(p.tipo==='baba')badge='<span class="ptag-badge baba">Baba</span>';
-    var resp=p.tipo==='baba'&&p.responsavel_nome?'<span style="font-size:.7em;color:var(--muted);">/'+p.responsavel_nome+'</span>':'';
+    var resp=p.tipo==='baba'&&p.responsavel_nome?'<span style="font-size:.7em;color:var(--muted);">/'  +p.responsavel_nome+'</span>':'';
     return '<span class="ptag">'+badge+p.nome+resp+'<button class="pdel" onclick="deletePerson(\''+esc(p.nome)+'\')">&times;</button></span>';
   }).join('');
 
@@ -350,7 +350,8 @@ function renderCboxes(){
   document.getElementById('cbox-container').innerHTML=list.map(function(p){
     var cls='cbopt'+(p.tipo==='velejador'?' vel':p.tipo==='baba'?' baba':'');
     var isChecked=somente_vel||(checked.indexOf(p.nome)>=0)||(checked.length===0);
-    var badge=p.tipo==='velejador'?'&#x1F3AA; ':p.tipo==='baba'?'&#x1F476; ':'';
+    var kiteSvg='<svg width="13" height="13" viewBox="0 0 32 32" fill="currentColor" style="vertical-align:middle;margin-right:3px"><polygon points="16,2 28,14 16,22 4,14"/><line x1="16" y1="22" x2="16" y2="30" stroke="currentColor" stroke-width="2"/><line x1="16" y1="30" x2="13" y2="30" stroke="currentColor" stroke-width="1.5"/></svg>';
+    var badge=p.tipo==='velejador'?kiteSvg:p.tipo==='baba'?'&#x1F476; ':'';
     return '<div class="'+cls+'"><input type="checkbox" class="kb-cb" id="cb_'+p.nome+'" value="'+p.nome+'" '+(isChecked?'checked':'')+'><label for="cb_'+p.nome+'">'+badge+p.nome+'</label></div>';
   }).join('');
 }
@@ -368,7 +369,7 @@ function renderExpenses(){
   document.getElementById('total-count').textContent=expenses.length;
   el.innerHTML=expenses.map(function(e){
     var vtag=e.somente_velejadores?'<span class="tag-vel">Kite</span>':'';
-    return '<div class="exp-item"><div class="exp-info"><strong>'+e.desc+' '+vtag+'</strong><small>'+e.payer+' pagou &middot; '+e.involved.join(', ')+'</small></div><div class="exp-right"><span class="exp-val">R$ '+fmt(e.amount)+'</span><button class="exp-del" onclick="removeExpense(\''+e.id+'\')">&times;</button></div></div>';
+    return '<div class="exp-item"><div class="exp-info"><strong>'+e.desc+' '+vtag+'</strong><small>'+e.payer+' pagou &middot; '+e.involved.join(', ')+'</small></div><div class="exp-right"><span class="exp-val">R$ '+fmt(e.amount)+'</span><button class="exp-del" onclick="removeExpense(\''+e.id+'\')">×</button></div></div>';
   }).join('');
 }
 
@@ -400,7 +401,7 @@ function calcBalances(){
   document.getElementById('balance-list').innerHTML=!rows.length
     ?'<div class="empty" style="color:var(--teal)">&#x2705; Ninguem deve nada!</div>'
     :rows.map(function(x){
-      var badge=x.tipo==='velejador'?'<span class="tag-vel">Vel</span>':'';
+      var badge=x.tipo==='velejador'?'<span class="tag-vel">Vel</span>':x.tipo==='baba'?'<span class="tag-baba">Baba</span>':'';
       return '<div class="bal-row"><span class="bal-name">'+badge+x.nome+'</span><span class="bal-val '+(x.v>0?'pos':'neg')+'">'+( x.v>0?'recebe':'deve')+' R$ '+fmt(Math.abs(x.v))+'</span></div>';
     }).join('');
 
