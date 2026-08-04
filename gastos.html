@@ -168,6 +168,13 @@ select option{background:#0a2236;}
           <div class="toggle-track"></div>
         </label>
       </div>
+      <div class="toggle-row">
+        <span class="toggle-lbl">&#x1F465; Todos</span>
+        <label class="toggle">
+          <input type="checkbox" id="all-toggle" onchange="onAllToggle()">
+          <div class="toggle-track"></div>
+        </label>
+      </div>
     </div>
     <div class="fg">
       <label class="lbl" id="involved-lbl">Para quem foi? (marque os envolvidos)</label>
@@ -270,12 +277,26 @@ window.deletePerson=async function(nome){
   }catch(e){alert('Erro: '+e.message);}finally{unload();}
 };
 
-window.onVelToggle=function(){
-  renderCboxes();
-  var on=document.getElementById('vel-toggle').checked;
-  document.getElementById('involved-lbl').textContent=on
+function syncInvolvedLbl(){
+  var vel=document.getElementById('vel-toggle').checked;
+  var todos=document.getElementById('all-toggle').checked;
+  document.getElementById('involved-lbl').textContent=vel
     ?'Velejadores envolvidos (selecionados automaticamente)'
+    :todos
+    ?'Todos envolvidos (selecionados automaticamente)'
     :'Para quem foi? (marque os envolvidos)';
+}
+
+window.onVelToggle=function(){
+  if(document.getElementById('vel-toggle').checked)document.getElementById('all-toggle').checked=false;
+  renderCboxes();
+  syncInvolvedLbl();
+};
+
+window.onAllToggle=function(){
+  if(document.getElementById('all-toggle').checked)document.getElementById('vel-toggle').checked=false;
+  renderCboxes();
+  syncInvolvedLbl();
 };
 
 window.addExpense=async function(){
@@ -297,6 +318,7 @@ window.addExpense=async function(){
     document.getElementById('desc-input').value='';
     document.getElementById('amount-input').value='';
     document.getElementById('vel-toggle').checked=false;
+    document.getElementById('all-toggle').checked=false;
     document.getElementById('involved-lbl').textContent='Para quem foi? (marque os envolvidos)';
     await loadExpenses();
   }catch(e){alert('Erro: '+e.message);}finally{unload();btn.disabled=false;btn.textContent='SALVAR GASTO';}
@@ -345,11 +367,12 @@ function renderPeople(){
 
 function renderCboxes(){
   var somente_vel=document.getElementById('vel-toggle').checked;
+  var todos=document.getElementById('all-toggle').checked;
   var checked=Array.from(document.querySelectorAll('.kb-cb:checked')).map(function(c){return c.value;});
   var list=somente_vel?people.filter(function(p){return p.tipo==='velejador';}):people;
   document.getElementById('cbox-container').innerHTML=list.map(function(p){
     var cls='cbopt'+(p.tipo==='velejador'?' vel':p.tipo==='baba'?' baba':'');
-    var isChecked=somente_vel||(checked.indexOf(p.nome)>=0)||(checked.length===0);
+    var isChecked=somente_vel||todos||(checked.indexOf(p.nome)>=0)||(checked.length===0);
     var kiteSvg='<svg width="13" height="13" viewBox="0 0 32 32" fill="currentColor" style="vertical-align:middle;margin-right:3px"><polygon points="16,2 28,14 16,22 4,14"/><line x1="16" y1="22" x2="16" y2="30" stroke="currentColor" stroke-width="2"/><line x1="16" y1="30" x2="13" y2="30" stroke="currentColor" stroke-width="1.5"/></svg>';
     var badge=p.tipo==='velejador'?kiteSvg:p.tipo==='baba'?'&#x1F476; ':'';
     return '<div class="'+cls+'"><input type="checkbox" class="kb-cb" id="cb_'+p.nome+'" value="'+p.nome+'" '+(isChecked?'checked':'')+'><label for="cb_'+p.nome+'">'+badge+p.nome+'</label></div>';
