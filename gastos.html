@@ -62,7 +62,8 @@ select option{background:#0a2236;}
 .ptag-badge.velejador{background:rgba(0,212,184,.18);color:var(--teal);}
 .ptag-badge.baba{background:rgba(245,197,24,.15);color:var(--gold);}
 .ptag-badge.sovel{background:rgba(61,232,255,.16);color:var(--cyan);}
-.ptag-badge.bebe{background:rgba(180,138,255,.18);color:var(--purple);}
+.pbebe{background:none;border:none;cursor:pointer;font-size:.95em;padding:0 2px;line-height:1;width:auto;filter:grayscale(1);opacity:.3;transition:.15s;}
+.pbebe.on{filter:none;opacity:1;}
 .pdel{background:none;border:none;color:rgba(255,79,79,.45);cursor:pointer;font-size:1em;padding:0;line-height:1;width:auto;}
 .pdel:hover{color:var(--danger);}
 .cbgrid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
@@ -74,8 +75,6 @@ select option{background:#0a2236;}
 .cbopt.baba input:checked + label{background:rgba(245,197,24,.1);border-color:var(--gold);color:var(--gold);}
 .cbopt.sovel label{border-color:rgba(61,232,255,.3);}
 .cbopt.sovel input:checked + label{background:rgba(61,232,255,.14);border-color:var(--cyan);color:var(--cyan);}
-.cbopt.bebe label{border-color:rgba(180,138,255,.3);}
-.cbopt.bebe input:checked + label{background:rgba(180,138,255,.14);border-color:var(--purple);color:var(--purple);}
 .exp-item{display:flex;justify-content:space-between;align-items:flex-start;padding:12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;gap:10px;}
 .exp-info strong{font-size:.88em;font-weight:700;display:block;}
 .exp-info small{font-size:.7em;color:var(--muted);margin-top:2px;display:block;}
@@ -107,7 +106,6 @@ select option{background:#0a2236;}
 .tipo-btn.active-velejador{background:rgba(0,212,184,.15);border-color:var(--teal);color:var(--teal);}
 .tipo-btn.active-baba{background:rgba(245,197,24,.12);border-color:var(--gold);color:var(--gold);}
 .tipo-btn.active-so_velejador{background:rgba(61,232,255,.14);border-color:var(--cyan);color:var(--cyan);}
-.tipo-btn.active-bebe{background:rgba(180,138,255,.14);border-color:var(--purple);color:var(--purple);}
 </style>
 </head>
 <body>
@@ -144,8 +142,8 @@ select option{background:#0a2236;}
       <b>Normal</b> &mdash; divide igual &nbsp;|&nbsp;
       <b style="color:var(--teal)">Velejador</b> &mdash; recebe gastos exclusivos de kite &nbsp;|&nbsp;
       <b style="color:var(--cyan)">S&oacute; velejador</b> &mdash; veio s&oacute; para velejar; fica fora da cota de comida e bebida &nbsp;|&nbsp;
-      <b style="color:var(--purple)">Bebe</b> &mdash; recebe gastos exclusivos de bebida &nbsp;|&nbsp;
-      <b style="color:var(--gold)">Baba</b> &mdash; n&atilde;o paga nada; o respons&aacute;vel paga 70% da cota dela
+      <b style="color:var(--gold)">Baba</b> &mdash; n&atilde;o paga nada; o respons&aacute;vel paga 50% da cota dela
+      <div style="margin-top:6px">&#x1F37A; <b style="color:var(--purple)">Bebe</b> &mdash; vale junto com o tipo (um velejador pode beber). Toque no copo do nome para ligar/desligar.</div>
     </div>
     <div class="person-form">
       <input id="new-person" type="text" placeholder="Nome do participante">
@@ -153,8 +151,14 @@ select option{background:#0a2236;}
         <button class="tipo-btn active-normal" id="tbtn-normal" onclick="setTipo('normal')">Normal</button>
         <button class="tipo-btn" id="tbtn-velejador" onclick="setTipo('velejador')"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" style="vertical-align:middle;margin-right:4px"><polygon points="16,2 28,14 16,22 4,14"/><line x1="16" y1="22" x2="16" y2="30" stroke="currentColor" stroke-width="2"/><line x1="16" y1="30" x2="13" y2="30" stroke="currentColor" stroke-width="1.5"/></svg> Velejador</button>
         <button class="tipo-btn" id="tbtn-so_velejador" onclick="setTipo('so_velejador')"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" style="vertical-align:middle;margin-right:4px"><polygon points="16,2 28,14 16,22 4,14"/><line x1="16" y1="22" x2="16" y2="30" stroke="currentColor" stroke-width="2"/><line x1="16" y1="30" x2="13" y2="30" stroke="currentColor" stroke-width="1.5"/></svg> S&oacute; velejador</button>
-        <button class="tipo-btn" id="tbtn-bebe" onclick="setTipo('bebe')">&#x1F37A; Bebe</button>
         <button class="tipo-btn" id="tbtn-baba" onclick="setTipo('baba')">&#x1F476; Baba</button>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-lbl">&#x1F37A; Bebe</span>
+        <label class="toggle">
+          <input type="checkbox" id="novo-bebe" checked>
+          <div class="toggle-track"></div>
+        </label>
       </div>
       <div class="resp-row" id="resp-row">
         <select id="responsavel-select">
@@ -240,11 +244,49 @@ window.addEventListener('load',async function(){
   finally{unload();}
 });
 
+// "Bebe" convive com o tipo: um velejador pode beber. Como a coluna tipo e
+// texto livre, a marca viaja como sufixo e nada muda no banco.
+//   "velejador|bebe"  bebe     "normal|nbebe"  nao bebe     "normal"  nao definido
+var SUF_SIM='|bebe',SUF_NAO='|nbebe';
+function lerTipo(raw){
+  raw=raw||'normal';
+  if(raw.slice(-SUF_NAO.length)===SUF_NAO)return{tipo:raw.slice(0,-SUF_NAO.length),bebe:false,definido:true};
+  if(raw.slice(-SUF_SIM.length)===SUF_SIM)return{tipo:raw.slice(0,-SUF_SIM.length),bebe:true,definido:true};
+  return{tipo:raw,bebe:false,definido:false};
+}
+function tipoBruto(tipo,bebe){return tipo+(bebe?SUF_SIM:SUF_NAO);}
+
 async function loadPeople(){
   var r=await sb.from('kb_participantes').select('nome,tipo,responsavel_nome').eq('grupo_id',grupoId).order('nome');
   if(r.error)throw r.error;
-  people=r.data||[];
+  people=(r.data||[]).map(function(p){
+    var t=lerTipo(p.tipo);
+    p.tipo=t.tipo;p.bebe=t.bebe;p.bebeDefinido=t.definido;
+    return p;
+  });
   renderUI();
+  await classificarBebidaInicial();
+}
+
+// Passagem unica: quem ainda nao tem a marca recebe a classificacao combinada
+// com o Bruno (todos bebem, menos babas, so-velejadores e os nomes abaixo).
+// Depois disso todo mundo fica com marca explicita e isto nunca mais roda.
+var NAO_BEBEM=['Wiilian','Willian','Marina Veras','Natalia'];
+async function classificarBebidaInicial(){
+  var pendentes=people.filter(function(p){return !p.bebeDefinido;});
+  if(!pendentes.length)return;
+  load('Marcando quem bebe...');
+  try{
+    for(var i=0;i<pendentes.length;i++){
+      var p=pendentes[i];
+      var bebe=p.tipo!=='baba'&&p.tipo!=='so_velejador'&&NAO_BEBEM.indexOf(p.nome)<0;
+      var r=await sb.from('kb_participantes').update({tipo:tipoBruto(p.tipo,bebe)})
+        .eq('grupo_id',grupoId).eq('nome',p.nome);
+      if(r.error)throw r.error;
+    }
+    await loadPeople();
+  }catch(e){alert('Erro ao marcar quem bebe: '+e.message);}
+  finally{unload();}
 }
 
 async function loadExpenses(){
@@ -262,11 +304,13 @@ function veleja(t){return t==='velejador'||t==='so_velejador';}
 // Quem entra na cota geral (comida, bebida, casa...). "So velejador" fica de fora.
 function naCotaGeral(t){return t!=='so_velejador';}
 function nomesPorTipo(fn){return people.filter(function(p){return fn(p.tipo);}).map(function(p){return p.nome;});}
-function bebe(t){return t==='bebe';}
+function nomesQueBebem(){
+  return people.filter(function(p){return p.bebe;}).map(function(p){return p.nome;});
+}
 
 window.setTipo=function(t){
   tipoSelecionado=t;
-  ['normal','velejador','so_velejador','bebe','baba'].forEach(function(x){
+  ['normal','velejador','so_velejador','baba'].forEach(function(x){
     var btn=document.getElementById('tbtn-'+x);
     btn.className='tipo-btn'+(t===x?' active-'+x:'');
   });
@@ -285,12 +329,26 @@ window.addPerson=async function(){
   }
   var btn=document.getElementById('btn-add-person');btn.disabled=true;
   try{
-    var r=await sb.from('kb_participantes').insert([{grupo_id:grupoId,nome:name,tipo:tipoSelecionado,responsavel_nome:responsavel}]);
+    var bebeNovo=document.getElementById('novo-bebe').checked;
+    var r=await sb.from('kb_participantes').insert([{grupo_id:grupoId,nome:name,
+      tipo:tipoBruto(tipoSelecionado,bebeNovo),responsavel_nome:responsavel}]);
     if(r.error)throw r.error;
     document.getElementById('new-person').value='';
+    document.getElementById('novo-bebe').checked=true;
     setTipo('normal');
     await loadPeople();
   }catch(e){alert('Erro: '+e.message);}finally{btn.disabled=false;}
+};
+
+window.toggleBebe=async function(nome){
+  var p=people.find(function(x){return x.nome===nome;});
+  if(!p)return;
+  var novo=!p.bebe;
+  p.bebe=novo; // otimista, para o copo responder na hora
+  renderPeople();
+  var r=await sb.from('kb_participantes').update({tipo:tipoBruto(p.tipo,novo)})
+    .eq('grupo_id',grupoId).eq('nome',nome);
+  if(r.error){p.bebe=!novo;renderPeople();alert('Erro ao salvar: '+r.error.message);}
 };
 
 window.deletePerson=async function(nome){
@@ -343,7 +401,7 @@ window.onAllToggle=function(){
 window.onBebeToggle=function(){
   var on=document.getElementById('bebe-toggle').checked;
   if(on)desligarOutros('bebe-toggle');
-  renderCboxes(on?nomesPorTipo(bebe):[]);
+  renderCboxes(on?nomesQueBebem():[]);
   syncInvolvedLbl();
 };
 
@@ -355,7 +413,7 @@ window.onCbChange=function(){
   var beb=document.getElementById('bebe-toggle');
   var mudou=false;
   if(all.checked&&marcados<nomesPorTipo(naCotaGeral).length){all.checked=false;mudou=true;}
-  if(beb.checked&&marcados<nomesPorTipo(bebe).length){beb.checked=false;mudou=true;}
+  if(beb.checked&&marcados<nomesQueBebem().length){beb.checked=false;mudou=true;}
   if(mudou)syncInvolvedLbl();
 };
 
@@ -408,10 +466,10 @@ function renderPeople(){
     var badge='';
     if(p.tipo==='velejador')badge='<span class="ptag-badge velejador">Vel</span>';
     else if(p.tipo==='so_velejador')badge='<span class="ptag-badge sovel">S&oacute; Vel</span>';
-    else if(p.tipo==='bebe')badge='<span class="ptag-badge bebe">Bebe</span>';
     else if(p.tipo==='baba')badge='<span class="ptag-badge baba">Baba</span>';
     var resp=p.tipo==='baba'&&p.responsavel_nome?'<span style="font-size:.7em;color:var(--muted);">/'  +p.responsavel_nome+'</span>':'';
-    return '<span class="ptag">'+badge+p.nome+resp+'<button class="pdel" onclick="deletePerson(\''+esc(p.nome)+'\')">&times;</button></span>';
+    var copo='<button class="pbebe'+(p.bebe?' on':'')+'" title="Bebe?" onclick="toggleBebe(\''+esc(p.nome)+'\')">&#x1F37A;</button>';
+    return '<span class="ptag">'+badge+p.nome+resp+copo+'<button class="pdel" onclick="deletePerson(\''+esc(p.nome)+'\')">&times;</button></span>';
   }).join('');
 
   var sel=document.getElementById('payer-select'),cur=sel.value;
@@ -435,7 +493,7 @@ function renderCboxes(preset){
   var somente_vel=document.getElementById('vel-toggle').checked;
   var somente_bebe=document.getElementById('bebe-toggle').checked;
   var list=somente_vel?people.filter(function(p){return veleja(p.tipo);})
-          :somente_bebe?people.filter(function(p){return bebe(p.tipo);})
+          :somente_bebe?people.filter(function(p){return p.bebe;})
           :people;
   var checked;
   if(preset)checked=preset;
@@ -443,10 +501,10 @@ function renderCboxes(preset){
   else checked=Array.from(document.querySelectorAll('.kb-cb:checked')).map(function(c){return c.value;});
   if(people.length)cboxInit=true;
   document.getElementById('cbox-container').innerHTML=list.map(function(p){
-    var cls='cbopt'+(p.tipo==='velejador'?' vel':p.tipo==='so_velejador'?' sovel':p.tipo==='bebe'?' bebe':p.tipo==='baba'?' baba':'');
+    var cls='cbopt'+(p.tipo==='velejador'?' vel':p.tipo==='so_velejador'?' sovel':p.tipo==='baba'?' baba':'');
     var isChecked=checked.indexOf(p.nome)>=0;
     var kiteSvg='<svg width="13" height="13" viewBox="0 0 32 32" fill="currentColor" style="vertical-align:middle;margin-right:3px"><polygon points="16,2 28,14 16,22 4,14"/><line x1="16" y1="22" x2="16" y2="30" stroke="currentColor" stroke-width="2"/><line x1="16" y1="30" x2="13" y2="30" stroke="currentColor" stroke-width="1.5"/></svg>';
-    var badge=veleja(p.tipo)?kiteSvg:p.tipo==='bebe'?'&#x1F37A; ':p.tipo==='baba'?'&#x1F476; ':'';
+    var badge=veleja(p.tipo)?kiteSvg:p.tipo==='baba'?'&#x1F476; ':'';
     return '<div class="'+cls+'"><input type="checkbox" class="kb-cb" id="cb_'+p.nome+'" value="'+p.nome+'" '+(isChecked?'checked':'')+' onchange="onCbChange()"><label for="cb_'+p.nome+'">'+badge+p.nome+'</label></div>';
   }).join('');
 }
@@ -484,7 +542,7 @@ function calcBalances(){
       var p=people.find(function(x){return x.nome===nome;});
       if(p&&p.tipo==='baba'){
         if(p.responsavel_nome&&bal.hasOwnProperty(p.responsavel_nome)){
-          bal[p.responsavel_nome]-=share*0.7;
+          bal[p.responsavel_nome]-=share*0.5;
         }
       }else{
         if(bal.hasOwnProperty(nome))bal[nome]-=share;
