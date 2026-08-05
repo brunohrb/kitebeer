@@ -603,25 +603,42 @@ function calcBalances(){
     document.getElementById('payment-plan').innerHTML='<div class="empty">Lance os gastos para ver o plano.</div>';
     return;
   }
+  // Todo mundo entra no saldo, inclusive as babas: elas nao pagam cota, mas
+  // podem ter pago uma conta e precisam ser reembolsadas.
   var bal={};
-  people.forEach(function(p){if(p.tipo!=='baba')bal[p.nome]=0;});
+  people.forEach(function(p){bal[p.nome]=0;});
+  expenses.forEach(function(e){
+    if(!bal.hasOwnProperty(e.payer))bal[e.payer]=0;
+    e.involved.forEach(function(n){if(!bal.hasOwnProperty(n))bal[n]=0;});
+  });
 
   expenses.forEach(function(e){
-    var share=e.amount/e.involved.length;
-    if(bal.hasOwnProperty(e.payer))bal[e.payer]+=e.amount;
+    // Peso no rateio: 1 para quem paga cota cheia, e a cota da baba vira
+    // COTA_BABA no responsavel dela. Dividir pelo peso TOTAL faz o desconto
+    // da baba ser absorvido pelo grupo. Rateando por cabeca, os 30% que a
+    // baba nao paga sobravam para quem pagou a conta, que ficava no prejuizo.
+    var pesos={},total=0;
     e.involved.forEach(function(nome){
       var p=people.find(function(x){return x.nome===nome;});
+      var alvo=nome,peso=1;
       if(p&&p.tipo==='baba'){
-        if(p.responsavel_nome&&bal.hasOwnProperty(p.responsavel_nome)){
-          bal[p.responsavel_nome]-=share*COTA_BABA;
-        }
-      }else{
-        if(bal.hasOwnProperty(nome))bal[nome]-=share;
+        if(!p.responsavel_nome||!bal.hasOwnProperty(p.responsavel_nome))return; // sem responsavel, nao ha quem cobrar
+        alvo=p.responsavel_nome;peso=COTA_BABA;
       }
+      pesos[alvo]=(pesos[alvo]||0)+peso;
+      total+=peso;
+    });
+    bal[e.payer]+=e.amount;
+    if(!total)return;
+    Object.keys(pesos).forEach(function(nome){
+      bal[nome]-=e.amount*pesos[nome]/total;
     });
   });
 
-  var rows=people.filter(function(p){return p.tipo!=='baba';}).map(function(p){return{nome:p.nome,tipo:p.tipo,v:bal[p.nome]};}).filter(function(x){return Math.abs(x.v)>0.01;});
+  var rows=Object.keys(bal).map(function(nome){
+    var p=people.find(function(x){return x.nome===nome;});
+    return{nome:nome,tipo:p?p.tipo:'normal',v:bal[nome]};
+  }).filter(function(x){return Math.abs(x.v)>0.01;}).sort(function(a,b){return b.v-a.v;});
   document.getElementById('balance-list').innerHTML=!rows.length
     ?'<div class="empty" style="color:var(--teal)">&#x2705; Ninguem deve nada!</div>'
     :rows.map(function(x){
