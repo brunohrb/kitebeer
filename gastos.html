@@ -148,7 +148,7 @@ select option{background:#0a2236;}
       <b>Normal</b> &mdash; divide igual &nbsp;|&nbsp;
       <b style="color:var(--teal)">Velejador</b> &mdash; recebe gastos exclusivos de kite &nbsp;|&nbsp;
       <b style="color:var(--cyan)">S&oacute; velejador</b> &mdash; veio s&oacute; para velejar; fica fora da cota de comida e bebida &nbsp;|&nbsp;
-      <b style="color:var(--gold)">Baba</b> &mdash; n&atilde;o paga nada; o respons&aacute;vel paga 50% da cota dela
+      <b style="color:var(--gold)">Baba</b> &mdash; n&atilde;o paga nada; o respons&aacute;vel paga <span id="pct-baba">70</span>% da cota dela
       <div style="margin-top:6px">&#x1F37A; <b style="color:var(--purple)">Bebe</b> &mdash; vale junto com o tipo (um velejador pode beber). Toque no copo do nome para ligar/desligar.</div>
       <div style="margin-top:6px">&#x270F;&#xFE0F; <b>Editar</b> &mdash; toque no <b>nome</b> da pessoa para mudar o tipo dela.</div>
     </div>
@@ -234,11 +234,15 @@ var grupoId=null,people=[],expenses=[];
 var tipoSelecionado='normal';
 var cboxInit=false;
 var editando=null; // nome da pessoa em edicao, ou null ao adicionar
+// Fracao da cota da baba que vai para o responsavel. Mudar so aqui: a legenda
+// da tela se ajusta sozinha.
+var COTA_BABA=0.70;
 
 function load(m){document.getElementById('overlay-msg').textContent=m||'Carregando...';document.getElementById('overlay').classList.add('on');}
 function unload(){document.getElementById('overlay').classList.remove('on');}
 
 window.addEventListener('load',async function(){
+  document.getElementById('pct-baba').textContent=Math.round(COTA_BABA*100);
   load('Conectando...');
   try{
     var r=await sb.from('kb_grupos').select('id').eq('codigo_acesso',CODIGO).eq('ativo',true).single();
@@ -609,7 +613,7 @@ function calcBalances(){
       var p=people.find(function(x){return x.nome===nome;});
       if(p&&p.tipo==='baba'){
         if(p.responsavel_nome&&bal.hasOwnProperty(p.responsavel_nome)){
-          bal[p.responsavel_nome]-=share*0.5;
+          bal[p.responsavel_nome]-=share*COTA_BABA;
         }
       }else{
         if(bal.hasOwnProperty(nome))bal[nome]-=share;
