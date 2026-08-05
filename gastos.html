@@ -62,6 +62,8 @@ select option{background:#0a2236;}
 .ptag-badge.velejador{background:rgba(0,212,184,.18);color:var(--teal);}
 .ptag-badge.baba{background:rgba(245,197,24,.15);color:var(--gold);}
 .ptag-badge.sovel{background:rgba(61,232,255,.16);color:var(--cyan);}
+.pbebe{background:none;border:none;cursor:pointer;font-size:.95em;padding:0 2px;line-height:1;width:auto;filter:grayscale(1);opacity:.35;transition:.15s;}
+.pbebe.on{filter:none;opacity:1;}
 .pdel{background:none;border:none;color:rgba(255,79,79,.45);cursor:pointer;font-size:1em;padding:0;line-height:1;width:auto;}
 .pdel:hover{color:var(--danger);}
 .cbgrid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
@@ -140,6 +142,10 @@ select option{background:#0a2236;}
       <b style="color:var(--teal)">Velejador</b> &mdash; recebe gastos exclusivos de kite &nbsp;|&nbsp;
       <b style="color:var(--cyan)">S&oacute; velejador</b> &mdash; veio s&oacute; para velejar; fica fora da cota de comida e bebida &nbsp;|&nbsp;
       <b style="color:var(--gold)">Baba</b> &mdash; n&atilde;o paga nada; o respons&aacute;vel paga 70% da cota dela
+      <div style="margin-top:6px">&#x1F37A; <b style="color:var(--purple)">Bebe</b> &mdash; marca independente do tipo. Toque no copo do nome para ligar/desligar.</div>
+    </div>
+    <div class="info-box" id="bebe-aviso" style="display:none;border-color:rgba(245,197,24,.3);background:rgba(245,197,24,.06)">
+      &#x26A0;&#xFE0F; O crit&eacute;rio <b style="color:var(--gold)">bebe</b> est&aacute; desligado porque falta a coluna <code>bebe</code> na tabela <code>kb_participantes</code>. Rode a migra&ccedil;&atilde;o no Supabase para liber&aacute;-lo.
     </div>
     <div class="person-form">
       <input id="new-person" type="text" placeholder="Nome do participante">
@@ -148,6 +154,13 @@ select option{background:#0a2236;}
         <button class="tipo-btn" id="tbtn-velejador" onclick="setTipo('velejador')"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" style="vertical-align:middle;margin-right:4px"><polygon points="16,2 28,14 16,22 4,14"/><line x1="16" y1="22" x2="16" y2="30" stroke="currentColor" stroke-width="2"/><line x1="16" y1="30" x2="13" y2="30" stroke="currentColor" stroke-width="1.5"/></svg> Velejador</button>
         <button class="tipo-btn" id="tbtn-so_velejador" onclick="setTipo('so_velejador')"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" style="vertical-align:middle;margin-right:4px"><polygon points="16,2 28,14 16,22 4,14"/><line x1="16" y1="22" x2="16" y2="30" stroke="currentColor" stroke-width="2"/><line x1="16" y1="30" x2="13" y2="30" stroke="currentColor" stroke-width="1.5"/></svg> S&oacute; velejador</button>
         <button class="tipo-btn" id="tbtn-baba" onclick="setTipo('baba')">&#x1F476; Baba</button>
+      </div>
+      <div class="toggle-row" id="bebe-row">
+        <span class="toggle-lbl">&#x1F37A; Bebe</span>
+        <label class="toggle">
+          <input type="checkbox" id="novo-bebe">
+          <div class="toggle-track"></div>
+        </label>
       </div>
       <div class="resp-row" id="resp-row">
         <select id="responsavel-select">
@@ -172,6 +185,13 @@ select option{background:#0a2236;}
         <span class="toggle-lbl"><svg width="14" height="14" viewBox="0 0 32 32" fill="currentColor" style="vertical-align:middle;margin-right:4px"><polygon points="16,2 28,14 16,22 4,14"/><line x1="16" y1="22" x2="16" y2="30" stroke="currentColor" stroke-width="2"/><line x1="16" y1="30" x2="13" y2="30" stroke="currentColor" stroke-width="1.5"/></svg> S&oacute; para velejadores</span>
         <label class="toggle">
           <input type="checkbox" id="vel-toggle" onchange="onVelToggle()">
+          <div class="toggle-track"></div>
+        </label>
+      </div>
+      <div class="toggle-row" id="bebe-toggle-row">
+        <span class="toggle-lbl">&#x1F37A; S&oacute; para quem bebe</span>
+        <label class="toggle">
+          <input type="checkbox" id="bebe-toggle" onchange="onBebeToggle()">
           <div class="toggle-track"></div>
         </label>
       </div>
@@ -207,6 +227,9 @@ var sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
 var grupoId=null,people=[],expenses=[];
 var tipoSelecionado='normal';
 var cboxInit=false;
+// A coluna "bebe" pode ainda nao existir no banco. Se faltar, o app segue
+// funcionando sem o criterio de bebida em vez de quebrar a tela toda.
+var temBebe=false;
 
 function load(m){document.getElementById('overlay-msg').textContent=m||'Carregando...';document.getElementById('overlay').classList.add('on');}
 function unload(){document.getElementById('overlay').classList.remove('on');}
@@ -221,15 +244,28 @@ window.addEventListener('load',async function(){
       r.data=cr.data;
     }
     grupoId=r.data.id;
+    var probe=await sb.from('kb_participantes').select('bebe').limit(1);
+    temBebe=!probe.error;
+    aplicarSuporteBebe();
     await Promise.all([loadPeople(),loadExpenses()]);
   }catch(e){alert('Erro ao conectar: '+e.message);}
   finally{unload();}
 });
 
+function aplicarSuporteBebe(){
+  ['bebe-row','bebe-toggle-row'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.style.display=temBebe?'':'none';
+  });
+  var aviso=document.getElementById('bebe-aviso');
+  if(aviso)aviso.style.display=temBebe?'none':'';
+}
+
 async function loadPeople(){
-  var r=await sb.from('kb_participantes').select('nome,tipo,responsavel_nome').eq('grupo_id',grupoId).order('nome');
+  var cols='nome,tipo,responsavel_nome'+(temBebe?',bebe':'');
+  var r=await sb.from('kb_participantes').select(cols).eq('grupo_id',grupoId).order('nome');
   if(r.error)throw r.error;
-  people=r.data||[];
+  people=(r.data||[]).map(function(p){p.bebe=!!p.bebe;return p;});
   renderUI();
 }
 
@@ -248,6 +284,11 @@ function veleja(t){return t==='velejador'||t==='so_velejador';}
 // Quem entra na cota geral (comida, bebida, casa...). "So velejador" fica de fora.
 function naCotaGeral(t){return t!=='so_velejador';}
 function nomesPorTipo(fn){return people.filter(function(p){return fn(p.tipo);}).map(function(p){return p.nome;});}
+// Quem racha a bebida: marcado como "bebe" e dentro da cota geral
+// (os "so velejador" ficam fora de comida e bebida).
+function nomesQueBebem(){
+  return people.filter(function(p){return p.bebe&&naCotaGeral(p.tipo);}).map(function(p){return p.nome;});
+}
 
 window.setTipo=function(t){
   tipoSelecionado=t;
@@ -270,12 +311,25 @@ window.addPerson=async function(){
   }
   var btn=document.getElementById('btn-add-person');btn.disabled=true;
   try{
-    var r=await sb.from('kb_participantes').insert([{grupo_id:grupoId,nome:name,tipo:tipoSelecionado,responsavel_nome:responsavel}]);
+    var reg={grupo_id:grupoId,nome:name,tipo:tipoSelecionado,responsavel_nome:responsavel};
+    if(temBebe)reg.bebe=document.getElementById('novo-bebe').checked;
+    var r=await sb.from('kb_participantes').insert([reg]);
     if(r.error)throw r.error;
     document.getElementById('new-person').value='';
+    document.getElementById('novo-bebe').checked=false;
     setTipo('normal');
     await loadPeople();
   }catch(e){alert('Erro: '+e.message);}finally{btn.disabled=false;}
+};
+
+window.toggleBebe=async function(nome){
+  var p=people.find(function(x){return x.nome===nome;});
+  if(!p)return;
+  var novo=!p.bebe;
+  p.bebe=novo; // otimista, para o copo responder na hora
+  renderPeople();
+  var r=await sb.from('kb_participantes').update({bebe:novo}).eq('grupo_id',grupoId).eq('nome',nome);
+  if(r.error){p.bebe=!novo;renderPeople();alert('Erro ao salvar: '+r.error.message);}
 };
 
 window.deletePerson=async function(nome){
@@ -294,33 +348,54 @@ window.deletePerson=async function(nome){
 function syncInvolvedLbl(){
   var vel=document.getElementById('vel-toggle').checked;
   var todos=document.getElementById('all-toggle').checked;
+  var beb=document.getElementById('bebe-toggle').checked;
   document.getElementById('involved-lbl').textContent=vel
     ?'Velejadores marcados — pode desmarcar quem nao entra'
+    :beb
+    ?'Quem bebe marcado — pode desmarcar quem nao entra'
     :todos
     ?'Todos marcados — pode desmarcar quem nao entra'
     :'Para quem foi? (marque os envolvidos)';
 }
 
+// Os tres criterios sao alternativos: ligar um desliga os outros.
+function desligarOutros(id){
+  ['vel-toggle','all-toggle','bebe-toggle'].forEach(function(x){
+    if(x!==id)document.getElementById(x).checked=false;
+  });
+}
+
 window.onVelToggle=function(){
   var on=document.getElementById('vel-toggle').checked;
-  if(on)document.getElementById('all-toggle').checked=false;
+  if(on)desligarOutros('vel-toggle');
   renderCboxes(on?nomesPorTipo(veleja):[]);
   syncInvolvedLbl();
 };
 
 window.onAllToggle=function(){
   var on=document.getElementById('all-toggle').checked;
-  if(on)document.getElementById('vel-toggle').checked=false;
+  if(on)desligarOutros('all-toggle');
   renderCboxes(on?nomesPorTipo(naCotaGeral):[]);
   syncInvolvedLbl();
 };
 
-// Desmarcar alguem na mao desliga o "Todos" (a selecao continua como esta).
+window.onBebeToggle=function(){
+  var on=document.getElementById('bebe-toggle').checked;
+  if(on)desligarOutros('bebe-toggle');
+  renderCboxes(on?nomesQueBebem():[]);
+  syncInvolvedLbl();
+};
+
+// Desmarcar alguem na mao desliga o criterio automatico, mas mantem a
+// selecao que sobrou — o toggle nao fica dizendo que esta todo mundo.
 window.onCbChange=function(){
-  var all=document.getElementById('all-toggle');
-  if(!all.checked)return;
   var marcados=document.querySelectorAll('.kb-cb:checked').length;
-  if(marcados<nomesPorTipo(naCotaGeral).length){all.checked=false;syncInvolvedLbl();}
+  var all=document.getElementById('all-toggle');
+  var beb=document.getElementById('bebe-toggle');
+  var mudou=false;
+  if(all.checked&&marcados<nomesPorTipo(naCotaGeral).length){all.checked=false;mudou=true;}
+  if(beb.checked&&marcados<nomesQueBebem().length){beb.checked=false;mudou=true;}
+  if(mudou)syncInvolvedLbl();
 };
 
 window.addExpense=async function(){
@@ -343,6 +418,7 @@ window.addExpense=async function(){
     document.getElementById('amount-input').value='';
     document.getElementById('vel-toggle').checked=false;
     document.getElementById('all-toggle').checked=false;
+    document.getElementById('bebe-toggle').checked=false;
     cboxInit=false; // volta a selecao padrao
     syncInvolvedLbl();
     await loadExpenses();
@@ -373,7 +449,8 @@ function renderPeople(){
     else if(p.tipo==='so_velejador')badge='<span class="ptag-badge sovel">S&oacute; Vel</span>';
     else if(p.tipo==='baba')badge='<span class="ptag-badge baba">Baba</span>';
     var resp=p.tipo==='baba'&&p.responsavel_nome?'<span style="font-size:.7em;color:var(--muted);">/'  +p.responsavel_nome+'</span>':'';
-    return '<span class="ptag">'+badge+p.nome+resp+'<button class="pdel" onclick="deletePerson(\''+esc(p.nome)+'\')">&times;</button></span>';
+    var copo=temBebe?'<button class="pbebe'+(p.bebe?' on':'')+'" title="Bebe?" onclick="toggleBebe(\''+esc(p.nome)+'\')">&#x1F37A;</button>':'';
+    return '<span class="ptag">'+badge+p.nome+resp+copo+'<button class="pdel" onclick="deletePerson(\''+esc(p.nome)+'\')">&times;</button></span>';
   }).join('');
 
   var sel=document.getElementById('payer-select'),cur=sel.value;
@@ -406,7 +483,8 @@ function renderCboxes(preset){
     var isChecked=checked.indexOf(p.nome)>=0;
     var kiteSvg='<svg width="13" height="13" viewBox="0 0 32 32" fill="currentColor" style="vertical-align:middle;margin-right:3px"><polygon points="16,2 28,14 16,22 4,14"/><line x1="16" y1="22" x2="16" y2="30" stroke="currentColor" stroke-width="2"/><line x1="16" y1="30" x2="13" y2="30" stroke="currentColor" stroke-width="1.5"/></svg>';
     var badge=veleja(p.tipo)?kiteSvg:p.tipo==='baba'?'&#x1F476; ':'';
-    return '<div class="'+cls+'"><input type="checkbox" class="kb-cb" id="cb_'+p.nome+'" value="'+p.nome+'" '+(isChecked?'checked':'')+' onchange="onCbChange()"><label for="cb_'+p.nome+'">'+badge+p.nome+'</label></div>';
+    var copo=temBebe&&p.bebe?' <span style="opacity:.75">&#x1F37A;</span>':'';
+    return '<div class="'+cls+'"><input type="checkbox" class="kb-cb" id="cb_'+p.nome+'" value="'+p.nome+'" '+(isChecked?'checked':'')+' onchange="onCbChange()"><label for="cb_'+p.nome+'">'+badge+p.nome+copo+'</label></div>';
   }).join('');
 }
 
