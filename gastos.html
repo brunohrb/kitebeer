@@ -66,6 +66,8 @@ select option{background:#0a2236;}
 .ptag-badge.velejador{background:rgba(0,212,184,.18);color:var(--teal);}
 .ptag-badge.baba{background:rgba(245,197,24,.15);color:var(--gold);}
 .ptag-badge.sovel{background:rgba(61,232,255,.16);color:var(--cyan);}
+.pnome{background:none;border:none;color:inherit;font:inherit;cursor:pointer;padding:0;width:auto;}
+.ptag.editando{border-color:var(--teal);background:rgba(0,212,184,.12);}
 .pbebe{background:none;border:none;cursor:pointer;font-size:.95em;padding:0 2px;line-height:1;width:auto;filter:grayscale(1);opacity:.3;transition:.15s;}
 .pbebe.on{filter:none;opacity:1;}
 .pdel{background:none;border:none;color:rgba(255,79,79,.45);cursor:pointer;font-size:1em;padding:0;line-height:1;width:auto;}
@@ -148,6 +150,7 @@ select option{background:#0a2236;}
       <b style="color:var(--cyan)">S&oacute; velejador</b> &mdash; veio s&oacute; para velejar; fica fora da cota de comida e bebida &nbsp;|&nbsp;
       <b style="color:var(--gold)">Baba</b> &mdash; n&atilde;o paga nada; o respons&aacute;vel paga 50% da cota dela
       <div style="margin-top:6px">&#x1F37A; <b style="color:var(--purple)">Bebe</b> &mdash; vale junto com o tipo (um velejador pode beber). Toque no copo do nome para ligar/desligar.</div>
+      <div style="margin-top:6px">&#x270F;&#xFE0F; <b>Editar</b> &mdash; toque no <b>nome</b> da pessoa para mudar o tipo dela.</div>
     </div>
     <div class="person-form">
       <input id="new-person" type="text" placeholder="Nome do participante">
@@ -170,6 +173,7 @@ select option{background:#0a2236;}
         </select>
       </div>
       <button class="btn" id="btn-add-person" onclick="addPerson()">+ Adicionar participante</button>
+      <button class="btn ghost" id="btn-cancel-edit" style="display:none" onclick="cancelarEdicao()">Cancelar</button>
     </div>
     <div id="ptags" class="ptags"></div>
   </div>
@@ -229,6 +233,7 @@ var sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
 var grupoId=null,people=[],expenses=[];
 var tipoSelecionado='normal';
 var cboxInit=false;
+var editando=null; // nome da pessoa em edicao, ou null ao adicionar
 
 function load(m){document.getElementById('overlay-msg').textContent=m||'Carregando...';document.getElementById('overlay').classList.add('on');}
 function unload(){document.getElementById('overlay').classList.remove('on');}
@@ -278,7 +283,7 @@ async function loadPeople(){
 var NAO_BEBEM=['Wiilian','Willian','Marina Veras','Natalia'];
 async function classificarBebidaInicial(){
   var pendentes=people.filter(function(p){return !p.bebeDefinido;});
-  if(!pendentes.length)return;
+  if(!pendentes.length){await aplicarAjustes();return;}
   load('Marcando quem bebe...');
   try{
     for(var i=0;i<pendentes.length;i++){
@@ -290,6 +295,33 @@ async function classificarBebidaInicial(){
     }
     await loadPeople();
   }catch(e){alert('Erro ao marcar quem bebe: '+e.message);}
+  finally{unload();}
+}
+
+// Correcao pontual pedida depois da classificacao inicial. So mexe em quem
+// ainda esta exatamente no estado antigo, entao nao desfaz edicao feita na mao.
+var AJUSTES=[
+  {nome:'Rodolfo',         de:{tipo:'normal',bebe:true}, para:{tipo:'velejador',bebe:false}},
+  {nome:'Jessica Cardoso', de:{tipo:'normal',bebe:true}, para:{tipo:'normal',   bebe:false}},
+];
+async function aplicarAjustes(){
+  if(localStorage.getItem('kb_ajuste_v1'))return;
+  var alvos=AJUSTES.filter(function(a){
+    var p=people.find(function(x){return x.nome===a.nome;});
+    return p&&p.tipo===a.de.tipo&&p.bebe===a.de.bebe;
+  });
+  localStorage.setItem('kb_ajuste_v1','1');
+  if(!alvos.length)return;
+  load('Ajustando participantes...');
+  try{
+    for(var i=0;i<alvos.length;i++){
+      var a=alvos[i];
+      var r=await sb.from('kb_participantes').update({tipo:tipoBruto(a.para.tipo,a.para.bebe)})
+        .eq('grupo_id',grupoId).eq('nome',a.nome);
+      if(r.error)throw r.error;
+    }
+    await loadPeople();
+  }catch(e){alert('Erro no ajuste: '+e.message);}
   finally{unload();}
 }
 
@@ -322,24 +354,53 @@ window.setTipo=function(t){
   rr.className='resp-row'+(t==='baba'?' show':'');
 };
 
+// O mesmo formulario adiciona e edita. Ao editar, o nome fica travado: ele e a
+// chave que liga a pessoa as despesas ja lancadas.
+window.editarPessoa=function(nome){
+  var p=people.find(function(x){return x.nome===nome;});
+  if(!p)return;
+  editando=nome;
+  var campo=document.getElementById('new-person');
+  campo.value=nome;campo.disabled=true;
+  document.getElementById('novo-bebe').checked=p.bebe;
+  setTipo(p.tipo);
+  if(p.tipo==='baba'&&p.responsavel_nome)document.getElementById('responsavel-select').value=p.responsavel_nome;
+  document.getElementById('btn-add-person').textContent='Salvar '+nome;
+  document.getElementById('btn-cancel-edit').style.display='';
+  renderPeople();
+  document.querySelector('.person-form').scrollIntoView({behavior:'smooth',block:'center'});
+};
+
+window.cancelarEdicao=function(){
+  editando=null;
+  var campo=document.getElementById('new-person');
+  campo.value='';campo.disabled=false;
+  document.getElementById('novo-bebe').checked=true;
+  setTipo('normal');
+  document.getElementById('btn-add-person').textContent='+ Adicionar participante';
+  document.getElementById('btn-cancel-edit').style.display='none';
+  renderPeople();
+};
+
 window.addPerson=async function(){
-  var name=document.getElementById('new-person').value.trim();
+  var name=editando||document.getElementById('new-person').value.trim();
   if(!name){alert('Digite um nome!');return;}
-  if(people.some(function(p){return p.nome===name;})){alert('Nome ja existe!');return;}
+  if(!editando&&people.some(function(p){return p.nome===name;})){alert('Nome ja existe!');return;}
   var responsavel=null;
   if(tipoSelecionado==='baba'){
     responsavel=document.getElementById('responsavel-select').value;
     if(!responsavel){alert('Selecione o responsavel pela baba!');return;}
+    if(editando&&responsavel===editando){alert('A baba nao pode ser responsavel por ela mesma!');return;}
   }
   var btn=document.getElementById('btn-add-person');btn.disabled=true;
   try{
     var bebeNovo=document.getElementById('novo-bebe').checked;
-    var r=await sb.from('kb_participantes').insert([{grupo_id:grupoId,nome:name,
-      tipo:tipoBruto(tipoSelecionado,bebeNovo),responsavel_nome:responsavel}]);
+    var campos={tipo:tipoBruto(tipoSelecionado,bebeNovo),responsavel_nome:responsavel};
+    var r=editando
+      ?await sb.from('kb_participantes').update(campos).eq('grupo_id',grupoId).eq('nome',editando)
+      :await sb.from('kb_participantes').insert([Object.assign({grupo_id:grupoId,nome:name},campos)]);
     if(r.error)throw r.error;
-    document.getElementById('new-person').value='';
-    document.getElementById('novo-bebe').checked=true;
-    setTipo('normal');
+    cancelarEdicao();
     await loadPeople();
   }catch(e){alert('Erro: '+e.message);}finally{btn.disabled=false;}
 };
@@ -473,7 +534,9 @@ function renderPeople(){
     else if(p.tipo==='baba')badge='<span class="ptag-badge baba">Baba</span>';
     var resp=p.tipo==='baba'&&p.responsavel_nome?'<span style="font-size:.7em;color:var(--muted);">/'  +p.responsavel_nome+'</span>':'';
     var copo='<button class="pbebe'+(p.bebe?' on':'')+'" title="Bebe?" onclick="toggleBebe(\''+esc(p.nome)+'\')">&#x1F37A;</button>';
-    return '<span class="ptag">'+badge+p.nome+resp+copo+'<button class="pdel" onclick="deletePerson(\''+esc(p.nome)+'\')">&times;</button></span>';
+    var nome='<button class="pnome" title="Editar" onclick="editarPessoa(\''+esc(p.nome)+'\')">'+p.nome+'</button>';
+    var cls='ptag'+(editando===p.nome?' editando':'');
+    return '<span class="'+cls+'">'+badge+nome+resp+copo+'<button class="pdel" onclick="deletePerson(\''+esc(p.nome)+'\')">&times;</button></span>';
   }).join('');
 
   var sel=document.getElementById('payer-select'),cur=sel.value;
