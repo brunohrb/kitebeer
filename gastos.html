@@ -6,6 +6,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#030d16">
+<meta name="apple-mobile-web-app-title" content="Velejin 2026">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest-velejin.json">
 <title>Gastos &middot; Kite Beer 2026</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -575,6 +579,15 @@ function calcBalances(){
 function fmt(n){return n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
 })();
+</script>
+<script>
+// Mesmo app da velejin: registra o mesmo SW, com caminho relativo ao /kitebeer/.
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw-velejin.js')
+      .catch(function(e){console.warn('SW nao registrou:',e);});
+  });
+}
 </script>
 </body>
 </html>
