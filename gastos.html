@@ -82,6 +82,8 @@ select option{background:#0a2236;}
 .cbopt.sovel label{border-color:rgba(61,232,255,.3);}
 .cbopt.sovel input:checked + label{background:rgba(61,232,255,.14);border-color:var(--cyan);color:var(--cyan);}
 .exp-item{display:flex;justify-content:space-between;align-items:flex-start;padding:12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;gap:10px;}
+.exp-item.editando{border-color:var(--teal);background:rgba(0,212,184,.1);}
+.exp-info{cursor:pointer;flex:1;min-width:0;}
 .exp-info strong{font-size:.88em;font-weight:700;display:block;}
 .exp-info small{font-size:.7em;color:var(--muted);margin-top:2px;display:block;}
 .exp-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
@@ -214,6 +216,7 @@ select option{background:#0a2236;}
       <div id="cbox-container" class="cbgrid"></div>
     </div>
     <button class="btn" id="btn-add-exp" onclick="addExpense()">SALVAR GASTO</button>
+    <button class="btn ghost" id="btn-cancel-exp" style="display:none;margin-top:8px" onclick="cancelarEdicaoGasto()">Cancelar edi&ccedil;&atilde;o</button>
   </div>
 
   <div class="card">
@@ -233,7 +236,8 @@ var sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
 var grupoId=null,people=[],expenses=[];
 var tipoSelecionado='normal';
 var cboxInit=false;
-var editando=null; // nome da pessoa em edicao, ou null ao adicionar
+var editando=null;      // nome da pessoa em edicao, ou null ao adicionar
+var editandoGasto=null; // id do gasto em edicao, ou null ao lancar um novo
 // Fracao da cota da baba que vai para o responsavel. Mudar so aqui: a legenda
 // da tela se ajusta sozinha.
 var COTA_BABA=0.70;
@@ -486,6 +490,41 @@ window.onCbChange=function(){
   if(mudou)syncInvolvedLbl();
 };
 
+// O mesmo formulario lanca e edita um gasto.
+window.editarGasto=function(id){
+  var e=expenses.find(function(x){return x.id===id;});
+  if(!e)return;
+  editandoGasto=id;
+  document.getElementById('desc-input').value=e.desc;
+  document.getElementById('amount-input').value=e.amount;
+  document.getElementById('payer-select').value=e.payer;
+  document.getElementById('vel-toggle').checked=!!e.somente_velejadores;
+  document.getElementById('all-toggle').checked=false;
+  document.getElementById('bebe-toggle').checked=false;
+  renderCboxes(e.involved.slice());
+  syncInvolvedLbl();
+  document.getElementById('btn-add-exp').textContent='SALVAR ALTERACOES';
+  document.getElementById('btn-cancel-exp').style.display='';
+  renderExpenses();
+  document.getElementById('desc-input').scrollIntoView({behavior:'smooth',block:'center'});
+};
+
+window.cancelarEdicaoGasto=function(){
+  editandoGasto=null;
+  document.getElementById('desc-input').value='';
+  document.getElementById('amount-input').value='';
+  document.getElementById('payer-select').value='';
+  document.getElementById('vel-toggle').checked=false;
+  document.getElementById('all-toggle').checked=false;
+  document.getElementById('bebe-toggle').checked=false;
+  cboxInit=false; // volta a selecao padrao
+  renderCboxes();
+  syncInvolvedLbl();
+  document.getElementById('btn-add-exp').textContent='SALVAR GASTO';
+  document.getElementById('btn-cancel-exp').style.display='none';
+  renderExpenses();
+};
+
 window.addExpense=async function(){
   var desc=document.getElementById('desc-input').value.trim();
   var amount=parseFloat(document.getElementById('amount-input').value);
@@ -495,22 +534,30 @@ window.addExpense=async function(){
   if(!desc||isNaN(amount)||amount<=0||!payer||!involved.length){
     alert('Preencha todos os campos e selecione ao menos um envolvido!');return;
   }
-  var btn=document.getElementById('btn-add-exp');btn.disabled=true;btn.textContent='Salvando...';
+  var btn=document.getElementById('btn-add-exp');var rotulo=btn.textContent;
+  btn.disabled=true;btn.textContent='Salvando...';
   load('Salvando...');
   try{
-    var d2=await sb.from('kb_despesas').insert([{grupo_id:grupoId,descricao:desc,valor:amount,pagador:payer,somente_velejadores:somente_vel}]).select().single();
-    if(d2.error)throw d2.error;
-    var e3=await sb.from('kb_despesas_envolvidos').insert(involved.map(function(n){return{despesa_id:d2.data.id,participante_nome:n};}));
+    var id=editandoGasto;
+    if(id){
+      var u=await sb.from('kb_despesas').update({descricao:desc,valor:amount,pagador:payer,
+        somente_velejadores:somente_vel}).eq('id',id);
+      if(u.error)throw u.error;
+      // Troca a lista de envolvidos inteira: e o jeito mais simples de acertar
+      // quem entrou e quem saiu do rateio.
+      var d=await sb.from('kb_despesas_envolvidos').delete().eq('despesa_id',id);
+      if(d.error)throw d.error;
+    }else{
+      var d2=await sb.from('kb_despesas').insert([{grupo_id:grupoId,descricao:desc,valor:amount,pagador:payer,somente_velejadores:somente_vel}]).select().single();
+      if(d2.error)throw d2.error;
+      id=d2.data.id;
+    }
+    var e3=await sb.from('kb_despesas_envolvidos').insert(involved.map(function(n){return{despesa_id:id,participante_nome:n};}));
     if(e3.error)throw e3.error;
-    document.getElementById('desc-input').value='';
-    document.getElementById('amount-input').value='';
-    document.getElementById('vel-toggle').checked=false;
-    document.getElementById('all-toggle').checked=false;
-    document.getElementById('bebe-toggle').checked=false;
-    cboxInit=false; // volta a selecao padrao
-    syncInvolvedLbl();
+    cancelarEdicaoGasto();
     await loadExpenses();
-  }catch(e){alert('Erro: '+e.message);}finally{unload();btn.disabled=false;btn.textContent='SALVAR GASTO';}
+  }catch(e){alert('Erro: '+e.message);btn.textContent=rotulo;}
+  finally{unload();btn.disabled=false;}
 };
 
 window.removeExpense=async function(id){
@@ -563,14 +610,19 @@ function renderPeople(){
 function renderCboxes(preset){
   var somente_vel=document.getElementById('vel-toggle').checked;
   var somente_bebe=document.getElementById('bebe-toggle').checked;
-  var list=somente_vel?people.filter(function(p){return veleja(p.tipo);})
-          :somente_bebe?people.filter(function(p){return p.bebe;})
-          :people;
   var checked;
   if(preset)checked=preset;
   else if(!cboxInit)checked=nomesPorTipo(naCotaGeral); // padrao ao abrir a tela
   else checked=Array.from(document.querySelectorAll('.kb-cb:checked')).map(function(c){return c.value;});
   if(people.length)cboxInit=true;
+  // Quem esta marcado aparece sempre, mesmo que o filtro o esconderia: escondido
+  // ele sairia do rateio calado ao salvar (acontece ao editar um gasto antigo).
+  var list=people.filter(function(p){
+    if(checked.indexOf(p.nome)>=0)return true;
+    if(somente_vel)return veleja(p.tipo);
+    if(somente_bebe)return p.bebe;
+    return true;
+  });
   document.getElementById('cbox-container').innerHTML=list.map(function(p){
     var cls='cbopt'+(p.tipo==='velejador'?' vel':p.tipo==='so_velejador'?' sovel':p.tipo==='baba'?' baba':'');
     var isChecked=checked.indexOf(p.nome)>=0;
@@ -593,7 +645,8 @@ function renderExpenses(){
   document.getElementById('total-count').textContent=expenses.length;
   el.innerHTML=expenses.map(function(e){
     var vtag=e.somente_velejadores?'<span class="tag-vel">Kite</span>':'';
-    return '<div class="exp-item"><div class="exp-info"><strong>'+e.desc+' '+vtag+'</strong><small>'+e.payer+' pagou &middot; '+e.involved.join(', ')+'</small></div><div class="exp-right"><span class="exp-val">R$ '+fmt(e.amount)+'</span><button class="exp-del" onclick="removeExpense(\''+e.id+'\')">×</button></div></div>';
+    var cls='exp-item'+(editandoGasto===e.id?' editando':'');
+    return '<div class="'+cls+'"><div class="exp-info" title="Editar" onclick="editarGasto(\''+e.id+'\')"><strong>'+e.desc+' '+vtag+'</strong><small>'+e.payer+' pagou &middot; '+e.involved.join(', ')+'</small></div><div class="exp-right"><span class="exp-val">R$ '+fmt(e.amount)+'</span><button class="exp-del" onclick="removeExpense(\''+e.id+'\')">×</button></div></div>';
   }).join('');
 }
 
