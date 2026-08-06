@@ -83,6 +83,7 @@ select option{background:#0a2236;}
 .cbopt.sovel input:checked + label{background:rgba(61,232,255,.14);border-color:var(--cyan);color:var(--cyan);}
 .exp-item{display:flex;justify-content:space-between;align-items:flex-start;padding:12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;gap:10px;}
 .exp-item.editando{border-color:var(--teal);background:rgba(0,212,184,.1);}
+.exp-item.sem-gente{border-color:rgba(255,79,79,.45);background:rgba(255,79,79,.06);}
 .exp-info{cursor:pointer;flex:1;min-width:0;}
 .exp-info strong{font-size:.88em;font-weight:700;display:block;}
 .exp-info small{font-size:.7em;color:var(--muted);margin-top:2px;display:block;}
@@ -244,6 +245,29 @@ var COTA_BABA=0.70;
 
 function load(m){document.getElementById('overlay-msg').textContent=m||'Carregando...';document.getElementById('overlay').classList.add('on');}
 function unload(){document.getElementById('overlay').classList.remove('on');}
+
+// Rede de celular cai. Tenta de novo antes de desistir; lanca o erro se insistir.
+async function comRetry(fn,tentativas){
+  tentativas=tentativas||3;
+  var ultimo;
+  for(var i=0;i<tentativas;i++){
+    if(i)await new Promise(function(r){setTimeout(r,400*i);});
+    try{
+      var r=await fn();
+      if(r&&r.error)  {ultimo=r.error;continue;}
+      return r;
+    }catch(e){ultimo=e;}
+  }
+  throw ultimo||new Error('Falhou');
+}
+
+function mensagemErro(e){
+  var m=(e&&e.message)||String(e);
+  if(/Load failed|Failed to fetch|NetworkError|network/i.test(m)){
+    return 'Sem conexao com o servidor. Nada foi perdido — confira o gasto na lista e tente de novo.';
+  }
+  return 'Erro: '+m;
+}
 
 window.addEventListener('load',async function(){
   document.getElementById('pct-baba').textContent=Math.round(COTA_BABA*100);
@@ -540,23 +564,44 @@ window.addExpense=async function(){
   try{
     var id=editandoGasto;
     if(id){
-      var u=await sb.from('kb_despesas').update({descricao:desc,valor:amount,pagador:payer,
-        somente_velejadores:somente_vel}).eq('id',id);
-      if(u.error)throw u.error;
-      // Troca a lista de envolvidos inteira: e o jeito mais simples de acertar
-      // quem entrou e quem saiu do rateio.
-      var d=await sb.from('kb_despesas_envolvidos').delete().eq('despesa_id',id);
-      if(d.error)throw d.error;
+      var atual=expenses.find(function(x){return x.id===id;});
+      var antes=atual?atual.involved:[];
+      var entrando=involved.filter(function(n){return antes.indexOf(n)<0;});
+      var saindo=antes.filter(function(n){return involved.indexOf(n)<0;});
+      await comRetry(function(){
+        return sb.from('kb_despesas').update({descricao:desc,valor:amount,pagador:payer,
+          somente_velejadores:somente_vel}).eq('id',id);
+      });
+      // So o que mudou, e primeiro quem entra. Apagar todos para reinserir
+      // deixava o gasto sem ninguem no rateio se a conexao caisse no meio.
+      if(entrando.length)await comRetry(function(){
+        return sb.from('kb_despesas_envolvidos')
+          .insert(entrando.map(function(n){return{despesa_id:id,participante_nome:n};}));
+      });
+      for(var i=0;i<saindo.length;i++)await comRetry(function(nome){
+        return function(){
+          return sb.from('kb_despesas_envolvidos').delete()
+            .eq('despesa_id',id).eq('participante_nome',nome);
+        };
+      }(saindo[i]));
     }else{
-      var d2=await sb.from('kb_despesas').insert([{grupo_id:grupoId,descricao:desc,valor:amount,pagador:payer,somente_velejadores:somente_vel}]).select().single();
-      if(d2.error)throw d2.error;
-      id=d2.data.id;
+      var novo=await comRetry(function(){
+        return sb.from('kb_despesas').insert([{grupo_id:grupoId,descricao:desc,valor:amount,
+          pagador:payer,somente_velejadores:somente_vel}]).select().single();
+      });
+      id=novo.data.id;
+      await comRetry(function(){
+        return sb.from('kb_despesas_envolvidos')
+          .insert(involved.map(function(n){return{despesa_id:id,participante_nome:n};}));
+      });
     }
-    var e3=await sb.from('kb_despesas_envolvidos').insert(involved.map(function(n){return{despesa_id:id,participante_nome:n};}));
-    if(e3.error)throw e3.error;
     cancelarEdicaoGasto();
     await loadExpenses();
-  }catch(e){alert('Erro: '+e.message);btn.textContent=rotulo;}
+  }catch(e){
+    btn.textContent=rotulo;unload();
+    alert(mensagemErro(e));
+    await loadExpenses(); // volta a tela para o que o banco realmente tem
+  }
   finally{unload();btn.disabled=false;}
 };
 
@@ -645,8 +690,10 @@ function renderExpenses(){
   document.getElementById('total-count').textContent=expenses.length;
   el.innerHTML=expenses.map(function(e){
     var vtag=e.somente_velejadores?'<span class="tag-vel">Kite</span>':'';
-    var cls='exp-item'+(editandoGasto===e.id?' editando':'');
-    return '<div class="'+cls+'"><div class="exp-info" title="Editar" onclick="editarGasto(\''+e.id+'\')"><strong>'+e.desc+' '+vtag+'</strong><small>'+e.payer+' pagou &middot; '+e.involved.join(', ')+'</small></div><div class="exp-right"><span class="exp-val">R$ '+fmt(e.amount)+'</span><button class="exp-del" onclick="removeExpense(\''+e.id+'\')">×</button></div></div>';
+    var cls='exp-item'+(editandoGasto===e.id?' editando':'')+(e.involved.length?'':' sem-gente');
+    var quem=e.involved.length?e.involved.join(', ')
+      :'<b style="color:var(--danger)">sem envolvidos — fora da conta, toque para corrigir</b>';
+    return '<div class="'+cls+'"><div class="exp-info" title="Editar" onclick="editarGasto(\''+e.id+'\')"><strong>'+e.desc+' '+vtag+'</strong><small>'+e.payer+' pagou &middot; '+quem+'</small></div><div class="exp-right"><span class="exp-val">R$ '+fmt(e.amount)+'</span><button class="exp-del" onclick="removeExpense(\''+e.id+'\')">×</button></div></div>';
   }).join('');
 }
 
@@ -666,6 +713,7 @@ function calcBalances(){
   });
 
   expenses.forEach(function(e){
+    if(!e.involved.length)return; // gasto sem envolvidos fica fora ate ser corrigido
     // Peso no rateio: 1 para quem paga cota cheia, e a cota da baba vira
     // COTA_BABA no responsavel dela. Dividir pelo peso TOTAL faz o desconto
     // da baba ser absorvido pelo grupo. Rateando por cabeca, os 30% que a
