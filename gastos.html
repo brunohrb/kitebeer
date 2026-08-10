@@ -47,6 +47,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .bal-val{font-size:.86em;font-weight:800;font-variant-numeric:tabular-nums;}
 .bal-val.pos{color:var(--green);}
 .bal-val.neg{color:var(--danger);}
+.bal-row{cursor:pointer;}
+.bal-lupa{color:var(--muted);font-size:.8em;}
+.hint-toque{font-size:.68em;color:var(--muted);margin-bottom:6px;}
+.bal-det{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin:0 0 10px;}
+.bal-det-t{font-size:.62em;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:6px 0 4px;}
+.bal-det-l{display:flex;justify-content:space-between;gap:10px;font-size:.75em;padding:3px 0;}
+.bal-det-l span:first-child{min-width:0;overflow-wrap:anywhere;}
+.bal-det-l .pos{color:var(--green);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.bal-det-l .neg{color:var(--danger);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.bal-det-tot{border-top:1px solid var(--border);margin-top:6px;padding-top:6px;font-weight:800;}
+.aviso-box{background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.3);border-radius:12px;padding:10px 14px;font-size:.72em;color:var(--muted);line-height:1.5;margin-bottom:10px;}
+.aviso-box b{color:var(--gold);}
+.aviso-box ul{margin:6px 0 0 16px;}
+.aviso-box li{margin-bottom:4px;}
 .fg{margin-bottom:12px;}
 label.lbl{display:block;font-size:.7em;font-weight:700;letter-spacing:.5px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;}
 input,select{width:100%;padding:12px 14px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:.92em;font-family:inherit;-webkit-appearance:none;}
@@ -142,6 +156,8 @@ select option{background:#0a2236;}
 
   <div class="card">
     <div class="card-title">&#x1F4CA; Saldo por pessoa</div>
+    <div id="avisos"></div>
+    <div class="hint-toque">Toque no nome para ver de onde vem o valor.</div>
     <div id="balance-list"><div class="empty">Sem dados ainda.</div></div>
   </div>
 
@@ -239,6 +255,8 @@ var tipoSelecionado='normal';
 var cboxInit=false;
 var editando=null;      // nome da pessoa em edicao, ou null ao adicionar
 var editandoGasto=null; // id do gasto em edicao, ou null ao lancar um novo
+var duplicatas=[];      // gastos que vieram com alguem repetido
+var aberto=null;        // pessoa com o detalhamento aberto no saldo
 // Fracao da cota da baba que vai para o responsavel. Mudar so aqui: a legenda
 // da tela se ajusta sozinha.
 var COTA_BABA=1.00;
@@ -360,9 +378,15 @@ async function aplicarAjustes(){
 async function loadExpenses(){
   var r=await sb.from('kb_despesas').select('id,descricao,valor,pagador,somente_velejadores,criado_em,kb_despesas_envolvidos(participante_nome)').eq('grupo_id',grupoId).order('criado_em',{ascending:false});
   if(r.error)throw r.error;
+  duplicatas=[];
   expenses=r.data?r.data.map(function(d){
-    return{id:d.id,desc:d.descricao,amount:parseFloat(d.valor),payer:d.pagador,somente_velejadores:d.somente_velejadores,
-           involved:d.kb_despesas_envolvidos.map(function(e){return e.participante_nome;})};
+    var nomes=d.kb_despesas_envolvidos.map(function(e){return e.participante_nome;});
+    // Uma tentativa repetida (rede caindo depois do banco ja ter gravado) pode
+    // deixar a pessoa duas vezes no mesmo gasto, e ela pagaria em dobro.
+    var unicos=nomes.filter(function(n,i){return nomes.indexOf(n)===i;});
+    if(unicos.length!==nomes.length)duplicatas.push(d.descricao);
+    return{id:d.id,desc:d.descricao,amount:parseFloat(d.valor),payer:d.pagador,
+           somente_velejadores:d.somente_velejadores,involved:unicos};
   }):[];
   renderUI();
 }
@@ -697,6 +721,67 @@ function renderExpenses(){
   }).join('');
 }
 
+window.verDetalhe=function(nome){aberto=aberto===nome?null:nome;calcBalances();};
+
+// Abre a conta da pessoa linha a linha: o que ela pagou e a cota dela em cada gasto.
+function detalheHTML(nome,linhas,saldo){
+  if(!linhas.length)return '<div class="bal-det">Sem lancamentos.</div>';
+  var pagou=linhas.filter(function(l){return l.pagou;});
+  var cotas=linhas.filter(function(l){return !l.pagou;});
+  var somaPagou=pagou.reduce(function(a,l){return a+l.v;},0);
+  var somaCotas=cotas.reduce(function(a,l){return a+l.v;},0);
+  var h='<div class="bal-det">';
+  if(pagou.length){
+    h+='<div class="bal-det-t">Pagou</div>';
+    pagou.forEach(function(l){
+      h+='<div class="bal-det-l"><span>'+l.desc+'</span><span class="pos">+ '+fmt(l.v)+'</span></div>';
+    });
+  }
+  if(cotas.length){
+    h+='<div class="bal-det-t">Cota em '+cotas.length+' gasto'+(cotas.length>1?'s':'')+'</div>';
+    cotas.forEach(function(l){
+      var obs=l.baba?' <i>(cota da baba '+l.baba+')</i>':'';
+      var tag=l.kite?' <span class="tag-vel">Kite</span>':'';
+      h+='<div class="bal-det-l"><span>'+l.desc+tag+obs+'</span><span class="neg">&minus; '+fmt(-l.v)+'</span></div>';
+    });
+  }
+  h+='<div class="bal-det-l bal-det-tot"><span>Pagou '+fmt(somaPagou)+' &minus; cota '+fmt(-somaCotas)+'</span><span class="'+
+     (saldo>0?'pos':'neg')+'">'+(saldo>0?'recebe ':'deve ')+fmt(Math.abs(saldo))+'</span></div>';
+  return h+'</div>';
+}
+
+// Aponta o que costuma estar por tras de um numero estranho.
+function renderAvisos(){
+  var el=document.getElementById('avisos');if(!el)return;
+  var av=[];
+  var nomes=people.map(function(p){return p.nome;});
+  var fora=[];
+  expenses.forEach(function(e){
+    e.involved.concat([e.payer]).forEach(function(n){
+      if(nomes.indexOf(n)<0&&fora.indexOf(n)<0)fora.push(n);
+    });
+  });
+  if(fora.length)av.push('Nome em gasto que nao esta na lista da galera: <b>'+fora.join(', ')+
+    '</b>. Costuma ser o mesmo nome escrito de dois jeitos.');
+  var vazios=expenses.filter(function(e){return !e.involved.length;});
+  if(vazios.length)av.push('<b>'+vazios.length+'</b> gasto(s) sem envolvidos, fora da conta: '+
+    vazios.map(function(e){return e.desc;}).join(', ')+'.');
+  if(duplicatas.length)av.push('Alguem aparecia repetido e foi contado uma vez so em: <b>'+
+    duplicatas.join(', ')+'</b>.');
+  var soVel=people.filter(function(p){return p.tipo==='so_velejador';}).map(function(p){return p.nome;});
+  var indevidos=[];
+  expenses.forEach(function(e){
+    if(e.somente_velejadores)return;
+    e.involved.forEach(function(n){
+      if(soVel.indexOf(n)>=0)indevidos.push(n+' em "'+e.desc+'"');
+    });
+  });
+  if(indevidos.length)av.push('Quem e <b>so velejador</b> deveria entrar so em gasto de kite, mas esta em: '+
+    indevidos.join('; ')+'.');
+  el.innerHTML=av.length
+    ?'<div class="aviso-box"><b>&#x26A0;&#xFE0F; Confira</b><ul><li>'+av.join('</li><li>')+'</li></ul></div>':'';
+}
+
 function calcBalances(){
   if(!people.length){
     document.getElementById('balance-list').innerHTML='<div class="empty">Adicione participantes.</div>';
@@ -705,7 +790,7 @@ function calcBalances(){
   }
   // Todo mundo entra no saldo, inclusive as babas: elas nao pagam cota, mas
   // podem ter pago uma conta e precisam ser reembolsadas.
-  var bal={};
+  var bal={},detalhe={};
   people.forEach(function(p){bal[p.nome]=0;});
   expenses.forEach(function(e){
     if(!bal.hasOwnProperty(e.payer))bal[e.payer]=0;
@@ -718,7 +803,7 @@ function calcBalances(){
     // COTA_BABA no responsavel dela. Dividir pelo peso TOTAL faz o desconto
     // da baba ser absorvido pelo grupo. Rateando por cabeca, os 30% que a
     // baba nao paga sobravam para quem pagou a conta, que ficava no prejuizo.
-    var pesos={},total=0;
+    var pesos={},motivos={},total=0;
     e.involved.forEach(function(nome){
       var p=people.find(function(x){return x.nome===nome;});
       var alvo=nome,peso=1;
@@ -727,12 +812,18 @@ function calcBalances(){
         alvo=p.responsavel_nome;peso=COTA_BABA;
       }
       pesos[alvo]=(pesos[alvo]||0)+peso;
+      (motivos[alvo]=motivos[alvo]||[]).push({peso:peso,baba:alvo!==nome?nome:null});
       total+=peso;
     });
     bal[e.payer]+=e.amount;
+    (detalhe[e.payer]=detalhe[e.payer]||[]).push({desc:e.desc,v:e.amount,pagou:true});
     if(!total)return;
     Object.keys(pesos).forEach(function(nome){
       bal[nome]-=e.amount*pesos[nome]/total;
+      motivos[nome].forEach(function(m){
+        (detalhe[nome]=detalhe[nome]||[]).push(
+          {desc:e.desc,v:-e.amount*m.peso/total,baba:m.baba,kite:e.somente_velejadores});
+      });
     });
   });
 
@@ -744,8 +835,12 @@ function calcBalances(){
     ?'<div class="empty" style="color:var(--teal)">&#x2705; Ninguem deve nada!</div>'
     :rows.map(function(x){
       var badge=x.tipo==='velejador'?'<span class="tag-vel">Vel</span>':x.tipo==='so_velejador'?'<span class="tag-sovel">S&oacute; Vel</span>':x.tipo==='baba'?'<span class="tag-baba">Baba</span>':'';
-      return '<div class="bal-row"><span class="bal-name">'+badge+x.nome+'</span><span class="bal-val '+(x.v>0?'pos':'neg')+'">'+( x.v>0?'recebe':'deve')+' R$ '+fmt(Math.abs(x.v))+'</span></div>';
+      return '<div class="bal-row" data-nome="'+x.nome+'" onclick="verDetalhe(\''+esc(x.nome)+'\')"><span class="bal-name">'+badge+x.nome+
+        ' <span class="bal-lupa">'+(aberto===x.nome?'&#x25BE;':'&#x25B8;')+'</span></span><span class="bal-val '+(x.v>0?'pos':'neg')+'">'+
+        (x.v>0?'recebe':'deve')+' R$ '+fmt(Math.abs(x.v))+'</span></div>'+
+        (aberto===x.nome?detalheHTML(x.nome,detalhe[x.nome]||[],x.v):'');
     }).join('');
+  renderAvisos();
 
   var deb=Object.entries(bal).filter(function(x){return x[1]<-0.01;}).map(function(x){return{n:x[0],v:Math.abs(x[1])};}).sort(function(a,b){return b.v-a.v;});
   var cred=Object.entries(bal).filter(function(x){return x[1]>0.01;}).map(function(x){return{n:x[0],v:x[1]};}).sort(function(a,b){return b.v-a.v;});
